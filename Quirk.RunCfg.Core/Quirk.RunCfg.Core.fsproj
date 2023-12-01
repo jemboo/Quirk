@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="RunCfgTypes.fs" />
+    <Compile Include="CfgPlex.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Quirk.Core\Quirk.Core.fsproj" />
+    <ProjectReference Include="..\Quirk.Iter\Quirk.Iter.fsproj" />
+    <ProjectReference Include="..\Quirk.RunIter\Quirk.RunIter.fsproj" />
+    <ProjectReference Include="..\Quirk.SortingResults\Quirk.SortingResults.fsproj" />
+    <ProjectReference Include="..\Quirk.Sorting\Quirk.Sorting.fsproj" />
+  </ItemGroup>
+
+</Project>
