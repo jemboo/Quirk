@@ -7,6 +7,8 @@
 
   <ItemGroup>
     <Compile Include="RunCfgTypes.fs" />
+    <Compile Include="RunParam.fs" />
+    <Compile Include="QuirkRun.fs" />
     <Compile Include="CfgPlex.fs" />
   </ItemGroup>
 

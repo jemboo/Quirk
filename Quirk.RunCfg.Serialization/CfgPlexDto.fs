@@ -16,16 +16,16 @@ type cfgPlexParamDto =
         }
     
  module CfgPlexItemDto =
-    let toDto (cfgPlexItem:cfgPlexParam) : cfgPlexParamDto =
+    let toDto (cfgPlexItem:cfgPlexItem) : cfgPlexParamDto =
         {
-            name = cfgPlexItem |> CfgPlexParam.getName |> UMX.untag
-            rank = cfgPlexItem |> CfgPlexParam.getRank |> UMX.untag
+            name = cfgPlexItem |> CfgPlexItem.getName |> UMX.untag
+            rank = cfgPlexItem |> CfgPlexItem.getRank |> UMX.untag
             cfgPlexItemValues =
                cfgPlexItem
-                    |> CfgPlexParam.getCfgPlexItemValues
-                    |> Array.map(fun itm -> itm |> CfgPlexParamValue.toArrayOfStrings)
+                    |> CfgPlexItem.getCfgPlexItemValues
+                    |> Array.map(fun itm -> itm |> RunParamValue.toArrayOfStrings)
         }
-    let toJson (cfgPlexItem:cfgPlexParam) =
+    let toJson (cfgPlexItem:cfgPlexItem) =
         cfgPlexItem |> toDto |> Json.serialize
 
     
@@ -33,11 +33,11 @@ type cfgPlexParamDto =
         result {
             let! cfgPlexItemValueList =
                    cfgPlexItemDto.cfgPlexItemValues
-                   |> Array.map(CfgPlexParamValue.fromArrayOfStrings)
+                   |> Array.map(RunParamValue.fromArrayOfStrings)
                    |> Array.toList
                    |> Result.sequence
             
-            return CfgPlexParam.create
+            return CfgPlexItem.create
                         (cfgPlexItemDto.name |> UMX.tag<cfgPlexItemName>)
                         (cfgPlexItemDto.rank |> UMX.tag<cfgPlexItemRank>)
                         (cfgPlexItemValueList |> List.toArray)

@@ -1,25 +1,35 @@
-﻿namespace Quirk.Core
+﻿namespace Quirk.RunCfg.Core
 open FSharp.UMX
+
+[<Measure>] type replicaNumber
+[<Measure>] type quirkRunId
+
+[<Measure>] type runParamName
 
 [<Measure>] type cfgPlexItemName
 [<Measure>] type cfgPlexItemRank
 [<Measure>] type cfgPlexName
 
 
-[<Measure>] type replicaNumber
+type quirkRunType =
+    | Shc
+    | Ga
 
 
+module QuirkRunType =
 
-type gaCfgPlex =
-   {
-        name:string<cfgPlexName>
-        orders:int<order>[]
-        multiplicationRates:float<reproductionRate>[]
-        mutationRates:float<mutationRate>[]
-        noiseFractions:float<noiseFraction>[]
-        rngTypes:rngType[]
-        parentCounts:int<sorterCount>[]
-        sorterSetPruneMethods:sorterSetPruneMethod[]
-        stageWeights:float<stageWeight>[]
-        switchGenModes:switchGenMode[]
-    }
+    let toString 
+            (quirkRunType:quirkRunType)
+        =
+        match quirkRunType with
+        | Shc -> "Shc"
+        | Ga -> "Ga"
+
+
+    let fromString 
+            (qrt:string)
+        =
+        match qrt with
+        | "Shc" -> quirkRunType.Shc |> Ok
+        | "Ga" -> quirkRunType.Ga |> Ok
+        | _ -> $"{qrt} not handled in QuirkRunType.fromString" |> Error
