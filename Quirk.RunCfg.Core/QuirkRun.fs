@@ -2,7 +2,7 @@
 
 open FSharp.UMX
 open Quirk.Core
-
+open Quirk.Run.Core
 
 
 type quirkRun = 

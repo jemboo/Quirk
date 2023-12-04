@@ -25,15 +25,21 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Quirk.SortingResults", "Qui
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Quirk.RunIter", "Quirk.RunIter\Quirk.RunIter.fsproj", "{B5C01810-082C-4F50-9132-61D366143D56}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Quirk.RunCfg.Core", "Quirk.RunCfg.Core\Quirk.RunCfg.Core.fsproj", "{31275412-7878-4519-98E0-F5D8A1D677A2}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Quirk.RunCfg.Core", "Quirk.RunCfg.Core\Quirk.RunCfg.Core.fsproj", "{31275412-7878-4519-98E0-F5D8A1D677A2}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Quirk.RunCfg.Serialization", "Quirk.RunCfg.Serialization\Quirk.RunCfg.Serialization.fsproj", "{B17CE493-2E61-4C69-A62A-B5FC4CAE1440}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Quirk.RunCfg.Serialization", "Quirk.RunCfg.Serialization\Quirk.RunCfg.Serialization.fsproj", "{B17CE493-2E61-4C69-A62A-B5FC4CAE1440}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Quirk.RunCfg.Test", "Quirk.RunCfg.Test\Quirk.RunCfg.Test.fsproj", "{69B1C753-B342-4DF6-9F54-C0F98EAD72D5}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Quirk.RunCfg.Test", "Quirk.RunCfg.Test\Quirk.RunCfg.Test.fsproj", "{69B1C753-B342-4DF6-9F54-C0F98EAD72D5}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Quirk.Serialziation", "Quirk.Serialziation\Quirk.Serialziation.fsproj", "{0481C283-EEE5-4733-8397-EC3005F58566}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Quirk.Serialziation", "Quirk.Serialziation\Quirk.Serialziation.fsproj", "{0481C283-EEE5-4733-8397-EC3005F58566}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Quirk.Serialization.Test", "Quirk.Serialization.Test\Quirk.Serialization.Test.fsproj", "{8B8BBBE4-BFD5-4CAE-B3C0-4F3730A23DF0}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Quirk.Serialization.Test", "Quirk.Serialization.Test\Quirk.Serialization.Test.fsproj", "{8B8BBBE4-BFD5-4CAE-B3C0-4F3730A23DF0}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Quirk.RunCfg.Serialization.Test", "Quirk.RunCfg.Serialization.Test\Quirk.RunCfg.Serialization.Test.fsproj", "{9FF79ECF-ACFE-4F90-B986-E564D5D8540A}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Quirk.Run.Core", "Quirk.Run.Core\Quirk.Run.Core.fsproj", "{C110E0E2-FD0E-4E11-9B32-3E16B1CEE00A}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Quirk.Run.Shc", "Quirk.Run.Shc\Quirk.Run.Shc.fsproj", "{B85ED56D-2D80-4C2A-90F4-F1749B419D84}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -105,6 +111,18 @@ Global
 		{8B8BBBE4-BFD5-4CAE-B3C0-4F3730A23DF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8B8BBBE4-BFD5-4CAE-B3C0-4F3730A23DF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8B8BBBE4-BFD5-4CAE-B3C0-4F3730A23DF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9FF79ECF-ACFE-4F90-B986-E564D5D8540A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9FF79ECF-ACFE-4F90-B986-E564D5D8540A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9FF79ECF-ACFE-4F90-B986-E564D5D8540A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9FF79ECF-ACFE-4F90-B986-E564D5D8540A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C110E0E2-FD0E-4E11-9B32-3E16B1CEE00A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C110E0E2-FD0E-4E11-9B32-3E16B1CEE00A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C110E0E2-FD0E-4E11-9B32-3E16B1CEE00A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C110E0E2-FD0E-4E11-9B32-3E16B1CEE00A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B85ED56D-2D80-4C2A-90F4-F1749B419D84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B85ED56D-2D80-4C2A-90F4-F1749B419D84}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B85ED56D-2D80-4C2A-90F4-F1749B419D84}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B85ED56D-2D80-4C2A-90F4-F1749B419D84}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

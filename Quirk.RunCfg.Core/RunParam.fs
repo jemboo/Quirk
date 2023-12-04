@@ -2,7 +2,7 @@
 
 open FSharp.UMX
 open Quirk.Core
-open System
+open Quirk.Run.Core
 
 
 type runParamValue =
@@ -186,39 +186,6 @@ module RunParamValue =
             
 
 
-//type runParam = 
-//    private 
-//        { 
-//            runParamName: string<runParamName>
-//            cfgPlexItemRank: int<cfgPlexItemRank>
-//            runParamValue: runParamValue
-//        }
-
-
-//module RunParam =
-
-//    let create 
-//            (runParamName: string<runParamName>) 
-//            (cfgPlexItemRank: int<cfgPlexItemRank>)
-//            (runParamValue: runParamValue)
-//        =
-//        {
-//            runParam.runParamName = runParamName;
-//            runParam.cfgPlexItemRank = cfgPlexItemRank;
-//            runParam.runParamValue = runParamValue;
-//        }
-
-//    let getName (runParam:runParam) =
-//        runParam.runParamValue
-        
-//    let getRank (runParam:runParam) =
-//        runParam.runParamValue
-        
-//    let getRunParamValue (runParam:runParam) =
-//        runParam.runParamValue
-  
-
-
 type runParamSet = 
     private 
         { 
@@ -230,6 +197,24 @@ type runParamSet =
 module RunParamSet =
 
     let create 
+            (runParamValues: runParamValue seq)
+        =
+        let runParamValueMap = 
+            runParamValues
+            |> Seq.map(fun rpv -> (rpv |> RunParamValue.getRunParamName, rpv ))
+            |> Map.ofSeq
+
+        let quirkRunId = 
+            [runParamValueMap :> obj] |> GuidUtils.guidFromObjs
+            |> UMX.tag<quirkRunId>
+
+        {
+            runParamSet.quirkRunId = quirkRunId;
+            runParamSet.runParamValueMap = runParamValueMap;
+        }
+
+
+    let create2
             (replicaNumber: int<replicaNumber>)
             (quirkRunType:quirkRunType)
             (runParamValues: runParamValue seq)
@@ -242,21 +227,12 @@ module RunParamSet =
                 (("quirkRunType" |> UMX.tag<runParamName>),
                   quirkRunType) |> runParamValue.QuirkRunType 
 
-
-        let runParamValueMap = 
+        let fullSeq = 
             runParamValues |> Seq.append
                 (seq {replicaRunParamValue; quirkRunTypeParamValue})
-            |> Seq.map(fun rpv -> (rpv |> RunParamValue.getRunParamName, rpv ))
-            |> Map.ofSeq
 
-        let quirkRunId = 
-            [runParamValueMap :> obj] |> GuidUtils.guidFromObjs
-            |> UMX.tag<quirkRunId>
+        create fullSeq
 
-        {
-            runParamSet.quirkRunId = quirkRunId;
-            runParamSet.runParamValueMap = runParamValueMap;
-        }
         
     let getQuirkRunId (runParamSet:runParamSet) =
         runParamSet.quirkRunId

@@ -2,8 +2,6 @@
 open FSharp.UMX
 
 [<Measure>] type replicaNumber
-[<Measure>] type quirkRunId
-
 [<Measure>] type runParamName
 
 [<Measure>] type cfgPlexItemName

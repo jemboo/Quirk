@@ -40,10 +40,9 @@ let ``cfgPlexItemDto`` () =
         
         
     let cfgPlexName = "cfgPlexName" |> UMX.tag<cfgPlexName>
-    let rngGen = RngGen.createLcg (123uL |> UMX.tag<randomSeed>)
     let cfgPlexItems = [|cfpiA; cfpiB; cfpiC|]
         
-    let cfgPlex = CfgPlex.create cfgPlexName rngGen cfgPlexItems
+    let cfgPlex = CfgPlex.create cfgPlexName cfgPlexItems
     let cfgPlexCereal = cfgPlex |> CfgPlexDto.toJson 
     let cfgPlexBackR = cfgPlexCereal |> CfgPlexDto.fromJson 
     let cfgPlexBack = cfgPlexBackR |> Result.ExtractOrThrow 

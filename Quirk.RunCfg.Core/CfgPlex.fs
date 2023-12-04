@@ -48,10 +48,11 @@ module CfgPlexItem =
 
     let makeRunParamSets 
             (cfgPlexItems: cfgPlexItem[]) 
+            (quirkRunType:quirkRunType)
             (replicaNumber: int<replicaNumber>) 
         =
         enumerateItems cfgPlexItems
-        |> List.map(fun li -> li |> RunParamSet.create replicaNumber)
+        |> List.map(fun li -> li |> RunParamSet.create2 replicaNumber quirkRunType )
 
 
 
@@ -59,7 +60,6 @@ type cfgPlex =
      private 
         { 
             name: string<cfgPlexName>
-            rngGen: rngGen
             cfgPlexItems: cfgPlexItem[]
         }
 
@@ -67,20 +67,15 @@ type cfgPlex =
 module CfgPlex =
     let create
             (name:string<cfgPlexName>)
-            (rngGen:rngGen)
             (cfgPlexItems:cfgPlexItem[])
          =
         { 
             name = name
-            rngGen = rngGen
             cfgPlexItems = cfgPlexItems
         }
         
     let getName (cfgPlex:cfgPlex) =
         cfgPlex.name
-        
-    let getRngGen (cfgPlex:cfgPlex) =
-        cfgPlex.rngGen
         
     let getCfgPlexItems (cfgPlex:cfgPlex) =
         cfgPlex.cfgPlexItems

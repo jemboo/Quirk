@@ -42,8 +42,6 @@ type cfgPlexParamDto =
                         (cfgPlexItemDto.rank |> UMX.tag<cfgPlexItemRank>)
                         (cfgPlexItemValueList |> List.toArray)
         }
-       
-
     let fromJson (cereal:string) =
         result {
             let! dto = Json.deserialize<cfgPlexParamDto> cereal
@@ -51,20 +49,18 @@ type cfgPlexParamDto =
         }
             
         
-            
-    
+        
  type cfgPlexDto =
         { 
             name: string
-            rngGenDto: rngGenDto
             cfgPlexItemDtos: cfgPlexParamDto[]
         }
     
- module CfgPlexDto =
+ module CfgPlexDto 
+    =
     let toDto (cfgPlex:cfgPlex) : cfgPlexDto =
         {
             name = cfgPlex |> CfgPlex.getName |> UMX.untag
-            rngGenDto = cfgPlex |> CfgPlex.getRngGen |> RngGenDto.toDto
             cfgPlexItemDtos =
                cfgPlex
                     |> CfgPlex.getCfgPlexItems
@@ -73,7 +69,6 @@ type cfgPlexParamDto =
         
     let toJson (cfgPlex:cfgPlex) =
         cfgPlex |> toDto |> Json.serialize
-
    
     let fromDto (cfgPlexDto:cfgPlexDto) = 
         result {
@@ -82,14 +77,11 @@ type cfgPlexParamDto =
                    |> Array.map(CfgPlexItemDto.fromDto)
                    |> Array.toList
                    |> Result.sequence
-            let! rngGen = cfgPlexDto.rngGenDto |> RngGenDto.fromDto
             return CfgPlex.create
                         (cfgPlexDto.name |> UMX.tag<cfgPlexName>)
-                        rngGen
                         (cfgPlexItems |> List.toArray)
         }
    
-
     let fromJson (cereal:string) =
         result {
             let! dto = Json.deserialize<cfgPlexDto> cereal
