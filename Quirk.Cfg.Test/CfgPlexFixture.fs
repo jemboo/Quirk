@@ -12,15 +12,15 @@ open Quirk.Cfg.Serialization
 let ``cfgPlexItemDto`` () =
 
     let cfpiNameA = "cfpNameA" |> UMX.tag<cfgPlexItemName>
-    let rpNameA = "rpNameA" |> UMX.tag<modelCfgParamName>
+    let rpNameA = "rpNameA" |> UMX.tag<cfgModelParamName>
     let cfpiRankA = 1 |> UMX.tag<cfgPlexItemRank>
         
     let cfpiNameB = "cfpNameB" |> UMX.tag<cfgPlexItemName>
-    let rpNameB = "rpNameB" |> UMX.tag<modelCfgParamName>
+    let rpNameB = "rpNameB" |> UMX.tag<cfgModelParamName>
     let cfpiRankB = 2 |> UMX.tag<cfgPlexItemRank>
         
     let cfpiNameC = "cfpNameC" |> UMX.tag<cfgPlexItemName>
-    let rpNameC = "rpNameC" |> UMX.tag<modelCfgParamName>
+    let rpNameC = "rpNameC" |> UMX.tag<cfgModelParamName>
     let cfpiRankC = 3 |> UMX.tag<cfgPlexItemRank>
         
         

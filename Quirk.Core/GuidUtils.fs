@@ -98,6 +98,16 @@ module GuidUtils =
         | false -> "not a guid: " + gstr |> Result.Error
 
 
+    let guidArrayFromStringR (gstr: string) =
+        result {
+            let guiLst = gstr.Split(",") |> Array.toList
+            let! lstR = guiLst |> List.map(guidFromStringR) |> Result.sequence
+            return lstR |> List.toArray
+        }
+
+    let guidArrayToString (guidArray: Guid array) =
+         String.Join(",", guidArray |> Array.map (fun guid -> guid.ToString()))
+
     let guidFromStringOpt (gstr: string) =
         let mutable gv = Guid.NewGuid()
 

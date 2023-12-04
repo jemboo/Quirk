@@ -1,4 +1,4 @@
-﻿namespace Quirk.RunCfg.Serialization
+﻿namespace Quirk.Cfg.Core
 
 module Say =
     let hello name =

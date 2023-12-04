@@ -1,11 +1,11 @@
-﻿namespace Quirk.RunCfg.Serialization
+﻿namespace Quirk.Cfg.Serialization
 
 open System
 open Microsoft.FSharp.Core
 open FSharp.UMX
 open Quirk.Core
 open Quirk.Serialization
-open Quirk.RunCfg.Core
+open Quirk.Cfg.Core
    
 
 type cfgPlexParamDto =
@@ -23,7 +23,7 @@ type cfgPlexParamDto =
             cfgPlexItemValues =
                cfgPlexItem
                     |> CfgPlexItem.getCfgPlexItemValues
-                    |> Array.map(fun itm -> itm |> RunParamValue.toArrayOfStrings)
+                    |> Array.map(fun itm -> itm |> CfgModelParamValue.toArrayOfStrings)
         }
     let toJson (cfgPlexItem:cfgPlexItem) =
         cfgPlexItem |> toDto |> Json.serialize
@@ -33,7 +33,7 @@ type cfgPlexParamDto =
         result {
             let! cfgPlexItemValueList =
                    cfgPlexItemDto.cfgPlexItemValues
-                   |> Array.map(RunParamValue.fromArrayOfStrings)
+                   |> Array.map(CfgModelParamValue.fromArrayOfStrings)
                    |> Array.toList
                    |> Result.sequence
             

@@ -9,12 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="RunParamSetDtoFixture.fs" />
+    <Compile Include="CfgParamSetDtoFixture.fs" />
+    <Compile Include="Tests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FSharp.UMX" Version="1.1.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0" />
     <PackageReference Include="xunit" Version="2.4.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
@@ -25,6 +25,17 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Quirk.Cfg.Core\Quirk.Cfg.Core.fsproj" />
+    <ProjectReference Include="..\Quirk.Cfg.Serialization\Quirk.Cfg.Serialization.fsproj" />
+    <ProjectReference Include="..\Quirk.Cfg\Quirk.Cfg.fsproj" />
+    <ProjectReference Include="..\Quirk.Core\Quirk.Core.fsproj" />
+    <ProjectReference Include="..\Quirk.Iter\Quirk.Iter.fsproj" />
+    <ProjectReference Include="..\Quirk.Serialziation\Quirk.Serialziation.fsproj" />
+    <ProjectReference Include="..\Quirk.SortingResults\Quirk.SortingResults.fsproj" />
+    <ProjectReference Include="..\Quirk.Sorting\Quirk.Sorting.fsproj" />
   </ItemGroup>
 
 </Project>

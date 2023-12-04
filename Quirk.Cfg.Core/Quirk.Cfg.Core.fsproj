@@ -6,10 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="RunCfgTypes.fs" />
-    <Compile Include="RunParam.fs" />
-    <Compile Include="QuirkRun.fs" />
+    <Compile Include="CfgTypes.fs" />
+    <Compile Include="CfgModelParam.fs" />
+    <Compile Include="CfgRunParam.fs" />
     <Compile Include="CfgPlex.fs" />
+    <Compile Include="QuirkRun.fs" />
+    <Compile Include="Library.fs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,7 +22,6 @@
     <ProjectReference Include="..\Quirk.Core\Quirk.Core.fsproj" />
     <ProjectReference Include="..\Quirk.Iter\Quirk.Iter.fsproj" />
     <ProjectReference Include="..\Quirk.Run.Core\Quirk.Run.Core.fsproj" />
-    <ProjectReference Include="..\Quirk.RunIter\Quirk.RunIter.fsproj" />
     <ProjectReference Include="..\Quirk.SortingResults\Quirk.SortingResults.fsproj" />
     <ProjectReference Include="..\Quirk.Sorting\Quirk.Sorting.fsproj" />
   </ItemGroup>

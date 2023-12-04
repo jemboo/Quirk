@@ -1,4 +1,4 @@
-﻿namespace Quirk.RunCfg.Core
+﻿namespace Quirk.Cfg.Core
 
 open FSharp.UMX
 open Quirk.Core
@@ -10,7 +10,7 @@ type cfgPlexItem =
         { 
             name: string<cfgPlexItemName>
             cfgPlexItemRank: int<cfgPlexItemRank>
-            cfgPlexItemValues: runParamValue[]
+            cfgPlexItemValues: cfgModelParamValue[]
         }
 
 
@@ -19,7 +19,7 @@ module CfgPlexItem =
     let create 
             (cfgPlexItemName: string<cfgPlexItemName>) 
             (cfgPlexItemRank: int<cfgPlexItemRank>)
-            (cfgPlexItemValues: runParamValue[])
+            (cfgPlexItemValues: cfgModelParamValue[])
         =
         {
             cfgPlexItem.name = cfgPlexItemName;
@@ -52,7 +52,7 @@ module CfgPlexItem =
             (replicaNumber: int<replicaNumber>) 
         =
         enumerateItems cfgPlexItems
-        |> List.map(fun li -> li |> RunParamSet.create2 replicaNumber quirkRunType )
+        |> List.map(fun li -> li |> CfgModelParamSet.create2 replicaNumber quirkRunType )
 
 
 

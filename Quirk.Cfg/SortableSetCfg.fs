@@ -1,4 +1,4 @@
-﻿namespace Quirk.Core
+﻿namespace Quirk.Cfg
 
 open System
 

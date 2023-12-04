@@ -1,4 +1,4 @@
-﻿namespace Quirk.RunCfg.Core
+﻿namespace Quirk.Cfg.Core
 
 open FSharp.UMX
 open Quirk.Core
@@ -11,7 +11,7 @@ type quirkRun =
             quirkRunId: Guid<quirkRunId>
             quirkRunType: quirkRunType
             replicaNumber: int<replicaNumber>
-            cfgPlexItemValues: runParamValue[]
+            cfgPlexItemValues: cfgModelParamValue[]
         }
 
 
@@ -20,7 +20,7 @@ module QuirkRun =
     let create 
             (cfgPlexItemName: string<cfgPlexItemName>) 
             (cfgPlexItemRank: int<cfgPlexItemRank>)
-            (cfgPlexItemValues: runParamValue[])
+            (cfgPlexItemValues: cfgModelParamValue[])
         =
         ()
 
