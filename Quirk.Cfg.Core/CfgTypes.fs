@@ -38,7 +38,6 @@ module QuirkRunMode =
 
 
 
-
 type quirkRunType =
     | Shc
     | Ga
@@ -62,3 +61,4 @@ module QuirkRunType =
         | "Ga" -> quirkRunType.Ga |> Ok
         | _ -> $"{qrt} not handled in QuirkRunType.fromString" |> Error
 
+    

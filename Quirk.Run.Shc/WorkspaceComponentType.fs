@@ -21,6 +21,7 @@ type workspaceComponentTypeShc =
     | WorkspaceParams = 50
 
 
+
 module WorkspaceComponentTypeShc =
 
     let getShcComponentID 
@@ -35,3 +36,42 @@ module WorkspaceComponentTypeShc =
         ] 
         |> GuidUtils.guidFromObjs
         |> UMX.tag<shcComponentId>
+
+
+
+type rndGenTypeShc =
+    | Create
+    | Mutate
+    | Prune
+
+
+
+module RndGenProvider =
+
+    let getRngGen 
+            (rngType:rngType)
+            (rndGenTypeShc:rndGenTypeShc)
+            (generation:int<generation>) 
+        =
+        let gu = 
+            [
+                rndGenTypeShc :> obj;
+                generation :> obj
+            ] 
+            |> GuidUtils.guidFromObjs
+
+        RngGen.fromGuid rngType gu
+
+
+    let getShcWorkspaceComponentId
+            (quirkRunId: Guid<quirkRunId>)
+            (wsc:workspaceComponentTypeShc)
+            (generation:int<generation>) 
+        =
+        [
+            quirkRunId :> obj;
+            wsc :> obj;
+            generation :> obj
+        ] 
+        |> GuidUtils.guidFromObjs
+        |> UMX.tag<workspaceComponentId>

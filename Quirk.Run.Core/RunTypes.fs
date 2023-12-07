@@ -3,3 +3,5 @@
 
 [<Measure>] type quirkRunId
 
+[<Measure>] type workspaceComponentId
+

@@ -10,16 +10,62 @@ type quirkRun =
         { 
             quirkRunId: Guid<quirkRunId>
             quirkRunType: quirkRunType
-            replicaNumber: int<replicaNumber>
-            cfgPlexItemValues: cfgModelParamValue[]
+            quirkRunMode: quirkRunMode
+            cfgModelParamSet: cfgModelParamSet
+            cfgRunParamSet: cfgRunParamSet
         }
 
 
 module QuirkRun =
 
-    let create 
-            (cfgPlexItemRank: int<cfgPlexItemRank>)
-            (cfgPlexItemValues: cfgModelParamValue[])
+    let makeQuirkRunId
+            (cfgModelParamSet:cfgModelParamSet)
+            (quirkRunType:quirkRunType)
         =
-        ()
+            [
+                cfgModelParamSet :> obj;
+                quirkRunType :> obj
+            ] 
+            |> GuidUtils.guidFromObjs
+            |> UMX.tag<quirkRunId>
 
+
+    let create 
+            (quirkRunType: quirkRunType)
+            (quirkRunMode: quirkRunMode)
+            (cfgRunParamSet: cfgRunParamSet)
+            (cfgModelParamSet: cfgModelParamSet)
+        =
+        { 
+            quirkRunId = makeQuirkRunId cfgModelParamSet quirkRunType
+            quirkRunType = quirkRunType
+            quirkRunMode = quirkRunMode
+            cfgModelParamSet = cfgModelParamSet
+            cfgRunParamSet = cfgRunParamSet
+        }
+
+    let createFromCfgPlex
+            (quirkRunType:quirkRunType)
+            (quirkRunMode:quirkRunMode)
+            (cfgRunParamSet:cfgRunParamSet)
+            (cfgPlex:cfgPlex)
+            (replicaNumber: int<replicaNumber>) 
+        =
+        CfgPlex.makeModelParamSets cfgPlex replicaNumber
+        |> List.map(create quirkRunType quirkRunMode cfgRunParamSet)
+
+
+    let getQuirkRunId (quirkRun:quirkRun) = 
+            quirkRun.quirkRunId
+
+    let getRunMode (quirkRun:quirkRun) = 
+            quirkRun.quirkRunMode
+
+    let getRunType (quirkRun:quirkRun) = 
+            quirkRun.quirkRunType
+
+    let getRunParamSet (quirkRun:quirkRun) = 
+            quirkRun.cfgRunParamSet
+
+    let getModelParamSet (quirkRun:quirkRun) = 
+            quirkRun.cfgModelParamSet

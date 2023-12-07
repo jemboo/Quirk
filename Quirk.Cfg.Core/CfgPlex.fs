@@ -64,7 +64,7 @@ module CfgPlex =
         cfgPlex.cfgPlexItems
 
 
-    let makeRunParamSets 
+    let makeModelParamSets 
             (cfgPlex: cfgPlex)
             (replicaNumber: int<replicaNumber>) 
         =
