@@ -1,8 +1,10 @@
-module Tests
+namespace Quirk.Sorting.Test
 
 open System
 open Xunit
 
-[<Fact>]
-let ``My test`` () =
-    Assert.True(true)
+module Tests =
+
+    [<Fact>]
+    let ``My test`` () =
+        Assert.True(true)

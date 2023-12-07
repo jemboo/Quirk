@@ -5,6 +5,9 @@ open FSharp.UMX
 [<Measure>] type cfgModelParamName
 [<Measure>] type cfgRunParamName
 
+[<Measure>] type cfgModelParamSetId
+[<Measure>] type cfgRunParamSetId
+
 [<Measure>] type cfgPlexItemName
 [<Measure>] type cfgPlexItemRank
 [<Measure>] type cfgPlexName

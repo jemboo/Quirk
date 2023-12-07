@@ -10,19 +10,32 @@ open Quirk.Cfg.Core
 
 type cfgModelParamSetDto =
         { 
+            id: Guid
+            replicaNumber: int
             runParamValues: string[][]
         }
     
  module CfgModelParamSetDto =
 
-    let toDto (runParamSet:cfgModelParamSet) : cfgModelParamSetDto 
+    let toDto 
+            (cfgModelParamSet:cfgModelParamSet) : cfgModelParamSetDto 
         =
         {
-            runParamValues =
-              runParamSet 
-                    |> CfgModelParamSet.getRunParamValueMap
-                    |> Map.toArray
-                    |> Array.map(snd >> CfgModelParamValue.toArrayOfStrings)
+            cfgModelParamSetDto.id = 
+                cfgModelParamSet 
+                |> CfgModelParamSet.getId
+                |> UMX.untag
+
+            cfgModelParamSetDto.replicaNumber = 
+                cfgModelParamSet
+                |> CfgModelParamSet.getReplicaNumber
+                |> UMX.untag
+
+            cfgModelParamSetDto.runParamValues =
+                cfgModelParamSet 
+                |> CfgModelParamSet.getValueMap
+                |> Map.toArray
+                |> Array.map(snd >> CfgModelParamValue.toArrayOfStrings)
         }
 
 
@@ -31,12 +44,8 @@ type cfgModelParamSetDto =
 
     
     let fromDto (runParamSetDto:cfgModelParamSetDto) = 
-        let _remap (n:string, a) =
-            result {
-                let! rpv = a |> CfgModelParamValue.fromArrayOfStrings
-                return (n |> UMX.tag<cfgModelParamName>, rpv)
-            }
-
+        let replicaNumber = 
+            runParamSetDto.replicaNumber |> UMX.tag<replicaNumber>
 
         result {
 
@@ -46,7 +55,7 @@ type cfgModelParamSetDto =
                 |> List.map(CfgModelParamValue.fromArrayOfStrings)
                 |> Result.sequence
 
-            return CfgModelParamSet.create runParamValues
+            return CfgModelParamSet.create replicaNumber runParamValues
         }
        
 

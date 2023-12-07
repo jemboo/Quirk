@@ -3,6 +3,7 @@
 open Microsoft.FSharp.Core
 open System
 open System.Security.Cryptography
+open System.Text
 
 module StringUtil =
     let parseInt (s: string) : Result<int, string> =
@@ -34,14 +35,72 @@ module StringUtil =
         |None -> null
 
 
-    let toCsvLine<'a> 
+
+    let joinSequence<'a> 
+            (delim:string) 
             (strFormat:'a->string) 
             (lineData:'a seq)
         =
-        lineData 
-        |> Seq.fold 
-                (fun st t ->
-                    let cv = strFormat t 
-                    if (st = "") then cv else $"{st}\t{cv}" 
-                )
-                ""
+        let stringB = new StringBuilder()
+        stringB.AppendJoin(delim, lineData |> Seq.map(strFormat)) |> ignore
+        stringB.ToString()
+
+
+    let joinGuids
+            (delim:string) 
+            (lineData:Guid seq)
+         =
+         joinSequence
+            delim
+            (fun gu -> gu.ToString())
+            lineData
+
+
+    let joinInts
+            (delim:string) 
+            (lineData:int seq)
+         =
+         joinSequence
+            delim
+            (fun gu -> gu.ToString())
+            lineData
+
+
+    let joinFloats
+            (delim:string) 
+            (lineData:float seq)
+         =
+         joinSequence
+            delim
+            (fun gu -> gu.ToString())
+            lineData
+
+
+    let splitToArray<'a>
+            (delim:string)
+            (parser:string -> Result<'a,string>)
+            (gstr: string) 
+            =
+        result {
+            let guiLst = gstr.Split(delim) |> Array.toList
+            let! lstR = guiLst |> List.map(parser) |> Result.sequence
+            return lstR |> List.toArray
+        }
+
+
+    let guidArrayFromString 
+                (delim:string)
+                (gstr: string) 
+        =
+        splitToArray 
+            delim
+            GuidUtils.guidFromStringR
+            gstr
+        //result {
+        //    let guiLst = gstr.Split(",") |> Array.toList
+        //    let! lstR = 
+        //            guiLst 
+        //            |> List.map(GuidUtils.guidFromStringR) 
+        //            |> Result.sequence
+        //    return lstR |> List.toArray
+        //}

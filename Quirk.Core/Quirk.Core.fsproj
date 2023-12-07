@@ -8,7 +8,7 @@
   <ItemGroup>
     <Compile Include="Result.fs" />
     <Compile Include="SysExt.fs" />
-    <Compile Include="Uoms.fs" />
+    <Compile Include="UMXext.fs" />
     <Compile Include="CoreTypes.fs" />
     <Compile Include="CollectionProps.fs" />
     <Compile Include="CollectionOps.fs" />

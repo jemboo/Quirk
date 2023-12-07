@@ -18,7 +18,6 @@ type quirkRun =
 module QuirkRun =
 
     let create 
-            (cfgPlexItemName: string<cfgPlexItemName>) 
             (cfgPlexItemRank: int<cfgPlexItemRank>)
             (cfgPlexItemValues: cfgModelParamValue[])
         =

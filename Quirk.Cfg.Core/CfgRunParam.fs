@@ -65,9 +65,11 @@ module CfgRunParamValue =
         | RunIDsToReport (n, pc) ->
                 [|
                      "RunIDsToReport";
-                     n |> UMX.untag
-                     pc |> Array.map(UMX.untag) |> string
+                     n |> UMX.untag;
+                     pc |> Array.map(UMX.untag) 
+                        |> StringUtil.joinGuids "\t"
                 |]
+
 
 
     let fromArrayOfStrings (lst: string array) : Result<cfgRunParamValue, string> =
@@ -114,7 +116,7 @@ module CfgRunParamValue =
 
         | [|"RunIDsToReport"; n; mr|] -> 
             result {
-                let! gaValues = GuidUtils.guidArrayFromStringR mr
+                let! gaValues = StringUtil.guidArrayFromString "\t" mr
                 let rpName = n |> UMX.tag<cfgRunParamName>
                 return
                     (rpName, gaValues |> Array.map(UMX.tag<quirkRunId>))
@@ -124,11 +126,10 @@ module CfgRunParamValue =
         | uhv -> $"not handled in CfgPlexType.fromList %A{uhv}" |> Error
             
 
-
 type cfgRunParamSet = 
     private 
         { 
-            quirkRunId: Guid<quirkRunId>
+            quirkRunId: Guid<cfgRunParamSetId>
             runParamValueMap: Map<string<cfgRunParamName>, cfgRunParamValue>
         }
 
@@ -145,7 +146,7 @@ module CfgRunParamSet =
 
         let quirkRunId = 
             [runParamValueMap :> obj] |> GuidUtils.guidFromObjs
-            |> UMX.tag<quirkRunId>
+            |> UMX.tag<cfgRunParamSetId>
 
         {
             cfgRunParamSet.quirkRunId = quirkRunId;

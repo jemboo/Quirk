@@ -8,7 +8,7 @@ open Quirk.Serialization
 open Quirk.Cfg.Core
    
 
-type cfgPlexParamDto =
+type cfgPlexItemDto =
         { 
             name: string
             rank: int
@@ -16,7 +16,7 @@ type cfgPlexParamDto =
         }
     
  module CfgPlexItemDto =
-    let toDto (cfgPlexItem:cfgPlexItem) : cfgPlexParamDto =
+    let toDto (cfgPlexItem:cfgPlexItem) : cfgPlexItemDto =
         {
             name = cfgPlexItem |> CfgPlexItem.getName |> UMX.untag
             rank = cfgPlexItem |> CfgPlexItem.getRank |> UMX.untag
@@ -29,7 +29,7 @@ type cfgPlexParamDto =
         cfgPlexItem |> toDto |> Json.serialize
 
     
-    let fromDto (cfgPlexItemDto:cfgPlexParamDto) = 
+    let fromDto (cfgPlexItemDto:cfgPlexItemDto) = 
         result {
             let! cfgPlexItemValueList =
                    cfgPlexItemDto.cfgPlexItemValues
@@ -44,7 +44,7 @@ type cfgPlexParamDto =
         }
     let fromJson (cereal:string) =
         result {
-            let! dto = Json.deserialize<cfgPlexParamDto> cereal
+            let! dto = Json.deserialize<cfgPlexItemDto> cereal
             return! fromDto dto
         }
             
@@ -53,7 +53,7 @@ type cfgPlexParamDto =
  type cfgPlexDto =
         { 
             name: string
-            cfgPlexItemDtos: cfgPlexParamDto[]
+            cfgPlexItemDtos: cfgPlexItemDto[]
         }
     
  module CfgPlexDto 

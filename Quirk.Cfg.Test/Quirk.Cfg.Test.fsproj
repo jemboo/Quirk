@@ -10,7 +10,6 @@
 
   <ItemGroup>
     <Compile Include="CfgPlexFixture.fs" />
-    <Compile Include="Tests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
@@ -31,6 +30,10 @@
     <ProjectReference Include="..\Quirk.RunIter\Quirk.RunIter.fsproj" />
     <ProjectReference Include="..\Quirk.SortingResults\Quirk.SortingResults.fsproj" />
     <ProjectReference Include="..\Quirk.Sorting\Quirk.Sorting.fsproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
 
 </Project>

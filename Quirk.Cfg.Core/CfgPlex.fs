@@ -8,7 +8,7 @@ open Quirk.Core
 type cfgPlexItem = 
     private 
         { 
-            name: string<cfgPlexItemName>
+            cfgPlexItemName: string<cfgPlexItemName>
             cfgPlexItemRank: int<cfgPlexItemRank>
             cfgPlexItemValues: cfgModelParamValue[]
         }
@@ -16,44 +16,27 @@ type cfgPlexItem =
 
 module CfgPlexItem =
 
-    let create 
-            (cfgPlexItemName: string<cfgPlexItemName>) 
+    let create
+            (cfgPlexItemName: string<cfgPlexItemName>)
             (cfgPlexItemRank: int<cfgPlexItemRank>)
             (cfgPlexItemValues: cfgModelParamValue[])
         =
         {
-            cfgPlexItem.name = cfgPlexItemName;
+            cfgPlexItem.cfgPlexItemName = cfgPlexItemName;
             cfgPlexItem.cfgPlexItemRank = cfgPlexItemRank;
             cfgPlexItem.cfgPlexItemValues = cfgPlexItemValues;
         }
 
+
     let getName (cfgPlexItem:cfgPlexItem) =
-        cfgPlexItem.name
-        
+        cfgPlexItem.cfgPlexItemName
+
     let getRank (cfgPlexItem:cfgPlexItem) =
         cfgPlexItem.cfgPlexItemRank
         
     let getCfgPlexItemValues (cfgPlexItem:cfgPlexItem) =
         cfgPlexItem.cfgPlexItemValues
     
-
-    let enumerateItems (cfgPlexItems: cfgPlexItem[]) =
-        let listList =
-                cfgPlexItems
-                |> Array.sortBy(fun it -> it.cfgPlexItemRank |> UMX.untag)
-                |> Array.map(fun it -> it.cfgPlexItemValues |> Array.toList)
-                |> Array.toList
-        CollectionOps.crossProduct listList
-
-
-    let makeRunParamSets 
-            (cfgPlexItems: cfgPlexItem[]) 
-            (quirkRunType:quirkRunType)
-            (replicaNumber: int<replicaNumber>) 
-        =
-        enumerateItems cfgPlexItems
-        |> List.map(fun li -> li |> CfgModelParamSet.create2 replicaNumber quirkRunType )
-
 
 
 type cfgPlex =
@@ -79,3 +62,22 @@ module CfgPlex =
         
     let getCfgPlexItems (cfgPlex:cfgPlex) =
         cfgPlex.cfgPlexItems
+
+
+    let makeRunParamSets 
+            (cfgPlex: cfgPlex)
+            (replicaNumber: int<replicaNumber>) 
+        =
+        
+        let _enumerateModelParamSetItems
+                (cfgPlexItems: cfgPlexItem[])
+            =
+            let listList =
+                    cfgPlexItems
+                    |> Array.sortBy(fun it -> it.cfgPlexItemRank |> UMX.untag)
+                    |> Array.map(fun it -> it.cfgPlexItemValues |> Array.toList)
+                    |> Array.toList
+            CollectionOps.crossProduct listList
+
+        _enumerateModelParamSetItems cfgPlex.cfgPlexItems
+        |> List.map(fun li -> li |> CfgModelParamSet.create replicaNumber )

@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="UomFixture.fs" />
+    <Compile Include="UmxFixture.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

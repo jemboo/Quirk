@@ -1,8 +1,10 @@
-module CfgParamSetDtoFixture
+namespace Quirk.Cfg.Serialization.Test
 
 open System
 open Xunit
 
-[<Fact>]
-let ``My test`` () =
-    Assert.True(true)
+module CfgParamSetDtoFixture =
+
+    [<Fact>]
+    let ``My test`` () =
+        Assert.True(true)
