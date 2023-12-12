@@ -8,119 +8,6 @@ open Quirk.Serialization
 open Quirk.Cfg.Core
    
 
-type cfgModelParamSetDto =
-        { 
-            id: Guid
-            replicaNumber: int
-            runParamValues: string[][]
-        }
-    
-
- module CfgModelParamSetDto =
-
-    let toDto 
-            (cfgModelParamSet:cfgModelParamSet) : cfgModelParamSetDto 
-        =
-        {
-            cfgModelParamSetDto.id = 
-                cfgModelParamSet 
-                |> CfgModelParamSet.getId
-                |> UMX.untag
-
-            cfgModelParamSetDto.replicaNumber = 
-                cfgModelParamSet
-                |> CfgModelParamSet.getReplicaNumber
-                |> UMX.untag
-
-            cfgModelParamSetDto.runParamValues =
-                cfgModelParamSet 
-                |> CfgModelParamSet.getValueMap
-                |> Map.toArray
-                |> Array.map(snd >> CfgModelParamValue.toArrayOfStrings)
-        }
-
-
-    let toJson (runParamSet:cfgModelParamSet) =
-        runParamSet |> toDto |> Json.serialize
-
-    
-    let fromDto (runParamSetDto:cfgModelParamSetDto) = 
-        let replicaNumber = 
-            runParamSetDto.replicaNumber |> UMX.tag<replicaNumber>
-
-        result {
-
-            let! runParamValues =
-                runParamSetDto.runParamValues
-                |> Array.toList
-                |> List.map(CfgModelParamValue.fromArrayOfStrings)
-                |> Result.sequence
-
-            return CfgModelParamSet.create replicaNumber runParamValues
-        }
-       
-
-    let fromJson (cereal:string) =
-        result {
-            let! dto = Json.deserialize<cfgModelParamSetDto> cereal
-            return! fromDto dto
-        }
-            
-
-   
-
-type cfgRunParamSetDto =
-        { 
-            id: Guid
-            runParamValues: string[][]
-        }
-    
-
- module CfgRunParamSetDto =
-
-    let toDto 
-            (cfgRunParamSet:cfgRunParamSet) : cfgRunParamSetDto 
-        =
-        {
-            cfgRunParamSetDto.id = 
-                cfgRunParamSet 
-                |> CfgRunParamSet.getId
-                |> UMX.untag
-
-            cfgRunParamSetDto.runParamValues =
-                cfgRunParamSet 
-                |> CfgRunParamSet.getValueMap
-                |> Map.toArray
-                |> Array.map(snd >> CfgRunParamValue.toArrayOfStrings)
-        }
-
-
-    let toJson (runParamSet:cfgRunParamSet) =
-        runParamSet |> toDto |> Json.serialize
-
-    
-    let fromDto (runParamSetDto:cfgRunParamSetDto) = 
-
-        result {
-
-            let! runParamValues =
-                runParamSetDto.runParamValues
-                |> Array.toList
-                |> List.map(CfgRunParamValue.fromArrayOfStrings)
-                |> Result.sequence
-
-            return CfgRunParamSet.create  runParamValues
-        }
-       
-
-    let fromJson (cereal:string) =
-        result {
-            let! dto = Json.deserialize<cfgRunParamSetDto> cereal
-            return! fromDto dto
-        }
-            
-   
-
 type quirkRunDto =
         { 
             quirkRunId: Guid
@@ -197,6 +84,54 @@ type quirkRunDto =
     let fromJson (cereal:string) =
         result {
             let! dto = Json.deserialize<quirkRunDto> cereal
+            return! fromDto dto
+        }
+            
+
+
+type quirkRunSetDto =
+        { 
+            quirkRunDtos: quirkRunDto[]
+        }
+    
+
+ module QuirkRunSetDto =
+
+    let toDto 
+            (quirkRunSet:quirkRunSet) : quirkRunSetDto 
+        =
+        {
+            quirkRunSetDto.quirkRunDtos =
+                quirkRunSet 
+                |> QuirkRunSet.getQuirkRuns 
+                |> Array.map(QuirkRunDto.toDto)
+
+        }
+
+
+    let toJson (quirkRunSet:quirkRunSet) =
+        quirkRunSet |> toDto |> Json.serialize
+
+    
+    let fromDto (quirkRunSetDto:quirkRunSetDto) = 
+
+        result {
+
+            let! quirkRuns =
+                quirkRunSetDto.quirkRunDtos
+                |> Array.map(QuirkRunDto.fromDto)
+                |> Array.toList
+                |> Result.sequence
+
+
+            return QuirkRunSet.create  
+                        quirkRuns
+        }
+       
+
+    let fromJson (cereal:string) =
+        result {
+            let! dto = Json.deserialize<quirkRunSetDto> cereal
             return! fromDto dto
         }
             

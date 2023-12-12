@@ -69,3 +69,39 @@ module QuirkRun =
 
     let getModelParamSet (quirkRun:quirkRun) = 
             quirkRun.cfgModelParamSet
+
+
+
+type quirkRunSet = 
+    private 
+        { 
+            quirkRuns:quirkRun[]
+        }
+
+
+module QuirkRunSet = 
+    
+    let create 
+            (quirkRuns: quirkRun seq)
+        =
+        { quirkRunSet.quirkRuns = quirkRuns |> Seq.toArray }
+
+
+    let getQuirkRuns 
+            (quirkRunSet:quirkRunSet) =
+        quirkRunSet.quirkRuns
+
+
+    let createFromCfgPlex
+            (quirkRunType:quirkRunType)
+            (quirkRunMode:quirkRunMode)
+            (cfgRunParamSet:cfgRunParamSet)
+            (cfgPlex:cfgPlex)
+            (replicaNumber: int<replicaNumber>) 
+        =
+        {
+            quirkRunSet.quirkRuns =
+                CfgPlex.makeModelParamSets cfgPlex replicaNumber
+                |> List.map(QuirkRun.create quirkRunType quirkRunMode cfgRunParamSet)
+                |> List.toArray
+        }

@@ -1,0 +1,10 @@
+﻿{
+    "profiles": {
+      "Quirk.UI.W (Package)": {
+        "commandName": "MsixPackage"
+      },
+      "Quirk.UI.W (Unpackaged)": {
+        "commandName": "Project"
+      }
+    }
+}

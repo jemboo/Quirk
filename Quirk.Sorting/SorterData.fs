@@ -1,4 +1,4 @@
-﻿namespace global
+﻿namespace Quirk.Sorting
 
 //http://users.telenet.be/bertdobbelaere/SorterHunter/sorting_networks.html
 module SorterData =

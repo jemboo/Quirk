@@ -1,4 +1,4 @@
-﻿namespace global
+﻿namespace Quirk.Sorting
 
 
 type sorterSetConcatMap = 

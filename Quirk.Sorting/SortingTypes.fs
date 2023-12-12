@@ -1,4 +1,4 @@
-﻿namespace global
+﻿namespace Quirk.Sorting
 
 open Quirk.Core
 open FSharp.UMX

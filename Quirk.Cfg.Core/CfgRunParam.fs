@@ -14,6 +14,20 @@ type cfgRunParamValue =
 
 module CfgRunParamValue =
 
+    let makeGenerationStart (genStart: int<generation>) =
+        ("generationStart" |> UMX.tag<cfgRunParamName>, genStart) |> cfgRunParamValue.GenerationStart
+
+    let makeGenerationEnd (genEnd: int<generation>) =
+        ("generationEnd" |> UMX.tag<cfgRunParamName>, genEnd) |> cfgRunParamValue.GenerationEnd
+
+    let makeReportIntervalShort (genShort: int<generation>) =
+        ("reportIntervalShort" |> UMX.tag<cfgRunParamName>, genShort) |> cfgRunParamValue.ReportIntervalShort
+
+    let makeReportIntervalLong (genLong: int<generation>) =
+        ("reportIntervalLong" |> UMX.tag<cfgRunParamName>, genLong) |> cfgRunParamValue.ReportIntervalLong
+
+
+
     let getModelCfgParamName (cfgRunParamValue: cfgRunParamValue) =
         match cfgRunParamValue with
         | GenerationStart (n, o) -> n
