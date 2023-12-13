@@ -4,10 +4,84 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:Quirk.UI.W.Core.Models.Workspace"
     mc:Ignorable="d">
+    <Page.Resources>
+        <DataTemplate x:Key="ItemTemplate" x:DataType="models:CfgPlexVm">
+            <Grid Height="120">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <FontIcon
+                    Grid.Column="0"
+                    VerticalAlignment="Center"
+                    FontSize="32"
+                    Glyph="{x:Bind Symbol}" />
+                <StackPanel
+                    Grid.Column="1"
+                    Margin="{StaticResource SmallLeftMargin}"
+                    VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Name:" Style="{StaticResource ListTitleStyleLabel}"/>
+                        <TextBlock Text="{x:Bind Name }" Style="{StaticResource ListTitleStyle}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Type:" Style="{StaticResource ListTitleStyleLabel}"/>
+                        <TextBlock Text="{Binding CfgPlexType}" Style="{StaticResource ListTitleStyle}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="ItemCount:" Style="{StaticResource ListTitleStyleLabel}"/>
+                        <TextBlock Text="{x:Bind ItemCount }" Style="{StaticResource ListTitleStyle}" />
+                    </StackPanel>
 
-    <StackPanel x:Name="ContentArea">
-        <TextBlock Text="{x:Bind ViewModel.PathWorkspaceRoot, Mode=OneWay}"/>
-        <Button Command="{x:Bind ViewModel.DeleteCommand, Mode=OneWay}"> Hi </Button>
-    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="NoSelectionContentTemplate">
+            <Grid>
+                <TextBlock
+                    Text="{Binding DataContext.Instruction, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    TextAlignment="Center"
+                    Style="{ThemeResource SubtitleTextBlockStyle}" />
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+
+    <Grid x:Name="ContentArea">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <Grid Margin="20" Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="140"/>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Command="{x:Bind ViewModel.FindWorkspaceCommand, Mode=OneWay}">
+                Find Workspace
+            </Button>
+            <TextBlock VerticalAlignment="Center" Grid.Column="1" Text="{x:Bind ViewModel.PathWorkspaceRoot, Mode=OneWay}"/>
+        </Grid>
+
+        <TextBlock VerticalAlignment="Center" Grid.Row="1" Text="Projects:"/>
+
+        <ListView
+            Grid.Row="2"
+            x:Uid="Configs"
+            x:Name="ListDetailsViewControl"
+            Background="Transparent"
+            BorderBrush="Transparent"
+            DataContext="{x:Bind ViewModel}"
+            ItemsSource="{x:Bind ViewModel.CfgPlexes}"
+            ItemTemplate="{StaticResource ItemTemplate}"
+            SelectedItem="{x:Bind ViewModel.Selected, Mode=TwoWay}"
+            />
+        
+    </Grid>
 </Page>

@@ -6,71 +6,103 @@ using Microsoft.UI.Xaml;
 using Windows.Storage.Pickers;
 using Windows.Storage;
 using WinRT.Interop;
+using Quirk.UI.W.Core.Contracts.Services;
+using Quirk.UI.W.Core.Models.Workspace;
+using System.Collections.ObjectModel;
 
 namespace Quirk.UI.W.ViewModels;
 
 public partial class BlankViewModel : ObservableRecipient
 {
-    public BlankViewModel()
+    public BlankViewModel(IWorkspaceDataService workspaceDataService)
     {
-        // DeleteCommand = new RelayCommand(ExecuteMyCommand, CanExecuteMyCommand);
-        //SwitchThemeCommand = new RelayCommand<ElementTheme>(
-        // async (param) =>
-        // {
-        //     if (ElementTheme != param)
-        //     {
-        //         ElementTheme = param;
-        //         await _themeSelectorService.SetThemeAsync(param);
-        //     }
-        // });
-        DeleteCommand = new RelayCommand(
-            //async () =>
-            //{
-            //    await Task.Run(() =>
-            //    {
-            //        ExecuteMyCommand();
-            //    });
-            //},
-            ExecuteMyCommand,
-            CanExecuteMyCommand
-            ) ;
+        CfgPlexes = new ObservableCollection<CfgPlexVm>();
+        _workspaceDataService = workspaceDataService;
 
-        _pathWorkspaceRoot = "";
+        FindWorkspaceCommand = new RelayCommand(
+            FindWorkspace,
+            CanFindWorkspace
+            );
+
+        PathWorkspaceRoot = "";
+
+        Instruction = "Select a workspace folder";
     }
 
-    public ICommand DeleteCommand
+    private readonly IWorkspaceDataService _workspaceDataService;
+
+    [ObservableProperty]
+    private CfgPlexVm? _selected;
+
+    partial void OnSelectedChanged(CfgPlexVm? value)
+    {
+        if (value != null)
+        {
+            var task = Task.Run(async () => await _workspaceDataService.GetCfgPlexDetails(PathWorkspaceRoot, value));
+            var cfgPlexVmUpdated = task.Result;
+            value.CopyValuesFrom(cfgPlexVmUpdated);
+        }
+    }
+
+    [ObservableProperty]
+    private ObservableCollection<CfgPlexVm> _cfgPlexes;
+
+    public async void OnNavigatedTo(object parameter)
+    {
+        CfgPlexes.Clear();
+
+        // TODO: Replace with real data.
+        var data = await _workspaceDataService.GetListDetailsDataAsync();
+
+        foreach (var item in data)
+        {
+            CfgPlexes.Add(item);
+        }
+    }
+
+    public void OnNavigatedFrom()
+    {
+    }
+
+    public void EnsureItemSelected()
+    {
+        Selected ??= CfgPlexes?.FirstOrDefault();
+    }
+
+
+    public ICommand FindWorkspaceCommand
     {
         get; set;
     }
 
 
-    private async void ExecuteMyCommand()
+    private async void FindWorkspace()
     {
-
-        //await Task.Run(() => { 
-        //    Debug.WriteLine("MyCommand executed!"); 
-
-        //});
-
         FolderPicker fileOpenPicker = new()
         {
             ViewMode = PickerViewMode.Thumbnail,
             FileTypeFilter = { ".jpg", ".jpeg", ".png", ".gif" },
         };
-
         nint windowHandle = WindowNative.GetWindowHandle(App.MainWindow);
         InitializeWithWindow.Initialize(fileOpenPicker, windowHandle);
-
         var folder = await fileOpenPicker.PickSingleFolderAsync();
 
         if (folder != null)
         {
-            Debug.WriteLine($"tada: {folder.Path}");
+            CfgPlexes.Clear();
             PathWorkspaceRoot = folder.Path;
+            Instruction = "Select a project";
+
+            var plexesFound = await _workspaceDataService.GetCfgPlexesInWorkspace(PathWorkspaceRoot);
+
+            foreach (var item in plexesFound)
+            {
+                CfgPlexes.Add(item);
+            }
         }
     }
 
-    private bool CanExecuteMyCommand()
+    private bool CanFindWorkspace()
     {
         // Implement the condition to enable/disable the command
         return true;
@@ -78,4 +110,9 @@ public partial class BlankViewModel : ObservableRecipient
 
     [ObservableProperty]
     private string _pathWorkspaceRoot;
+
+
+    [ObservableProperty]
+    private string _instruction;
+
 }

@@ -8,7 +8,7 @@ public class Workspace
         get; set;
     }
 
-    public ICollection<CfgPlex> CfgPlexes
+    public ICollection<CfgPlexVm> CfgPlexes
     {
         get; set;
     }

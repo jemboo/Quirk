@@ -1,6 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Numerics;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -9,30 +7,14 @@ using Quirk.UI.W.Core.Contracts.Services;
 using Quirk.UI.W.Core.Models.Workspace;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Quirk.UI.W.ViewModels;
 
 public partial class ConfigsViewModel : ObservableRecipient, INavigationAware
 {
-    private readonly IWorkspaceDataService _workspaceDataService;
-
-    [ObservableProperty]
-    private CfgPlex? selected;
-
-    partial void OnSelectedChanged(CfgPlex? value)
-    {
-        if (value != null)
-        {
-            var cfgPlexPath = $"{Path.Combine(PathWorkspaceRoot, value.Name)}\\{(value.Name)}.txt";
-        }
-    }
-
-
-    public ObservableCollection<CfgPlex> CfgPlexes { get; private set; } = new ObservableCollection<CfgPlex>();
-
     public ConfigsViewModel(IWorkspaceDataService workspaceDataService)
     {
+        CfgPlexes = new ObservableCollection<CfgPlexVm>();
         _workspaceDataService = workspaceDataService;
 
         FindWorkspaceCommand = new RelayCommand(
@@ -44,6 +26,24 @@ public partial class ConfigsViewModel : ObservableRecipient, INavigationAware
 
         Instruction = "Select a workspace folder";
     }
+
+    private readonly IWorkspaceDataService _workspaceDataService;
+
+    [ObservableProperty]
+    private CfgPlexVm? _selected;
+
+    partial void OnSelectedChanged(CfgPlexVm? value)
+    {
+        if (value != null)
+        {
+            var task = Task.Run(async () => await _workspaceDataService.GetCfgPlexDetails(PathWorkspaceRoot, value));
+            var cfgPlexVmUpdated = task.Result;
+            value.CopyValuesFrom(cfgPlexVmUpdated);
+        }
+    }
+
+    [ObservableProperty]
+    private ObservableCollection<CfgPlexVm> _cfgPlexes;
 
     public async void OnNavigatedTo(object parameter)
     {

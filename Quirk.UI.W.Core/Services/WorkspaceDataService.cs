@@ -8,271 +8,60 @@ namespace Quirk.UI.W.Core.Services;
 
 public class WorkspaceDataService : IWorkspaceDataService
 {
-    private List<CfgPlex> _allOrders;
+    private List<CfgPlexVm> _allOrders;
 
     public WorkspaceDataService(IFileService fileService)
     {
         _fileService = fileService;
     }
 
-    private IFileService _fileService;
+    private readonly IFileService _fileService;
 
-    private static IEnumerable<CfgPlex> AllOrders()
+    public async Task<IEnumerable<CfgPlexVm>> GetGridDataAsync()
     {
-        // The following is order summary data
-        var companies = AllCompanies();
-        return companies.SelectMany(c => c.CfgPlexes);
-    }
-
-    private static IEnumerable<Workspace> AllCompanies()
-    {
-        return new List<Workspace>()
-        {
-            new Workspace()
-            {
-                Name = "Company A",
-
-                CfgPlexes = new List<CfgPlex>()
-                {
-                    new CfgPlex()
-                    {
-                        Name = "Speedy Fugazi",
-                        SymbolCode = 57643,
-                        SymbolName = "Globe",
-                        CfgPlexItems = new List<CfgPlexItem>()
-                        {
-                            new CfgPlexItem()
-                            {
-                                Name = "Rössle Sauerkraut",
-                                Rank = 15
-
-                            },
-                            new CfgPlexItem()
-                            {
-                                Name = "Rössle Sauerkraut",
-                                Rank = 15
-                            },
-                            new CfgPlexItem()
-                            {
-                                Name = "Rössle Sauerkraut",
-                                Rank = 15
-                            }
-                        }
-                    },
-                    new CfgPlex()
-                    {
-                        Name = "Federal Shipping",
-                        SymbolCode = 57737,
-                        SymbolName = "Audio",
-                        CfgPlexItems = new List<CfgPlexItem>()
-                        {
-                            new CfgPlexItem()
-                            {
-                                Name = "Rössle Sauerkraut",
-                                Rank = 15
-                            },
-                            new CfgPlexItem()
-                            {
-                                Name = "Rössle Sauerkraut",
-                                Rank = 15
-                            }
-                        }
-                    },
-                    new CfgPlex()
-                    {
-                        Name = "Speedy Express",
-                        SymbolCode = 57699,
-                        SymbolName = "Calendar",
-                        CfgPlexItems = new List<CfgPlexItem>()
-                        {
-                            new CfgPlexItem()
-                            {
-                                Name = "Rössle Sauerkraut",
-                                Rank = 15
-                            },
-                            new CfgPlexItem()
-                            {
-                                Name = "Rössle Sauerkraut",
-                                Rank = 15
-                            }
-                        }
-                    }
-                }
-            },
-            new Workspace()
-            {
-                Name = "Company F",
-
-                CfgPlexes = new List<CfgPlex>()
-                {
-                    new CfgPlex()
-                    {
-                        Name = "Speedy Express",
-                        SymbolCode = 57620,
-                        SymbolName = "Camera",
-                        CfgPlexItems = new List<CfgPlexItem>()
-                        {
-                            new CfgPlexItem()
-                            {
-                                Name = "Rössle Sauerkraut",
-                                Rank = 15
-                            },
-                            new CfgPlexItem()
-                            {
-                                Name = "Rössle Sauerkraut",
-                                Rank = 15
-                            },
-                            new CfgPlexItem()
-                            {
-                                Name = "Rössle Sauerkraut",
-                                Rank = 15
-                            }
-                        }
-                    },
-                    new CfgPlex()
-                    {
-                        Name = "Federal Shipping",
-                        SymbolCode = 57633,
-                        SymbolName = "Clock",
-                        CfgPlexItems = new List<CfgPlexItem>()
-                        {
-                            new CfgPlexItem()
-                            {
-                                Name = "Rössle Sauerkraut",
-                                Rank = 15
-                            },
-                            new CfgPlexItem()
-                            {
-                                Name = "Rössle Sauerkraut",
-                                Rank = 15
-                            },
-                            new CfgPlexItem()
-                            {
-                                Name = "Rössle Sauerkraut",
-                                Rank = 15
-                            },
-                            new CfgPlexItem()
-                            {
-                                Name = "Rössle Sauerkraut",
-                                Rank = 15
-                            }
-                        }
-                    }
-                }
-            },
-            new Workspace()
-            {
-                Name = "Company Z",
-
-                CfgPlexes = new List<CfgPlex>()
-                {
-                    new CfgPlex()
-                    {
-                        Name = "Speedy Express",
-                        SymbolCode = 57661,
-                        SymbolName = "Contact",
-                        CfgPlexItems = new List<CfgPlexItem>()
-                        {
-                            new CfgPlexItem()
-                            {
-                                Name = "Rössle Sauerkraut",
-                                Rank = 15
-                            },
-                            new CfgPlexItem()
-                            {
-                                Name = "Rössle Sauerkraut",
-                                Rank = 15
-                            }
-                        }
-                    },
-                    new CfgPlex()
-                    {
-                        Name = "Federal Shipping",
-                        SymbolCode = 57619,
-                        SymbolName = "Favorite",
-                        CfgPlexItems = new List<CfgPlexItem>()
-                        {
-                            new CfgPlexItem()
-                            {
-                                Name = "Rössle Sauerkraut",
-                                Rank = 15
-                            },
-                            new CfgPlexItem()
-                            {
-                                Name = "Rössle Sauerkraut",
-                                Rank = 15
-                            },
-                            new CfgPlexItem()
-                            {
-                                Name = "Rössle Sauerkraut",
-                                Rank = 15
-                            }
-                        }
-                    },
-                    new CfgPlex()
-                    {
-                        Name = "United Package",
-                        SymbolCode = 57615,
-                        SymbolName = "Home",
-                        CfgPlexItems = new List<CfgPlexItem>()
-                        {
-                            new CfgPlexItem()
-                            {
-                                Name = "Rössle Sauerkraut",
-                                Rank = 15
-                            },
-                            new CfgPlexItem()
-                            {
-                                Name = "Rössle Sauerkraut",
-                                Rank = 15
-                            },
-                            new CfgPlexItem()
-                            {
-                                Name = "Rössle Sauerkraut",
-                                Rank = 15
-                            }
-                        }
-                    }
-                }
-            }
-        };
-    }
-
-    public async Task<IEnumerable<CfgPlex>> GetGridDataAsync()
-    {
-        _allOrders ??= new List<CfgPlex>(); // AllOrders());
+        _allOrders ??= new List<CfgPlexVm>(); // AllOrders());
 
         await Task.CompletedTask;
         return _allOrders;
     }
 
-    public async Task<IEnumerable<CfgPlex>> GetListDetailsDataAsync()
+    public async Task<IEnumerable<CfgPlexVm>> GetListDetailsDataAsync()
     {
-        _allOrders ??= new List<CfgPlex>(); // AllOrders());
+        _allOrders ??= new List<CfgPlexVm>(); // AllOrders());
 
         await Task.CompletedTask;
         return _allOrders;
     }
-    public async Task<IEnumerable<CfgPlex>> GetCfgPlexesInWorkspace(string workspacePath)
+
+    public async Task<IEnumerable<CfgPlexVm>> GetCfgPlexesInWorkspace(string workspacePath)
     {
         var subfolders = _fileService.GetFolders(workspacePath)
                             .Select(path => Path.GetRelativePath(workspacePath, path));
         var cfgPlexesInWorkspace =
-            subfolders.Select(subfolder => new CfgPlex() { Name = subfolder });
+            subfolders.Select(subfolder => new CfgPlexVm() { Name = subfolder });
 
         await Task.CompletedTask;
         return cfgPlexesInWorkspace;
     }
 
-    public async Task<CfgPlex> GetCfgPlexDetails(string workspacePath, CfgPlex cfgPlex)
+    public async Task<CfgPlexVm> GetCfgPlexDetails(string workspacePath, CfgPlexVm cfgPlex)
     {
-        var cfgPlexPath = $"{Path.Combine(workspacePath, cfgPlex.Name)}\\{(cfgPlex.Name)}.txt";
+        var cfgPlexRet = new CfgPlexVm();
+        cfgPlexRet.CopyValuesFrom(cfgPlex);
 
-        cfgPlex.CfgPlexType = CfgPlexType.None;
+        var cfgPlexPath = Path.Combine(workspacePath, $"{cfgPlex.Name}\\{cfgPlex.Name}.txt");
 
+        if (! Path.Exists(cfgPlexPath))
+        {
+            cfgPlexRet.CfgPlexType = CfgPlexType.None;
+        }
+        else
+        {
+
+        }
 
         await Task.CompletedTask;
-        return cfgPlex;
+        return cfgPlexRet;
     }
 
 

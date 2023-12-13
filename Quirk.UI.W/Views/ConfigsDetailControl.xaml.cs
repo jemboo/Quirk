@@ -7,13 +7,13 @@ namespace Quirk.UI.W.Views;
 
 public sealed partial class ConfigsDetailControl : UserControl
 {
-    public CfgPlex? CfgPlex
+    public CfgPlexVm? CfgPlex
     {
-        get => GetValue(CfgPlexProperty) as CfgPlex;
+        get => GetValue(CfgPlexProperty) as CfgPlexVm;
         set => SetValue(CfgPlexProperty, value);
     }
 
-    public static readonly DependencyProperty CfgPlexProperty = DependencyProperty.Register("CfgPlex", typeof(CfgPlex), typeof(ConfigsDetailControl), new PropertyMetadata(null, OnCfgPlexPropertyPropertyChanged));
+    public static readonly DependencyProperty CfgPlexProperty = DependencyProperty.Register("CfgPlex", typeof(CfgPlexVm), typeof(ConfigsDetailControl), new PropertyMetadata(null, OnCfgPlexPropertyPropertyChanged));
 
     public ConfigsDetailControl()
     {

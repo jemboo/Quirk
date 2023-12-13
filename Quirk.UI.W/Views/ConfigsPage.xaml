@@ -11,7 +11,7 @@
     behaviors:NavigationViewHeaderBehavior.HeaderMode="Never"
     mc:Ignorable="d">
     <Page.Resources>
-        <DataTemplate x:Key="ItemTemplate" x:DataType="models:CfgPlex">
+        <DataTemplate x:Key="ItemTemplate" x:DataType="models:CfgPlexVm">
             <Grid Height="120">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -32,7 +32,7 @@
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Type:" Style="{StaticResource ListTitleStyleLabel}"/>
-                        <TextBlock Text="{x:Bind CfgPlexType }" Style="{StaticResource ListTitleStyle}" />
+                        <TextBlock Text="{Binding CfgPlexType }" Style="{StaticResource ListTitleStyle}" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="ItemCount:" Style="{StaticResource ListTitleStyleLabel}"/>
@@ -80,6 +80,7 @@
         </Grid>
 
         <TextBlock VerticalAlignment="Center" Grid.Row="1" Text="Projects:"/>
+        
         <controls:ListDetailsView
             Grid.Row="2"
             x:Uid="Configs"

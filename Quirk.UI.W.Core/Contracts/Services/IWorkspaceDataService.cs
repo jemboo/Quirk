@@ -5,9 +5,11 @@ namespace Quirk.UI.W.Core.Contracts.Services;
 // Remove this class once your pages/features are using your data.
 public interface IWorkspaceDataService
 {
-    Task<IEnumerable<CfgPlex>> GetGridDataAsync();
+    Task<IEnumerable<CfgPlexVm>> GetGridDataAsync();
 
-    Task<IEnumerable<CfgPlex>> GetListDetailsDataAsync();
+    Task<IEnumerable<CfgPlexVm>> GetListDetailsDataAsync();
 
-    Task<IEnumerable<CfgPlex>> GetCfgPlexesInWorkspace(string workspacePath);
+    Task<IEnumerable<CfgPlexVm>> GetCfgPlexesInWorkspace(string workspacePath);
+
+    Task<CfgPlexVm> GetCfgPlexDetails(string workspacePath, CfgPlexVm cfgPlexVm);
 }
