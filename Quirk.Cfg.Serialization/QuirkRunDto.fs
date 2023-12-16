@@ -4,6 +4,7 @@ open System
 open Microsoft.FSharp.Core
 open FSharp.UMX
 open Quirk.Core
+open Quirk.Project
 open Quirk.Serialization
 open Quirk.Cfg.Core
    
@@ -11,10 +12,10 @@ open Quirk.Cfg.Core
 type quirkRunDto =
         { 
             quirkRunId: Guid
-            quirkRunType: string
-            quirkRunMode: string
-            cfgModelParamSetDto: cfgModelParamSetDto
-            cfgRunParamSetDto: cfgRunParamSetDto
+            quirkProjectType: string
+            quirkScriptMode: string
+            quirkModelParamSetDto: quirkModelParamSetDto
+            quirkRunParamSetDto: quirkRunParamSetDto
         }
     
 
@@ -27,25 +28,25 @@ type quirkRunDto =
             quirkRunDto.quirkRunId =
                 quirkRun |> QuirkRun.getQuirkRunId |> UMX.untag
 
-            quirkRunDto.quirkRunType =
+            quirkRunDto.quirkProjectType =
                 quirkRun 
                 |> QuirkRun.getRunType 
-                |> QuirkRunType.toString
+                |> QuirkProjectType.toString
 
-            quirkRunDto.quirkRunMode =
-                quirkRun 
-                |> QuirkRun.getRunMode
-                |> QuirkRunMode.toString
+            quirkRunDto.quirkScriptMode = ""
+                //quirkRun 
+                //|> QuirkRun.getScriptMode
+                //|> QuirkScriptMode.toString
 
-            quirkRunDto.cfgModelParamSetDto =
+            quirkRunDto.quirkModelParamSetDto =
                 quirkRun 
                 |> QuirkRun.getModelParamSet 
-                |> CfgModelParamSetDto.toDto
+                |> quirkModelParamSetDto.toDto
             
-            quirkRunDto.cfgRunParamSetDto =
+            quirkRunDto.quirkRunParamSetDto =
                 quirkRun 
                 |> QuirkRun.getRunParamSet 
-                |> CfgRunParamSetDto.toDto
+                |> quirkRunParamSetDto.toDto
         }
 
 
@@ -57,27 +58,22 @@ type quirkRunDto =
 
         result {
 
-            let! quirkRunType =
-                quirkRunDto.quirkRunType
-                |> QuirkRunType.fromString
+            let! quirkProjectType =
+                quirkRunDto.quirkProjectType
+                |> QuirkProjectType.fromString
 
-            let! quirkRunMode =
-                quirkRunDto.quirkRunMode
-                |> QuirkRunMode.fromString
+            let! quirkRunParamSet =
+                quirkRunDto.quirkRunParamSetDto 
+                |> quirkRunParamSetDto.fromDto
 
-            let! cfgRunParamSet =
-                quirkRunDto.cfgRunParamSetDto 
-                |> CfgRunParamSetDto.fromDto
-
-            let! cfgModelParamSet =
-                quirkRunDto.cfgModelParamSetDto 
-                |> CfgModelParamSetDto.fromDto
+            let! quirkModelParamSet =
+                quirkRunDto.quirkModelParamSetDto 
+                |> quirkModelParamSetDto.fromDto
 
             return QuirkRun.create  
-                        quirkRunType
-                        quirkRunMode
-                        cfgRunParamSet
-                        cfgModelParamSet
+                        quirkProjectType
+                        quirkRunParamSet
+                        quirkModelParamSet
         }
        
 

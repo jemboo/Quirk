@@ -4,86 +4,87 @@ open System
 open Microsoft.FSharp.Core
 open FSharp.UMX
 open Quirk.Core
+open Quirk.Project
 open Quirk.Serialization
 open Quirk.Cfg.Core
    
 
-type cfgModelParamSetDto =
+type quirkModelParamSetDto =
         { 
             id: Guid
             replicaNumber: int
             cfgModelParamValues: string[][]
         }
     
- module CfgModelParamSetDto =
-    let toDto (cfgModelParamSet:cfgModelParamSet) : cfgModelParamSetDto =
+ module quirkModelParamSetDto =
+    let toDto (quirkModelParamSet:quirkModelParamSet) : quirkModelParamSetDto =
         {
-            cfgModelParamSetDto.id = cfgModelParamSet |> CfgModelParamSet.getId |> UMX.untag
-            cfgModelParamSetDto.replicaNumber = cfgModelParamSet |> CfgModelParamSet.getReplicaNumber |> UMX.untag
-            cfgModelParamSetDto.cfgModelParamValues =
-               cfgModelParamSet
-                    |> CfgModelParamSet.getValueMap
+            quirkModelParamSetDto.id = quirkModelParamSet |> QuirkModelParamSet.getId |> UMX.untag
+            quirkModelParamSetDto.replicaNumber = quirkModelParamSet |> QuirkModelParamSet.getReplicaNumber |> UMX.untag
+            quirkModelParamSetDto.cfgModelParamValues =
+               quirkModelParamSet
+                    |> QuirkModelParamSet.getValueMap
                     |> Map.toArray
                     |> Array.map(fun (k,v) -> v |> CfgModelParamValue.toArrayOfStrings)
         }
-    let toJson (cfgModelParamSet:cfgModelParamSet) =
-        cfgModelParamSet |> toDto |> Json.serialize
+    let toJson (quirkModelParamSet:quirkModelParamSet) =
+        quirkModelParamSet |> toDto |> Json.serialize
 
     
-    let fromDto (cfgModelParamSetDto:cfgModelParamSetDto) = 
+    let fromDto (quirkModelParamSetDto:quirkModelParamSetDto) = 
         result {
             let! cfgPlexItemValueList =
-                   cfgModelParamSetDto.cfgModelParamValues
+                   quirkModelParamSetDto.cfgModelParamValues
                    |> Array.map(CfgModelParamValue.fromArrayOfStrings)
                    |> Array.toList
                    |> Result.sequence
 
-            return CfgModelParamSet.create
-                        (cfgModelParamSetDto.replicaNumber |> UMX.tag<replicaNumber>)
+            return QuirkModelParamSet.create
+                        (quirkModelParamSetDto.replicaNumber |> UMX.tag<replicaNumber>)
                         cfgPlexItemValueList
         }
     let fromJson (cereal:string) =
         result {
-            let! dto = Json.deserialize<cfgModelParamSetDto> cereal
+            let! dto = Json.deserialize<quirkModelParamSetDto> cereal
             return! fromDto dto
         }
             
 
 
-type cfgRunParamSetDto =
+type quirkRunParamSetDto =
         { 
             id: Guid
             cfgRunParamValues: string[][]
         }
     
- module CfgRunParamSetDto =
-    let toDto (cfgRunParamSet:cfgRunParamSet) : cfgRunParamSetDto =
+ module quirkRunParamSetDto =
+    let toDto (quirkRunParamSet:quirkRunParamSet) : quirkRunParamSetDto =
         {
-            cfgRunParamSetDto.id = cfgRunParamSet |> CfgRunParamSet.getId |> UMX.untag
-            cfgRunParamSetDto.cfgRunParamValues =
-               cfgRunParamSet
-                    |> CfgRunParamSet.getValueMap
+            quirkRunParamSetDto.id = quirkRunParamSet |> QuirkRunParamSet.getId |> UMX.untag
+            quirkRunParamSetDto.cfgRunParamValues =
+               quirkRunParamSet
+                    |> QuirkRunParamSet.getValueMap
                     |> Map.toArray
                     |> Array.map(fun (k,v) -> v |> CfgRunParamValue.toArrayOfStrings)
         }
-    let toJson (cfgRunParamSet:cfgRunParamSet) =
-        cfgRunParamSet |> toDto |> Json.serialize
+    let toJson (quirkRunParamSet:quirkRunParamSet) =
+        quirkRunParamSet |> toDto |> Json.serialize
 
     
-    let fromDto (cfgRunParamSetDto:cfgRunParamSetDto) = 
+    let fromDto (quirkRunParamSetDto:quirkRunParamSetDto) = 
         result {
             let! cfgPlexItemValueList =
-                   cfgRunParamSetDto.cfgRunParamValues
+                   quirkRunParamSetDto.cfgRunParamValues
                    |> Array.map(CfgRunParamValue.fromArrayOfStrings)
                    |> Array.toList
                    |> Result.sequence
 
-            return CfgRunParamSet.create
+            return QuirkRunParamSet.create
                         cfgPlexItemValueList
         }
     let fromJson (cereal:string) =
         result {
-            let! dto = Json.deserialize<cfgRunParamSetDto> cereal
+            let! dto = Json.deserialize<quirkRunParamSetDto> cereal
             return! fromDto dto
         }
             

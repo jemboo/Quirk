@@ -4,6 +4,7 @@ open System
 open Xunit
 open FSharp.UMX
 open Quirk.Core
+open Quirk.Project
 open Quirk.Cfg.Core
 open Quirk.Sorting
 open Quirk.Cfg.Shc
@@ -15,9 +16,8 @@ module QuirkRunSetDtoFixture =
     let ``QuirkRunSet`` () =
 
         let quirkRunSet = 
-            QuirkRunSet.createFromCfgPlex
-                quirkRunType.Shc
-                quirkRunMode.Sim
+            CfgPlex.createQuirkRunSet
+                quirkProjectType.Shc
                 O_64.runParamSet1
                 O_64.plex64
                 (1 |> UMX.tag<replicaNumber>)

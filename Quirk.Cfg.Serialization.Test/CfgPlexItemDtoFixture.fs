@@ -1,29 +1,40 @@
-namespace Quirk.Cfg.Test
+namespace Quirk.Cfg.Serialization.Test
 
 open System
-open Microsoft.VisualStudio.TestTools.UnitTesting
-
 open Xunit
 open FSharp.UMX
 open Quirk.Core
+open Quirk.Project
 open Quirk.Cfg.Core
 open Quirk.Cfg.Serialization
 
-module CfgPlexFixture =
+module CfgPlexItemDtoFixture =
+
+    //[<Fact>]
+    //let ``quirkProgramMode`` () =
+
+    //    let qrmRpt = "yowza" |> UMX.tag<reportName> |> quirkScriptMode.Report
+    //    let cereal = qrmRpt |> QuirkScriptMode.toString
+    //    let decerealR = cereal |> QuirkScriptMode.fromString
+    //    let qrmRptBack = decerealR |> Result.ExtractOrThrow
+
+    //    Assert.Equal (qrmRpt, qrmRptBack)
+
+
 
     [<Fact>]
     let ``cfgPlexItemDto`` () =
 
         let cfpiNameA = "cfpNameA" |> UMX.tag<cfgPlexItemName>
-        let rpNameA = "rpNameA" |> UMX.tag<cfgModelParamName>
+        let rpNameA = "rpNameA" |> UMX.tag<quirkModelParamName>
         let cfpiRankA = 1 |> UMX.tag<cfgPlexItemRank>
         
         let cfpiNameB = "cfpNameB" |> UMX.tag<cfgPlexItemName>
-        let rpNameB = "rpNameB" |> UMX.tag<cfgModelParamName>
+        let rpNameB = "rpNameB" |> UMX.tag<quirkModelParamName>
         let cfpiRankB = 2 |> UMX.tag<cfgPlexItemRank>
         
         let cfpiNameC = "cfpNameC" |> UMX.tag<cfgPlexItemName>
-        let rpNameC = "rpNameC" |> UMX.tag<cfgModelParamName>
+        let rpNameC = "rpNameC" |> UMX.tag<quirkModelParamName>
         let cfpiRankC = 3 |> UMX.tag<cfgPlexItemRank>
         
         
@@ -43,7 +54,7 @@ module CfgPlexFixture =
         
         
         
-        let cfgPlexName = "cfgPlexName" |> UMX.tag<cfgPlexName>
+        let cfgPlexName = "cfgPlexName" |> UMX.tag<projectName>
         let cfgPlexItems = [|cfpiA; cfpiB; cfpiC|]
         
         let cfgPlex = CfgPlex.create cfgPlexName cfgPlexItems

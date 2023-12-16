@@ -1,9 +1,8 @@
-﻿namespace Quirk.Cfg.Core
+﻿namespace Quirk.Project
 
 open FSharp.UMX
 open Quirk.Core
 open Quirk.Sorting
-open Quirk.Run.Core
 
 
 type cfgModelParamType =
@@ -18,14 +17,14 @@ type cfgModelParamType =
 
 
 type cfgModelParamValue =
-    | MutationRate of string<cfgModelParamName> * float<mutationRate>
-    | NoiseFraction of string<cfgModelParamName> * float<noiseFraction>
-    | Order of string<cfgModelParamName> * int<order>
-    | ParentCount of string<cfgModelParamName> * int<sorterCount>
-    | ReproductionRate of string<cfgModelParamName> * float<reproductionRate>
-    | SorterSetPruneMethod of string<cfgModelParamName> * sorterSetPruneMethod
-    | StageWeight of string<cfgModelParamName> * float<stageWeight>
-    | SwitchGenMode of string<cfgModelParamName> * switchGenMode
+    | MutationRate of string<quirkModelParamName> * float<mutationRate>
+    | NoiseFraction of string<quirkModelParamName> * float<noiseFraction>
+    | Order of string<quirkModelParamName> * int<order>
+    | ParentCount of string<quirkModelParamName> * int<sorterCount>
+    | ReproductionRate of string<quirkModelParamName> * float<reproductionRate>
+    | SorterSetPruneMethod of string<quirkModelParamName> * sorterSetPruneMethod
+    | StageWeight of string<quirkModelParamName> * float<stageWeight>
+    | SwitchGenMode of string<quirkModelParamName> * switchGenMode
 
 
 
@@ -33,7 +32,7 @@ type cfgModelParamValue =
 module CfgModelParamType =
     
     let toCfgModelParamValue 
-            (cfgModelParamName: string<cfgModelParamName>) 
+            (quirkModelParamName: string<quirkModelParamName>) 
             (cfgModelParamType:cfgModelParamType)
             (strVal:string)
         =
@@ -41,49 +40,49 @@ module CfgModelParamType =
         | cfgModelParamType.MutationRate -> 
             result {
                let! value = StringUtil.parseFloat strVal
-               return  (cfgModelParamName, value |> UMX.tag<mutationRate>) |> cfgModelParamValue.MutationRate
+               return  (quirkModelParamName, value |> UMX.tag<mutationRate>) |> cfgModelParamValue.MutationRate
             }
 
         | cfgModelParamType.NoiseFraction ->
             result {
                let! value = StringUtil.parseFloat strVal
-               return  (cfgModelParamName, value |> UMX.tag<noiseFraction>) |> cfgModelParamValue.NoiseFraction
+               return  (quirkModelParamName, value |> UMX.tag<noiseFraction>) |> cfgModelParamValue.NoiseFraction
             }
 
         | cfgModelParamType.Order ->
             result {
                let! value = StringUtil.parseInt strVal
-               return  (cfgModelParamName, value |> UMX.tag<order>) |> cfgModelParamValue.Order
+               return  (quirkModelParamName, value |> UMX.tag<order>) |> cfgModelParamValue.Order
             }
 
         | cfgModelParamType.ParentCount ->
             result {
                let! value = StringUtil.parseInt strVal
-               return  (cfgModelParamName, value |> UMX.tag<sorterCount>) |> cfgModelParamValue.ParentCount
+               return  (quirkModelParamName, value |> UMX.tag<sorterCount>) |> cfgModelParamValue.ParentCount
             }
 
         | cfgModelParamType.ReproductionRate ->
             result {
                let! value = StringUtil.parseFloat strVal
-               return  (cfgModelParamName, value |> UMX.tag<reproductionRate>) |> cfgModelParamValue.ReproductionRate
+               return  (quirkModelParamName, value |> UMX.tag<reproductionRate>) |> cfgModelParamValue.ReproductionRate
             }
 
         | cfgModelParamType.SorterSetPruneMethod ->
             result {
                let! value = SorterSetPruneMethod.fromReport strVal
-               return  (cfgModelParamName, value) |> cfgModelParamValue.SorterSetPruneMethod
+               return  (quirkModelParamName, value) |> cfgModelParamValue.SorterSetPruneMethod
             }
 
         | cfgModelParamType.StageWeight ->
             result {
                let! value = StringUtil.parseFloat strVal
-               return  (cfgModelParamName, value |> UMX.tag<stageWeight>) |> cfgModelParamValue.StageWeight
+               return  (quirkModelParamName, value |> UMX.tag<stageWeight>) |> cfgModelParamValue.StageWeight
             }
 
         | cfgModelParamType.SwitchGenMode ->
             result {
                let! value = strVal |> SwitchGenMode.fromString
-               return  (cfgModelParamName, value) |> cfgModelParamValue.SwitchGenMode
+               return  (quirkModelParamName, value) |> cfgModelParamValue.SwitchGenMode
             }
 
 
@@ -92,35 +91,35 @@ module CfgModelParamType =
 module CfgModelParamValue =
 
     let makeMutationRates (rates: float seq) =
-        rates |> Seq.map(fun r -> ("mutationRate" |> UMX.tag<cfgModelParamName>, r |> UMX.tag<mutationRate>) |> cfgModelParamValue.MutationRate)
+        rates |> Seq.map(fun r -> ("mutationRate" |> UMX.tag<quirkModelParamName>, r |> UMX.tag<mutationRate>) |> cfgModelParamValue.MutationRate)
         |> Seq.toArray
 
     let makeNoiseFractions (rates: float seq) =
-        rates |> Seq.map(fun r -> ("noiseFraction" |> UMX.tag<cfgModelParamName>, r |> UMX.tag<noiseFraction>) |> cfgModelParamValue.NoiseFraction)
+        rates |> Seq.map(fun r -> ("noiseFraction" |> UMX.tag<quirkModelParamName>, r |> UMX.tag<noiseFraction>) |> cfgModelParamValue.NoiseFraction)
         |> Seq.toArray
 
     let makeOrders (rates: int seq) =
-        rates |> Seq.map(fun r -> ("order" |> UMX.tag<cfgModelParamName>, r |> UMX.tag<order>) |> cfgModelParamValue.Order)
+        rates |> Seq.map(fun r -> ("order" |> UMX.tag<quirkModelParamName>, r |> UMX.tag<order>) |> cfgModelParamValue.Order)
         |> Seq.toArray
 
     let makeParentCounts (rates: int seq) =
-        rates |> Seq.map(fun r -> ("parentCount" |> UMX.tag<cfgModelParamName>, r |> UMX.tag<sorterCount>) |> cfgModelParamValue.ParentCount)
+        rates |> Seq.map(fun r -> ("parentCount" |> UMX.tag<quirkModelParamName>, r |> UMX.tag<sorterCount>) |> cfgModelParamValue.ParentCount)
         |> Seq.toArray
 
     let makeReproductionRates (rates: float seq) =
-        rates |> Seq.map(fun r -> ("reproductionRate" |> UMX.tag<cfgModelParamName>, r |> UMX.tag<reproductionRate>) |> cfgModelParamValue.ReproductionRate)
+        rates |> Seq.map(fun r -> ("reproductionRate" |> UMX.tag<quirkModelParamName>, r |> UMX.tag<reproductionRate>) |> cfgModelParamValue.ReproductionRate)
         |> Seq.toArray
 
     let makeSorterSetPruneMethods (rates: sorterSetPruneMethod seq) =
-        rates |> Seq.map(fun r -> ("sorterSetPruneMethod" |> UMX.tag<cfgModelParamName>, r ) |> cfgModelParamValue.SorterSetPruneMethod)
+        rates |> Seq.map(fun r -> ("sorterSetPruneMethod" |> UMX.tag<quirkModelParamName>, r ) |> cfgModelParamValue.SorterSetPruneMethod)
         |> Seq.toArray
 
     let makeStageWeights (rates: float seq) =
-        rates |> Seq.map(fun r -> ("stageWeight" |> UMX.tag<cfgModelParamName>, r |> UMX.tag<stageWeight>) |> cfgModelParamValue.StageWeight)
+        rates |> Seq.map(fun r -> ("stageWeight" |> UMX.tag<quirkModelParamName>, r |> UMX.tag<stageWeight>) |> cfgModelParamValue.StageWeight)
         |> Seq.toArray
 
     let makeSwitchGenModes (rates: switchGenMode seq) =
-        rates |> Seq.map(fun r -> ("switchGenMode" |> UMX.tag<cfgModelParamName>, r ) |> cfgModelParamValue.SwitchGenMode)
+        rates |> Seq.map(fun r -> ("switchGenMode" |> UMX.tag<quirkModelParamName>, r ) |> cfgModelParamValue.SwitchGenMode)
         |> Seq.toArray
 
 
@@ -203,7 +202,7 @@ module CfgModelParamValue =
         | [|"MutationRate"; n; o|] ->
             result {
                 let! ov = StringUtil.parseFloat o
-                let rpName = n |> UMX.tag<cfgModelParamName>
+                let rpName = n |> UMX.tag<quirkModelParamName>
                 return (rpName, ov |> UMX.tag<mutationRate>)
                         |> cfgModelParamValue.MutationRate
             }
@@ -211,7 +210,7 @@ module CfgModelParamValue =
         | [|"NoiseFraction"; n; nf|] ->
             result {
                 let! nfValue = StringUtil.parseFloat nf
-                let rpName = n |> UMX.tag<cfgModelParamName>
+                let rpName = n |> UMX.tag<quirkModelParamName>
                 return (rpName, nfValue |> UMX.tag<noiseFraction>)
                         |> cfgModelParamValue.NoiseFraction
             }
@@ -219,14 +218,14 @@ module CfgModelParamValue =
         | [|"Order"; n; o|] ->
             result {
                 let! ov = StringUtil.parseInt o
-                let rpName = n |> UMX.tag<cfgModelParamName>
+                let rpName = n |> UMX.tag<quirkModelParamName>
                 return (rpName, ov |> UMX.tag<order>) |> cfgModelParamValue.Order
             }
 
         | [|"ParentCount"; n; pc;|] ->
             result {
                 let! pcValue = StringUtil.parseInt pc
-                let rpName = n |> UMX.tag<cfgModelParamName>
+                let rpName = n |> UMX.tag<quirkModelParamName>
                 return (rpName, pcValue |> UMX.tag<sorterCount> )
                         |> cfgModelParamValue.ParentCount
             }
@@ -234,7 +233,7 @@ module CfgModelParamValue =
         | [|"ReproductionRate"; n; mr|] -> 
             result {
                 let! mrValue = StringUtil.parseFloat mr
-                let rpName = n |> UMX.tag<cfgModelParamName>
+                let rpName = n |> UMX.tag<quirkModelParamName>
                 return
                     (rpName, mrValue |> UMX.tag<reproductionRate> )
                       |> cfgModelParamValue.ReproductionRate
@@ -243,7 +242,7 @@ module CfgModelParamValue =
         | [|"SorterSetPruneMethod"; n; ssp|] ->
             result {
                 let! spm = SorterSetPruneMethod.fromReport ssp
-                let rpName = n |> UMX.tag<cfgModelParamName>
+                let rpName = n |> UMX.tag<quirkModelParamName>
                 return (rpName, spm )
                         |> cfgModelParamValue.SorterSetPruneMethod
             }
@@ -252,7 +251,7 @@ module CfgModelParamValue =
             result {
                 let! swv = StringUtil.parseFloat o
                 let sw = swv |> UMX.tag<stageWeight>
-                let rpName = n |> UMX.tag<cfgModelParamName>
+                let rpName = n |> UMX.tag<quirkModelParamName>
                 return (rpName, sw )
                         |> cfgModelParamValue.StageWeight
             }
@@ -260,7 +259,7 @@ module CfgModelParamValue =
         | [|"SwitchGenMode"; n; sgm|] ->
             result {
                 let! smv = sgm |> SwitchGenMode.fromString
-                let rpName = n |> UMX.tag<cfgModelParamName>
+                let rpName = n |> UMX.tag<quirkModelParamName>
                 return (rpName, smv) |> cfgModelParamValue.SwitchGenMode
             }
 
@@ -268,16 +267,16 @@ module CfgModelParamValue =
             
 
 
-type cfgModelParamSet = 
+type quirkModelParamSet = 
     private 
         { 
-            id: Guid<cfgModelParamSetId>
+            id: Guid<quirkModelParamSetId>
             replicaNumber : int<replicaNumber>
-            valueMap: Map<string<cfgModelParamName>, cfgModelParamValue>
+            valueMap: Map<string<quirkModelParamName>, cfgModelParamValue>
         }
 
 
-module CfgModelParamSet =
+module QuirkModelParamSet =
 
     let create
             (replicaNumber: int<replicaNumber>)
@@ -288,28 +287,28 @@ module CfgModelParamSet =
             |> Seq.map(fun rpv -> (rpv |> CfgModelParamValue.getModelCfgParamName, rpv ))
             |> Map.ofSeq
 
-        let cfgModelParamSetId = 
+        let quirkModelParamSetId = 
             [
                 replicaNumber :> obj;
                 runParamValueMap :> obj
             ] 
             |> GuidUtils.guidFromObjs
-            |> UMX.tag<cfgModelParamSetId>
+            |> UMX.tag<quirkModelParamSetId>
 
         {
-            cfgModelParamSet.id = cfgModelParamSetId;
-            cfgModelParamSet.replicaNumber = replicaNumber;
-            cfgModelParamSet.valueMap = runParamValueMap;
+            quirkModelParamSet.id = quirkModelParamSetId;
+            quirkModelParamSet.replicaNumber = replicaNumber;
+            quirkModelParamSet.valueMap = runParamValueMap;
         }
 
         
-    let getId (cfgModelParamSet:cfgModelParamSet) =
-        cfgModelParamSet.id
+    let getId (quirkModelParamSet:quirkModelParamSet) =
+        quirkModelParamSet.id
         
             
-    let getReplicaNumber (cfgModelParamSet:cfgModelParamSet) =
-        cfgModelParamSet.replicaNumber
+    let getReplicaNumber (quirkModelParamSet:quirkModelParamSet) =
+        quirkModelParamSet.replicaNumber
 
-    let getValueMap (cfgModelParamSet:cfgModelParamSet) =
-        cfgModelParamSet.valueMap
+    let getValueMap (quirkModelParamSet:quirkModelParamSet) =
+        quirkModelParamSet.valueMap
   

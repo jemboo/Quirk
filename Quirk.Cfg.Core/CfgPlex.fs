@@ -2,6 +2,8 @@
 
 open FSharp.UMX
 open Quirk.Core
+open Quirk.Project
+open Quirk.Run.Core
 
 
 
@@ -42,23 +44,23 @@ module CfgPlexItem =
 type cfgPlex =
      private 
         { 
-            name: string<cfgPlexName>
+            projectName: string<projectName>
             cfgPlexItems: cfgPlexItem[]
         }
 
 
 module CfgPlex =
     let create
-            (name:string<cfgPlexName>)
+            (name:string<projectName>)
             (cfgPlexItems:cfgPlexItem[])
          =
         { 
-            name = name
+            projectName = name
             cfgPlexItems = cfgPlexItems
         }
         
-    let getName (cfgPlex:cfgPlex) =
-        cfgPlex.name
+    let getProjectName (cfgPlex:cfgPlex) =
+        cfgPlex.projectName
         
     let getCfgPlexItems (cfgPlex:cfgPlex) =
         cfgPlex.cfgPlexItems
@@ -80,4 +82,31 @@ module CfgPlex =
             CollectionOps.crossProduct listList
 
         _enumerateModelParamSetItems cfgPlex.cfgPlexItems
-        |> List.map(fun li -> li |> CfgModelParamSet.create replicaNumber )
+        |> List.map(fun li -> li |> QuirkModelParamSet.create replicaNumber )
+
+
+
+    let createQuirkRun
+            (quirkProjectType:quirkProjectType)
+            (quirkRunParamSet:quirkRunParamSet)
+            (cfgPlex:cfgPlex)
+            (replicaNumber: int<replicaNumber>) 
+        =
+        makeModelParamSets cfgPlex replicaNumber
+        |> List.map(QuirkRun.create quirkProjectType quirkRunParamSet)
+
+
+    let createQuirkRunSet
+            (quirkProjectType:quirkProjectType)
+            (quirkRunParamSet:quirkRunParamSet)
+            (cfgPlex:cfgPlex)
+            (replicaNumber: int<replicaNumber>) 
+        =
+
+            let quirkRuns =
+                makeModelParamSets cfgPlex replicaNumber
+                |> List.map(QuirkRun.create quirkProjectType quirkRunParamSet)
+                |> List.toArray
+
+            QuirkRunSet.create quirkRuns
+

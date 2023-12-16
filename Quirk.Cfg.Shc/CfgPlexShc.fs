@@ -3,6 +3,7 @@
 open FSharp.UMX
 open Quirk.Core
 open Quirk.Cfg.Core
+open Quirk.Project
 open Quirk.Sorting
 
 module O_64 =
@@ -68,7 +69,7 @@ module O_64 =
 
     let plex64 = 
             CfgPlex.create
-                ("Shc_064" |> UMX.tag<cfgPlexName> )
+                ("Shc_064" |> UMX.tag<projectName> )
                 [| 
                    cpiMutationRates; 
                    cpiNoiseFractions; 
@@ -82,7 +83,7 @@ module O_64 =
 
 
     let runParamSet1 = 
-            CfgRunParamSet.create
+            QuirkRunParamSet.create
                 [|
                     (0 |> UMX.tag<generation> |> CfgRunParamValue.makeGenerationStart)
                     (500 |> UMX.tag<generation> |> CfgRunParamValue.makeGenerationStart)
@@ -92,9 +93,8 @@ module O_64 =
 
 
     let quirkRunSet = 
-            QuirkRunSet.createFromCfgPlex
-                quirkRunType.Shc
-                quirkRunMode.Sim
+            CfgPlex.createQuirkRunSet
+                quirkProjectType.Shc
                 runParamSet1
                 plex64
                 (1 |> UMX.tag<replicaNumber>)

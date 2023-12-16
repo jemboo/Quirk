@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Quirk.Runner": {
+      "commandName": "Project",
+      "commandLineArgs": "--first-script-index 0 --log-level 1 --project-name o64\\StagePhenoPrune --report-file-name standard --run-mode CfgPlex --script-count 3 --use-parallel true --working-directory C:\\Quirk "
+    }
+  }
+}

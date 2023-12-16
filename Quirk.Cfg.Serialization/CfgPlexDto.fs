@@ -4,6 +4,7 @@ open System
 open Microsoft.FSharp.Core
 open FSharp.UMX
 open Quirk.Core
+open Quirk.Project
 open Quirk.Serialization
 open Quirk.Cfg.Core
    
@@ -60,7 +61,7 @@ type cfgPlexItemDto =
     =
     let toDto (cfgPlex:cfgPlex) : cfgPlexDto =
         {
-            name = cfgPlex |> CfgPlex.getName |> UMX.untag
+            name = cfgPlex |> CfgPlex.getProjectName |> UMX.untag
             cfgPlexItemDtos =
                cfgPlex
                     |> CfgPlex.getCfgPlexItems
@@ -78,7 +79,7 @@ type cfgPlexItemDto =
                    |> Array.toList
                    |> Result.sequence
             return CfgPlex.create
-                        (cfgPlexDto.name |> UMX.tag<cfgPlexName>)
+                        (cfgPlexDto.name |> UMX.tag<projectName>)
                         (cfgPlexItems |> List.toArray)
         }
    
