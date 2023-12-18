@@ -3,76 +3,16 @@
 open System.IO
 open System
 
-type fileDir = private FileDir of string
-type fileFolder = private FileFolder of string
-type filePath = private FilePath of string
-type fileName = private FileName of string
-type fileExt = private FileExt of string
-
-
-// folder name (single name)
-module FileFolder =
-    let value (FileFolder str) = str
-    let create str = FileFolder str
-
-// directory name (full path from root to folder)
-module FileDir =
-    let value (FileDir str) = str
-    let create str = FileDir str
-
-    let appendFolder (fn: fileFolder) (fd: fileDir) =
-        try
-            create (Path.Combine(value fd, fn |> FileFolder.value)) |> Ok
-        with ex ->
-            ("error in addFolderName: " + ex.Message) |> Result.Error
-
-// file extension (single name)
-module FileExt =
-    let value (FileExt str) = str
-    let create str = FileExt str
-
-// file name only, (no path, no extension)
-module FileName =
-    let value (FileName str) = str
-    let create str = FileName str
-
-
-// FileDir + (FileFolder (optional)) + FileName + file extension
-module FilePath =
-    let value (FilePath str) = str
-    let create str = FilePath str
-    let exists (FilePath str) = System.IO.File.Exists str
-
-    let toFileDir (fp: filePath) =
-        Path.GetDirectoryName(value fp) |> FileDir.create
-
-    let toFileName (fp: filePath) =
-        Path.GetFileNameWithoutExtension(value fp) |> FileName.create
-
-    let fromParts (fd: fileDir) (fn: fileName) (fe: fileExt) =
-        try
-            let fne = sprintf "%s%s" (FileName.value fn) (FileExt.value fe)
-            create (Path.Combine(FileDir.value fd, fne)) |> Ok
-        with ex ->
-            ("error in addFolderName: " + ex.Message) |> Result.Error
-
-
 module TextIO =
 
     let readAllLines 
-            (ext:string) 
-            (root:string option) 
+            (ext:string)
             (folder:string) 
             (fileName:string)
         =
         try
             let fne = sprintf "%s.%s" fileName ext
-            let fp = 
-                match root with
-                | Some rt ->
-                     Path.Combine(rt, folder, fne)
-                | None ->
-                    Path.Combine(folder, fne)
+            let fp = Path.Combine(folder, fne)
             if File.Exists(fp) then
                 File.ReadAllLines fp |> Ok
             else
@@ -83,38 +23,25 @@ module TextIO =
 
     let fileExists
             (ext:string) 
-            (root:string option) 
             (folder:string) 
             (fileName:string)
         =
         try
             let fne = sprintf "%s.%s" fileName ext
-            let fp = 
-                match root with
-                | Some p ->
-                     Path.Combine(p, folder, fne)
-                | None ->
-                    Path.Combine(folder, fne)
+            let fp = Path.Combine(folder, fne)
             File.Exists(fp) |> Ok
         with ex ->
             ("error in TextIO.fileExists: " + ex.Message) |> Result.Error
 
 
     let readAllText
-            (ext:string) 
-            (root:string option) 
+            (ext:string)
             (folder:string) 
             (fileName:string)
         =
         try
             let fne = sprintf "%s.%s" fileName ext
-            let fp = 
-                match root with
-                | Some p ->
-                     Path.Combine(p, folder, fne)
-                | None ->
-                    Path.Combine(folder, fne)
-
+            let fp = Path.Combine(folder, fne)
             if File.Exists(fp) then
                 File.ReadAllText fp |> Ok
             else
@@ -124,23 +51,15 @@ module TextIO =
 
 
     let appendLines
-            (ext:string) 
-            (root:string option) 
+            (ext:string)
             (folder:string) 
             (file:string)
             (data: seq<string>)
         =
         try
             let fne = sprintf "%s.%s" file ext
-            let fldr = 
-                match root with
-                | Some p ->
-                     Path.Combine(p, folder)
-                | None ->
-                    folder
-
-            Directory.CreateDirectory(fldr) |> ignore
-            let fp = Path.Combine(fldr, fne)
+            let fp = Path.Combine(folder, fne)
+            Directory.CreateDirectory(folder) |> ignore
             File.AppendAllLines(fp, data)
             true |> Ok
         with ex ->
@@ -148,8 +67,7 @@ module TextIO =
 
 
     let writeLinesEnsureHeader
-            (ext:string) 
-            (root:string option) 
+            (ext:string)
             (folder:string) 
             (file:string)
             (hdr: seq<string>)
@@ -157,15 +75,8 @@ module TextIO =
         =
         try
             let fne = sprintf "%s.%s" file ext
-            let fldr = 
-                match root with
-                | Some p ->
-                     Path.Combine(p, folder)
-                | None ->
-                    folder
-
-            Directory.CreateDirectory(fldr) |> ignore
-            let fp = Path.Combine(fldr, fne)
+            let fp = Path.Combine(folder, fne)
+            Directory.CreateDirectory(folder) |> ignore
             if File.Exists(fp) then
                 File.AppendAllLines(fp, data)
                 true |> Ok
@@ -178,23 +89,15 @@ module TextIO =
 
 
     let writeToFileIfMissing
-            (ext:string) 
-            (root:string option) 
+            (ext:string)
             (folder:string) 
             (file:string)
             (data:string)
         =
         try
             let fne = sprintf "%s.%s" file ext
-            let fldr = 
-                match root with
-                | Some p ->
-                     Path.Combine(p, folder)
-                | None ->
-                    folder
-
-            Directory.CreateDirectory(fldr) |> ignore
-            let fp = Path.Combine(fldr, fne)
+            let fp = Path.Combine(folder, fne)
+            Directory.CreateDirectory(folder) |> ignore
             if File.Exists(fp) then
                 true |> Ok
             else
@@ -205,23 +108,15 @@ module TextIO =
 
 
     let writeToFileOverwrite
-            (ext:string) 
-            (root:string option) 
+            (ext:string)
             (folder:string) 
             (file:string)
             (data:string)
         =
         try
             let fne = sprintf "%s.%s" file ext
-            let fldr = 
-                match root with
-                | Some p ->
-                     Path.Combine(p, folder)
-                | None ->
-                    folder
-
-            Directory.CreateDirectory(fldr) |> ignore
-            let fp = Path.Combine(fldr, fne)
+            let fp = Path.Combine(folder, fne)
+            Directory.CreateDirectory(folder) |> ignore
             File.WriteAllText(fp, data)
             () |> Ok
         with ex ->
@@ -230,119 +125,120 @@ module TextIO =
 
 
 
+type IFileUtils =
+    abstract member Read<'a> : string -> string -> Result<'a, string>
+    abstract member Read2<'a> : string -> string -> string -> Result<'a, string>
+    abstract member Read3<'a> : string -> string -> string -> string -> Result<'a, string>
+    abstract member Save<'a> : string -> string -> 'a -> unit
+    abstract member Save2<'a> : string -> string -> string -> 'a -> unit
+    abstract member Save3<'a> : string -> string -> string -> string -> 'a -> unit
+    abstract member GetFolders: string -> Result<seq<string>, string>
+    abstract member GetFolders2: string -> string -> Result<seq<string>, string>
+    abstract member GetFolders3: string -> string ->  string -> Result<seq<string>, string>
+    abstract member GetFiles:  string -> Result<seq<string>, string>
+    abstract member GetFiles2:  string -> string -> Result<seq<string>, string>
+    abstract member GetFiles3:  string -> string -> string -> Result<seq<string>, string>
 
 
-module FileUtils =
-    let makeDirectory (fd: fileDir) =
-        try
-            Directory.CreateDirectory(FileDir.value fd) |> Ok
-        with ex ->
-            ("error in makeDirectory: " + ex.Message) |> Result.Error
+type FileUtils = 
+
+    new () = {}
+
+    member this.read<'a> (folderPath:string) (fileName:string) =
+        result {
+            let fp = Path.Combine(folderPath, fileName)
+            if File.Exists(fp) then
+                return! Json.deserialize<'a> fp
+            else
+                return! $"{fp} not found" |> Error
+        }
+
+    member this.save<'a> (folderPath:string) (fileName:string) (content:'a) =
+        if (Directory.Exists folderPath |> not) then
+            Directory.CreateDirectory(folderPath) |> ignore
+
+        let fileContent = Json.serialize content
+        let fp = Path.Combine(folderPath, fileName)
+        File.WriteAllText(fp, fileContent)
 
 
-    let clearDirectory (fd: fileDir) =
-        try
-            let files = Directory.GetFiles(FileDir.value fd, "*.*")
-            files |> Array.map (fun f -> File.Delete(f)) |> ignore
-            Directory.Delete(FileDir.value fd) |> Ok
-        with ex ->
-            ("error in clearDirectory: " + ex.Message) |> Result.Error
+    member this.getFolders (folderPath:string) =
+        result {
+            if (Directory.Exists folderPath |> not) then
+               return! $"directory: {folderPath} does not exist" |> Error
+            else
+               return Directory.EnumerateDirectories(folderPath)
+        }
 
 
-    let getFileNamesInDirectory (fd: fileDir) ext =
-        try
-            Directory.GetFiles((FileDir.value fd), ext)
-            |> Array.map (Path.GetFileNameWithoutExtension >> FileName.create)
-            |> Ok
-        with ex ->
-            ("error in getFilesInDirectory: " + ex.Message) |> Result.Error
+    member this.getFiles (folderPath:string) =
+        result {
+            if (Directory.Exists folderPath |> not) then
+               return! $"directory: {folderPath} does not exist" |> Error
+            else
+               return Directory.EnumerateFiles (folderPath)
+        }
 
 
-    let getFileNameWithExtInDirectory (fd: fileDir) ext =
-        try
-            Directory.GetFiles((FileDir.value fd), ext)
-            |> Array.map (Path.GetFileName)
-            |> Ok
-        with ex ->
-            ("error in getFilesInDirectory: " + ex.Message) |> Result.Error
+    member this.read2<'a> (folderPath:string) (folder:string) (fileName:string) : Result<'a, string> =
+        let comby = Path.Combine(folderPath, folder)
+        this.read comby fileName
+
+    member this.read3<'a> (folderPath:string) (folder1:string) (folder2:string) (fileName:string) : Result<'a, string> =
+        this.read (Path.Combine(folderPath, folder1, folder2)) fileName
+
+    member this.save2<'a> (folderPath:string) (folder:string) (fileName:string) (content:'a) =
+        this.save (Path.Combine(folderPath, folder)) fileName content
+
+    member this.save3<'a> (folderPath:string) (folder1:string) (folder2:string) (fileName:string) (content:'a) =
+        this.save (Path.Combine(folderPath, folder1, folder2)) fileName content
+
+    member this.getFolders2<'a> (folderPath:string) (folder:string) =
+        this.getFolders (Path.Combine(folderPath, folder))
+
+    member this.getFolders3<'a> (folderPath:string) (folder1:string) (folder2:string) =
+        this.getFolders (Path.Combine(folderPath, folder1, folder2))
+
+    member this.getFiles2<'a> (folderPath:string) (folder:string) =
+        this.getFiles (Path.Combine(folderPath, folder))
+
+    member this.getFiles3<'a> (folderPath:string) (folder1:string) (folder2:string) =
+        this.getFiles (Path.Combine(folderPath, folder1, folder2))
 
 
-    let getFilePathsInDirectory (fd: fileDir) ext =
-        try
-            Directory.GetFiles((FileDir.value fd), ext) |> Array.map FilePath.create |> Ok
-        with ex ->
-            ("error in getFilesInDirectory: " + ex.Message) |> Result.Error
+    interface IFileUtils with
+        member this.Read<'a> (folderPath:string) (fileName:string) = 
+            this.read<'a> folderPath fileName
 
+        member this.Read2<'a> (folderPath:string) (folder:string) (fileName:string) = 
+            this.read2<'a> folderPath folder fileName
 
-    let readFile (fp: filePath) =
-        try
-            use sr = new System.IO.StreamReader(FilePath.value fp)
-            let res = sr.ReadToEnd()
-            sr.Dispose()
-            res |> Ok
-        with ex ->
-            ("error in readFile: " + ex.Message) |> Result.Error
+        member this.Read3<'a> (folderPath:string) (folder1:string) (folder2:string) (fileName:string) = 
+            this.read3<'a> folderPath folder1 folder2 fileName
 
+        member this.Save<'a> (folderPath:string) (fileName:string) (content:'a)  = 
+            this.save<'a> folderPath fileName content
 
-    let readLines<'T> (fp: filePath) =
-        try
-            System.IO.File.ReadLines(FilePath.value fp) |> Ok
-        //System.IO.File.ReadAllLines (FilePath.value fp)
-        //                |> Ok
-        with ex ->
-            ("error in readFile: " + ex.Message) |> Result.Error
+        member this.Save2<'a> (folderPath:string) (folder:string) (fileName:string) (content:'a)  = 
+            this.save2<'a> folderPath folder fileName content
 
+        member this.Save3<'a> (folderPath:string) (folder1:string) (folder2:string) (fileName:string) (content:'a)  = 
+            this.save3<'a> folderPath folder1 folder2 fileName content
 
-    let makeFile (fp: filePath) item =
-        try
-            System.IO.File.WriteAllText((FilePath.value fp), item)
-            //use sw = new StreamWriter(path, append)
-            //fprintfn sw "%s" item
-            //sw.Dispose()
-            true |> Ok
-        with ex ->
-            ("error in writeFile: " + ex.Message) |> Result.Error
+        member this.GetFolders (folderPath:string) = 
+            this.getFolders folderPath
 
+        member this.GetFolders2 (folderPath:string) (folder:string) = 
+            this.getFolders2 folderPath folder
 
-    let makeFileFromLines (fp: filePath) (lines: seq<string>) =
-        try
-            System.IO.File.WriteAllLines((FilePath.value fp), lines)
-            true |> Ok
-        with ex ->
-            ("error in writeFile: " + ex.Message) |> Result.Error
+        member this.GetFolders3 (folderPath:string) (folder1:string) (folder2:string) = 
+            this.getFolders3 folderPath folder1 folder2
 
+        member this.GetFiles (folderPath:string) = 
+            this.getFiles folderPath
 
-    let appendToFile (fp: filePath) (lines: seq<string>) =
-        try
-            System.IO.File.AppendAllLines((FilePath.value fp), lines)
-            true |> Ok
-        with ex ->
-            ("error in writeFile: " + ex.Message) |> Result.Error
+        member this.GetFiles2 (folderPath:string) (folder:string) = 
+            this.getFiles2 folderPath folder
 
-    let makeArchiver (root: fileDir) =
-        fun (folder: fileFolder) (file: fileName) (ext: fileExt) (data: seq<string>) ->
-            try
-                let fne = sprintf "%s.%s" (FileName.value file) (FileExt.value ext)
-                let fdir = Path.Combine(FileDir.value root, FileFolder.value folder) |> FileDir.create
-                let fp = Path.Combine(FileDir.value fdir, fne) |> FilePath.create
-                System.IO.Directory.CreateDirectory(FileDir.value fdir) |> ignore
-                appendToFile fp data
-            with ex ->
-                ("error in archiver: " + ex.Message) |> Result.Error
-
-
-type csvFile = { header:string; records:string[]; directory:fileDir; fileName:string; }
-
-module CsvFile =
-
-    let writeCsvFile (csv:csvFile) =
-        try
-            Directory.CreateDirectory(FileDir.value(csv.directory)) |> ignore
-            let FileDir = sprintf "%s\\%s" (FileDir.value(csv.directory)) csv.fileName
-            use sw = new StreamWriter(FileDir, false)
-            fprintfn sw "%s" csv.header
-            csv.records |> Array.iter(fprintfn sw "%s")
-            sw.Dispose()
-            true |> Ok
-        with
-            | ex -> ("error in writeFile: " + ex.Message ) |> Result.Error
+        member this.GetFiles3 (folderPath:string) (folder1:string) (folder2:string) = 
+            this.getFiles3 folderPath folder1 folder2

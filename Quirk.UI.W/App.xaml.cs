@@ -46,6 +46,10 @@ public partial class App : Application
     {
         InitializeComponent();
 
+        //var fd = Quirk.Core.FileDir.create("C:\\Klink\\o128\\StagePhenoPruneLR\\dd6d218a-51e9-50ae-bc51-3ab10c531fe1");
+        //var res = Quirk.Core.FileUtils.getFileNamesInDirectory(fd, "txt");
+        //var tada = res.ResultValue;
+
         Host = Microsoft.Extensions.Hosting.Host.
         CreateDefaultBuilder().
         UseContentRoot(AppContext.BaseDirectory).
@@ -68,7 +72,7 @@ public partial class App : Application
             // Core Services
             services.AddSingleton<ISampleDataService, SampleDataService>();
             services.AddSingleton<IWorkspaceDataService, WorkspaceDataService>();
-            services.AddSingleton<IFileService, FileService>();
+            services.AddSingleton<Quirk.Core.IFileUtils, Quirk.Core.FileUtils>();
 
             // Views and ViewModels
             services.AddTransient<ConfigsViewModel>();

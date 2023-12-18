@@ -16,7 +16,8 @@ public class LocalSettingsService : ILocalSettingsService
     private const string _defaultApplicationDataFolder = "Quirk.UI.W/ApplicationData";
     private const string _defaultLocalSettingsFile = "LocalSettings.json";
 
-    private readonly IFileService _fileService;
+    //private readonly IFileService _fileService;
+    private readonly Quirk.Core.IFileUtils _fileService;
     private readonly LocalSettingsOptions _options;
 
     private readonly string _localApplicationData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
@@ -27,7 +28,7 @@ public class LocalSettingsService : ILocalSettingsService
 
     private bool _isInitialized;
 
-    public LocalSettingsService(IFileService fileService, IOptions<LocalSettingsOptions> options)
+    public LocalSettingsService(Quirk.Core.IFileUtils fileService, IOptions<LocalSettingsOptions> options)
     {
         _fileService = fileService;
         _options = options.Value;
@@ -42,7 +43,20 @@ public class LocalSettingsService : ILocalSettingsService
     {
         if (!_isInitialized)
         {
-            _settings = await Task.Run(() => _fileService.Read<IDictionary<string, object>>(_applicationDataFolder, _localsettingsFile)) ?? new Dictionary<string, object>();
+            _settings = await Task.Run(
+                () =>
+                {
+                    var res = _fileService.Read<IDictionary<string, object>>(_applicationDataFolder, _localsettingsFile);
+                    if (res.IsOk)
+                    {
+                        return res.ResultValue;
+                    }
+                    else
+                    {
+                        return new Dictionary<string, object>();
+                    }
+                }
+             );
 
             _isInitialized = true;
         }

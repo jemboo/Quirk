@@ -10,12 +10,12 @@ public class WorkspaceDataService : IWorkspaceDataService
 {
     private List<CfgPlexVm> _allOrders;
 
-    public WorkspaceDataService(IFileService fileService)
+    public WorkspaceDataService(Quirk.Core.IFileUtils fileService)
     {
         _fileService = fileService;
     }
 
-    private readonly IFileService _fileService;
+    private readonly Quirk.Core.IFileUtils _fileService;
 
     public async Task<IEnumerable<CfgPlexVm>> GetGridDataAsync()
     {
@@ -35,13 +35,21 @@ public class WorkspaceDataService : IWorkspaceDataService
 
     public async Task<IEnumerable<CfgPlexVm>> GetCfgPlexesInWorkspace(string workspacePath)
     {
-        var subfolders = _fileService.GetFolders(workspacePath)
-                            .Select(path => Path.GetRelativePath(workspacePath, path));
-        var cfgPlexesInWorkspace =
-            subfolders.Select(subfolder => new CfgPlexVm() { Name = subfolder });
-
-        await Task.CompletedTask;
-        return cfgPlexesInWorkspace;
+        var subfoldersR = _fileService.GetFolders(workspacePath);
+        if (subfoldersR.IsOk)
+        {
+            var subfolders = subfoldersR.ResultValue
+                             .Select(path => Path.GetRelativePath(workspacePath, path));
+            var cfgPlexesInWorkspace =
+                subfolders.Select(subfolder => new CfgPlexVm() { Name = subfolder });
+            await Task.CompletedTask;
+            return cfgPlexesInWorkspace;
+        }
+        else
+        {
+            await Task.CompletedTask;
+            return Enumerable.Empty<CfgPlexVm>();
+        }
     }
 
     public async Task<CfgPlexVm> GetCfgPlexDetails(string workspacePath, CfgPlexVm cfgPlex)

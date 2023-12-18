@@ -6,8 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="WorkspaceFileStore.fs" />
-    <Compile Include="ProjectDataStore.fs" />
+    <Compile Include="ProjectFileStore.fs" />
   </ItemGroup>
 
   <ItemGroup>
