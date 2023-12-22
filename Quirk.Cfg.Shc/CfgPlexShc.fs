@@ -5,6 +5,7 @@ open Quirk.Core
 open Quirk.Cfg.Core
 open Quirk.Project
 open Quirk.Sorting
+open Quirk.Script
 
 module O_64 =
 
@@ -83,18 +84,17 @@ module O_64 =
 
 
     let runParamSet1 = 
-            QuirkRunParamSet.create
+            RunParamSet.create
                 [|
-                    (0 |> UMX.tag<generation> |> CfgRunParamValue.makeGenerationStart)
-                    (500 |> UMX.tag<generation> |> CfgRunParamValue.makeGenerationStart)
-                    (5 |> UMX.tag<generation> |> CfgRunParamValue.makeGenerationStart)
-                    (50 |> UMX.tag<generation> |> CfgRunParamValue.makeGenerationStart)
+                    (0 |> UMX.tag<generation> |> RunParamValue.makeGenerationStart)
+                    (500 |> UMX.tag<generation> |> RunParamValue.makeGenerationStart)
+                    (5 |> UMX.tag<generation> |> RunParamValue.makeGenerationStart)
+                    (50 |> UMX.tag<generation> |> RunParamValue.makeGenerationStart)
                 |]
 
 
     let quirkRunSet = 
             CfgPlex.createQuirkRunSet
                 quirkProjectType.Shc
-                runParamSet1
                 plex64
                 (1 |> UMX.tag<replicaNumber>)

@@ -3,30 +3,33 @@
 open FSharp.UMX
 open Quirk.Core
 
-type cfgRunParamValue =
-    | GenerationStart of string<quirkRunParamName> * int<generation>
-    | GenerationEnd of string<quirkRunParamName> * int<generation>
-    | ReportIntervalShort of string<quirkRunParamName> * int<generation>
-    | ReportIntervalLong of string<quirkRunParamName> * int<generation>
+
+[<Measure>] type runParamName
+[<Measure>] type runParamSetName
+
+type runParamValue =
+    | GenerationStart of string<runParamName> * int<generation>
+    | GenerationEnd of string<runParamName> * int<generation>
+    | ReportIntervalShort of string<runParamName> * int<generation>
+    | ReportIntervalLong of string<runParamName> * int<generation>
 
 
-module CfgRunParamValue =
+module RunParamValue =
 
     let makeGenerationStart (genStart: int<generation>) =
-        ("generationStart" |> UMX.tag<quirkRunParamName>, genStart) |> cfgRunParamValue.GenerationStart
+        ("generationStart" |> UMX.tag<runParamName>, genStart) |> runParamValue.GenerationStart
 
     let makeGenerationEnd (genEnd: int<generation>) =
-        ("generationEnd" |> UMX.tag<quirkRunParamName>, genEnd) |> cfgRunParamValue.GenerationEnd
+        ("generationEnd" |> UMX.tag<runParamName>, genEnd) |> runParamValue.GenerationEnd
 
     let makeReportIntervalShort (genShort: int<generation>) =
-        ("reportIntervalShort" |> UMX.tag<quirkRunParamName>, genShort) |> cfgRunParamValue.ReportIntervalShort
+        ("reportIntervalShort" |> UMX.tag<runParamName>, genShort) |> runParamValue.ReportIntervalShort
 
     let makeReportIntervalLong (genLong: int<generation>) =
-        ("reportIntervalLong" |> UMX.tag<quirkRunParamName>, genLong) |> cfgRunParamValue.ReportIntervalLong
+        ("reportIntervalLong" |> UMX.tag<runParamName>, genLong) |> runParamValue.ReportIntervalLong
 
 
-
-    let getModelCfgParamName (cfgRunParamValue: cfgRunParamValue) =
+    let getRunParamName (cfgRunParamValue: runParamValue) =
         match cfgRunParamValue with
         | GenerationStart (n, o) -> n
         | GenerationEnd (n, nf) -> n
@@ -34,7 +37,7 @@ module CfgRunParamValue =
         | ReportIntervalLong (n, pc) -> n
 
 
-    let toArrayOfStrings (cfgRunParamValue: cfgRunParamValue) =
+    let toArrayOfStrings (cfgRunParamValue: runParamValue) =
         match cfgRunParamValue with
         | GenerationStart (n, o) ->
                 [|
@@ -65,72 +68,72 @@ module CfgRunParamValue =
 
 
 
-    let fromArrayOfStrings (lst: string array) : Result<cfgRunParamValue, string> =
+    let fromArrayOfStrings (lst: string array) : Result<runParamValue, string> =
         match lst with
 
         | [|"GenerationStart"; n; o|] ->
             result {
                 let! ov = StringUtil.parseInt o
-                let rpName = n |> UMX.tag<quirkRunParamName>
+                let rpName = n |> UMX.tag<runParamName>
                 return (rpName, ov |> UMX.tag<generation>)
-                        |> cfgRunParamValue.GenerationStart
+                        |> runParamValue.GenerationStart
             }
 
         | [|"GenerationEnd"; n; nf|] ->
             result {
                 let! nfValue = StringUtil.parseInt nf
-                let rpName = n |> UMX.tag<quirkRunParamName>
+                let rpName = n |> UMX.tag<runParamName>
                 return (rpName, nfValue |> UMX.tag<generation>)
-                        |> cfgRunParamValue.GenerationEnd
+                        |> runParamValue.GenerationEnd
             }
 
         | [|"ReportIntervalShort"; n; o|] ->
             result {
                 let! ov = StringUtil.parseInt o
-                let rpName = n |> UMX.tag<quirkRunParamName>
-                return (rpName, ov |> UMX.tag<generation>) |> cfgRunParamValue.ReportIntervalShort
+                let rpName = n |> UMX.tag<runParamName>
+                return (rpName, ov |> UMX.tag<generation>) |> runParamValue.ReportIntervalShort
             }
 
         | [|"ReportIntervalLong"; n; pc;|] ->
             result {
                 let! pcValue = StringUtil.parseInt pc
-                let rpName = n |> UMX.tag<quirkRunParamName>
+                let rpName = n |> UMX.tag<runParamName>
                 return (rpName, pcValue |> UMX.tag<generation> )
-                        |> cfgRunParamValue.ReportIntervalLong
+                        |> runParamValue.ReportIntervalLong
             }
 
         | uhv -> $"not handled in CfgPlexType.fromList %A{uhv}" |> Error
             
 
-type quirkRunParamSet = 
+type runParamSet = 
     private 
         { 
-            id: Guid<quirkRunParamSetId>
-            runParamValueMap: Map<string<quirkRunParamName>, cfgRunParamValue>
+            id: Guid<runParamSetName>
+            runParamValueMap: Map<string<runParamName>, runParamValue>
         }
 
 
-module QuirkRunParamSet =
+module RunParamSet =
 
     let create 
-            (runParamValues: cfgRunParamValue seq)
+            (runParamValues: runParamValue seq)
         =
         let runParamValueMap = 
             runParamValues
-            |> Seq.map(fun rpv -> (rpv |> CfgRunParamValue.getModelCfgParamName, rpv ))
+            |> Seq.map(fun rpv -> (rpv |> RunParamValue.getRunParamName, rpv ))
             |> Map.ofSeq
 
         let id = 
             [runParamValueMap :> obj] |> GuidUtils.guidFromObjs
-            |> UMX.tag<quirkRunParamSetId>
+            |> UMX.tag<runParamSetName>
         {
-            quirkRunParamSet.id = id;
-            quirkRunParamSet.runParamValueMap = runParamValueMap;
+            runParamSet.id = id;
+            runParamSet.runParamValueMap = runParamValueMap;
         }
         
-    let getId (runParamSet:quirkRunParamSet) =
+    let getId (runParamSet:runParamSet) =
         runParamSet.id
         
-    let getValueMap (runParamSet:quirkRunParamSet) =
+    let getValueMap (runParamSet:runParamSet) =
         runParamSet.runParamValueMap
   

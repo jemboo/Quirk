@@ -4,12 +4,12 @@ open System.IO
 open FSharp.UMX
 open Quirk.Core
 open Quirk.Project
+open Quirk.Script
 open Quirk.Cfg.Core
 open Quirk.Cfg.Serialization
 
 
-
-type projectFileStore (wsRootDir:string, fileUtils:IFileUtils) =
+type scriptFileStore (wsRootDir:string, fileUtils:IFileUtils) =
     member this.scriptFolder = "scripts"
     member this.reportFolder = "reports"
     member this.scriptToDoFolder = "toDo"
@@ -67,21 +67,15 @@ type projectFileStore (wsRootDir:string, fileUtils:IFileUtils) =
                 (this.getScriptToDoPath projectName)
 
 
-    member this.saveCfgPlex (cfgPlex:cfgPlex) =
+    member this.SaveScript (quirkScript:quirkScript) =
         result {
-            let projectName = (cfgPlex |> CfgPlex.getProjectName |> UMX.untag)
-            let projectPath = this.getProjectPath projectName
-          
-            if Directory.Exists(projectPath) then
-                return! $"A project already exists at {projectPath}" |> Error
-            let dto = cfgPlex |> CfgPlexDto.toDto
-            fileUtils.Save projectPath (this.getProjectFileName projectName) dto
+
             return ()
         }
 
 
-    interface ICfgPlexDataStore with
-        member this.SaveCfgPlex cfgPlex = this.saveCfgPlex cfgPlex
+    interface IScriptDataStore with
+        member this.SaveScript quirkScript = this.SaveScript quirkScript
 
 
 

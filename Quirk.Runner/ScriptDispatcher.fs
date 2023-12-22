@@ -1,24 +1,35 @@
 ﻿namespace Quirk.Runner
 open FSharp.UMX
+open Quirk.Core
 open Quirk.Cfg.Core
-open Argu
+open Quirk.Project
+open Quirk.Cfg.Shc
+open Quirk.Storage
 
 
 module ScriptDispatcher =
 
     let dispatchCfgPlex
-            (workingDirectory:string<workingDirectory>)
+            (cCfgPlexDataStore:ICfgPlexDataStore)
             (projectName:string<projectName>)
         =
-        match (projectName |> UMX.untag).Split() with
-        | [| "CfgPlex" |] -> () |> Ok 
+        let fileUtils = new fileUtils()
+        let nA  = (projectName |> UMX.untag).Split() 
+        match nA with
+        | [| "Shc_064" |] -> 
+            result {
+                let shcO64 = O_64.plex64
+                return! cCfgPlexDataStore.SaveCfgPlex shcO64
+            }
+
         | [| "GenScript" |] -> () |> Ok
         | [| "RunScript"; rn |] -> () |> Ok
         | _ -> Error $"{projectName |> UMX.untag} not handled in ScriptDispatcher.dispatchCfgPlex"
 
 
+
     let dispatchGenScript
-            (workingDirectory:string<workingDirectory>)
+            (cCfgPlexDataStore:ICfgPlexDataStore)
             (projectName:string<projectName>)
             (firstScriptIndex:int)
             (scriptCount:int)
@@ -27,22 +38,25 @@ module ScriptDispatcher =
 
 
     let dispatchRunScript
-            (workingDirectory:string<workingDirectory>)
+            (cCfgPlexDataStore:ICfgPlexDataStore)
             (projectName:string<projectName>)
         =
         ()  |> Ok
 
 
-    let fromRunMode
-            (workingDirectory:string<workingDirectory>)
+    let fromQuirkProgramMode
+            (cCfgPlexDataStore:ICfgPlexDataStore)
             (projectName:string<projectName>)
             (firstScriptIndex:int)
             (scriptCount:int)
             (rm:quirkProgramMode) = 
-        match rm with
-        | CfgPlex -> dispatchCfgPlex workingDirectory projectName
-        | GenScript -> dispatchGenScript workingDirectory projectName firstScriptIndex scriptCount
-        | RunScript  -> dispatchRunScript workingDirectory projectName
+        let res =
+            match rm with
+            | CfgPlex -> dispatchCfgPlex cCfgPlexDataStore projectName
+            | GenScript -> dispatchGenScript cCfgPlexDataStore projectName firstScriptIndex scriptCount
+            | RunScript  -> dispatchRunScript cCfgPlexDataStore projectName
+
+        res
 
 
 

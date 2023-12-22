@@ -2,13 +2,16 @@
 
 
 [<Measure>] type quirkRunId
+[<Measure>] type projectName
+
 
 [<Measure>] type replicaNumber
-[<Measure>] type quirkModelParamName
-[<Measure>] type quirkRunParamName
+[<Measure>] type modelParamName
 
-[<Measure>] type quirkModelParamSetId
-[<Measure>] type quirkRunParamSetId
+[<Measure>] type modelParamSetId
+[<Measure>] type reportName
+[<Measure>] type reportParamName
+[<Measure>] type reportParamSetName
 
 
 [<Measure>] type workspaceId

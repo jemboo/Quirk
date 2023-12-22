@@ -4,10 +4,6 @@ open FSharp.UMX
 [<Measure>] type cfgPlexItemName
 [<Measure>] type cfgPlexItemRank
 [<Measure>] type workingDirectory
-[<Measure>] type projectName
-
-
-
 
 type quirkProgramMode =
     | CfgPlex

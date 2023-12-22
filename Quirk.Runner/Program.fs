@@ -2,8 +2,11 @@
 open System
 open Argu
 open FSharp.UMX
+open Quirk.Core
 open Quirk.Cfg.Core
+open Quirk.Project
 open Quirk.Script
+open Quirk.Storage
 
 module Program =
 
@@ -14,6 +17,9 @@ module Program =
 
 
     let [<EntryPoint>] main argv =
+
+
+
         let parser = ArgumentParser.Create<CliArguments>(programName = "Quirk.Runner.exe")
         Console.WriteLine(parser.PrintUsage())
         let argResults = parser.Parse argv
@@ -29,17 +35,26 @@ module Program =
         let scriptCountArg = argResults.GetResults Script_Count |> List.head |> int
         let useParallelArg = argResults.GetResults Use_Parallel |> List.head
         let workingDirectoryArg = argResults.GetResults Working_Directory |> List.head |> UMX.tag<workingDirectory>
-
+        
+        let fileUtils = new fileUtils()
+        let projectFileStore = new projectFileStore(workingDirectoryArg |> UMX.untag, fileUtils)
 
         let runMode = runModeArg |> quirkProgramMode.fromString |> Result.ExtractOrThrow
            
         let scriptResult = 
                 runMode 
-                    |> ScriptDispatcher.fromRunMode
-                            workingDirectoryArg
+                    |> ScriptDispatcher.fromQuirkProgramMode
+                            projectFileStore
                             projectNameArg
                             firstScriptIndexArg
                             scriptCountArg
+
+
+        match scriptResult with
+        | Result.Ok _ -> Console.WriteLine("Script ran successfully")
+        | Result.Error m -> Console.WriteLine($"Script ran with error: {m}")
+
+
 
         //let projectFolderArg = argResults.GetResults Project_Folder |> List.head
 

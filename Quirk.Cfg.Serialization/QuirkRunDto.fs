@@ -14,8 +14,7 @@ type quirkRunDto =
             quirkRunId: Guid
             quirkProjectType: string
             quirkScriptMode: string
-            quirkModelParamSetDto: quirkModelParamSetDto
-            quirkRunParamSetDto: quirkRunParamSetDto
+            modelParamSetDto: modelParamSetDto
         }
     
 
@@ -38,15 +37,10 @@ type quirkRunDto =
                 //|> QuirkRun.getScriptMode
                 //|> QuirkScriptMode.toString
 
-            quirkRunDto.quirkModelParamSetDto =
+            quirkRunDto.modelParamSetDto =
                 quirkRun 
                 |> QuirkRun.getModelParamSet 
-                |> quirkModelParamSetDto.toDto
-            
-            quirkRunDto.quirkRunParamSetDto =
-                quirkRun 
-                |> QuirkRun.getRunParamSet 
-                |> quirkRunParamSetDto.toDto
+                |> modelParamSetDto.toDto
         }
 
 
@@ -62,17 +56,13 @@ type quirkRunDto =
                 quirkRunDto.quirkProjectType
                 |> QuirkProjectType.fromString
 
-            let! quirkRunParamSet =
-                quirkRunDto.quirkRunParamSetDto 
-                |> quirkRunParamSetDto.fromDto
 
             let! quirkModelParamSet =
-                quirkRunDto.quirkModelParamSetDto 
-                |> quirkModelParamSetDto.fromDto
+                quirkRunDto.modelParamSetDto 
+                |> modelParamSetDto.fromDto
 
             return QuirkRun.create  
                         quirkProjectType
-                        quirkRunParamSet
                         quirkModelParamSet
         }
        

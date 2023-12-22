@@ -140,7 +140,7 @@ type IFileUtils =
     abstract member GetFiles3:  string -> string -> string -> Result<seq<string>, string>
 
 
-type FileUtils = 
+type fileUtils = 
 
     new () = {}
 

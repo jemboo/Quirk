@@ -18,7 +18,6 @@ module QuirkRunSetDtoFixture =
         let quirkRunSet = 
             CfgPlex.createQuirkRunSet
                 quirkProjectType.Shc
-                O_64.runParamSet1
                 O_64.plex64
                 (1 |> UMX.tag<replicaNumber>)
 

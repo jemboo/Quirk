@@ -65,7 +65,7 @@ module CfgPlex =
     let getCfgPlexItems (cfgPlex:cfgPlex) =
         cfgPlex.cfgPlexItems
 
-
+    
     let makeModelParamSets 
             (cfgPlex: cfgPlex)
             (replicaNumber: int<replicaNumber>) 
@@ -82,30 +82,26 @@ module CfgPlex =
             CollectionOps.crossProduct listList
 
         _enumerateModelParamSetItems cfgPlex.cfgPlexItems
-        |> List.map(fun li -> li |> QuirkModelParamSet.create replicaNumber )
+        |> List.map(fun li -> li |> ModelParamSet.create replicaNumber )
 
 
-
-    let createQuirkRun
+    let createScriptItem
             (quirkProjectType:quirkProjectType)
-            (quirkRunParamSet:quirkRunParamSet)
             (cfgPlex:cfgPlex)
             (replicaNumber: int<replicaNumber>) 
         =
         makeModelParamSets cfgPlex replicaNumber
-        |> List.map(QuirkRun.create quirkProjectType quirkRunParamSet)
+        |> List.map(QuirkRun.create quirkProjectType)
 
 
     let createQuirkRunSet
             (quirkProjectType:quirkProjectType)
-            (quirkRunParamSet:quirkRunParamSet)
             (cfgPlex:cfgPlex)
             (replicaNumber: int<replicaNumber>) 
         =
-
             let quirkRuns =
                 makeModelParamSets cfgPlex replicaNumber
-                |> List.map(QuirkRun.create quirkProjectType quirkRunParamSet)
+                |> List.map(QuirkRun.create quirkProjectType)
                 |> List.toArray
 
             QuirkRunSet.create quirkRuns

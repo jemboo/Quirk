@@ -26,15 +26,15 @@ module CfgPlexItemDtoFixture =
     let ``cfgPlexItemDto`` () =
 
         let cfpiNameA = "cfpNameA" |> UMX.tag<cfgPlexItemName>
-        let rpNameA = "rpNameA" |> UMX.tag<quirkModelParamName>
+        let rpNameA = "rpNameA" |> UMX.tag<modelParamName>
         let cfpiRankA = 1 |> UMX.tag<cfgPlexItemRank>
         
         let cfpiNameB = "cfpNameB" |> UMX.tag<cfgPlexItemName>
-        let rpNameB = "rpNameB" |> UMX.tag<quirkModelParamName>
+        let rpNameB = "rpNameB" |> UMX.tag<modelParamName>
         let cfpiRankB = 2 |> UMX.tag<cfgPlexItemRank>
         
         let cfpiNameC = "cfpNameC" |> UMX.tag<cfgPlexItemName>
-        let rpNameC = "rpNameC" |> UMX.tag<quirkModelParamName>
+        let rpNameC = "rpNameC" |> UMX.tag<modelParamName>
         let cfpiRankC = 3 |> UMX.tag<cfgPlexItemRank>
         
         

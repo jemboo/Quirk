@@ -6,6 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Interfaces.fs" />
+    <Compile Include="ScriptFileStore.fs" />
     <Compile Include="ProjectFileStore.fs" />
   </ItemGroup>
 
@@ -20,6 +22,7 @@
     <ProjectReference Include="..\Quirk.Core\Quirk.Core.fsproj" />
     <ProjectReference Include="..\Quirk.Iter\Quirk.Iter.fsproj" />
     <ProjectReference Include="..\Quirk.Project\Quirk.Project.fsproj" />
+    <ProjectReference Include="..\Quirk.Script\Quirk.Script.fsproj" />
     <ProjectReference Include="..\Quirk.Serialziation\Quirk.Serialziation.fsproj" />
     <ProjectReference Include="..\Quirk.SortingResults\Quirk.SortingResults.fsproj" />
     <ProjectReference Include="..\Quirk.Sorting\Quirk.Sorting.fsproj" />

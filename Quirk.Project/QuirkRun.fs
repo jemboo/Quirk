@@ -35,15 +35,14 @@ type quirkRun =
         { 
             quirkRunId: Guid<quirkRunId>
             quirkProjectType: quirkProjectType
-            quirkModelParamSet: quirkModelParamSet
-            quirkRunParamSet: quirkRunParamSet
+            quirkModelParamSet: modelParamSet
         }
 
 
 module QuirkRun =
 
     let makeQuirkRunId
-            (quirkModelParamSet:quirkModelParamSet)
+            (quirkModelParamSet:modelParamSet)
             (quirkProjectType:quirkProjectType)
         =
             [
@@ -56,14 +55,12 @@ module QuirkRun =
 
     let create 
             (quirkProjectType: quirkProjectType)
-            (quirkRunParamSet: quirkRunParamSet)
-            (quirkModelParamSet: quirkModelParamSet)
+            (quirkModelParamSet: modelParamSet)
         =
         { 
             quirkRunId = makeQuirkRunId quirkModelParamSet quirkProjectType
             quirkProjectType = quirkProjectType
             quirkModelParamSet = quirkModelParamSet
-            quirkRunParamSet = quirkRunParamSet
         }
 
 
@@ -73,9 +70,6 @@ module QuirkRun =
 
     let getRunType (quirkRun:quirkRun) = 
             quirkRun.quirkProjectType
-
-    let getRunParamSet (quirkRun:quirkRun) = 
-            quirkRun.quirkRunParamSet
 
     let getModelParamSet (quirkRun:quirkRun) = 
             quirkRun.quirkModelParamSet

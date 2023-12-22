@@ -6,10 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="RunTypes.fs" />
-    <Compile Include="QuirkModelParam.fs" />
-    <Compile Include="QuirkRunParam.fs" />
-    <Compile Include="Library.fs" />
+    <Compile Include="ProjectTypes.fs" />
+    <Compile Include="ReportParam.fs" />
+    <Compile Include="RunParam.fs" />
+    <Compile Include="ModelParam.fs" />
     <Compile Include="QuirkRun.fs" />
   </ItemGroup>
 
