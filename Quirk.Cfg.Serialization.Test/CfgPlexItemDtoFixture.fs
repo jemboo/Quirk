@@ -38,11 +38,11 @@ module CfgPlexItemDtoFixture =
         let cfpiRankC = 3 |> UMX.tag<cfgPlexItemRank>
         
         
-        let cfpivOrder1 = (rpNameA, 16 |> UMX.tag<order>) |> cfgModelParamValue.Order
-        let cfpivMutationRate1 = (rpNameB, 0.1 |> UMX.tag<mutationRate> ) |> cfgModelParamValue.MutationRate
-        let cfpivMutationRate2 = (rpNameB, 0.2 |> UMX.tag<mutationRate> )  |> cfgModelParamValue.MutationRate
-        let cfpivNoiseFraction1 = (rpNameC, 0.25 |> UMX.tag<noiseFraction> )  |> cfgModelParamValue.NoiseFraction
-        let cfpivNoiseFraction2 = (rpNameC, 0.50 |> UMX.tag<noiseFraction> ) |> cfgModelParamValue.NoiseFraction
+        let cfpivOrder1 = (rpNameA, 16 |> UMX.tag<order>) |> modelParamValue.Order
+        let cfpivMutationRate1 = (rpNameB, 0.1 |> UMX.tag<mutationRate> ) |> modelParamValue.MutationRate
+        let cfpivMutationRate2 = (rpNameB, 0.2 |> UMX.tag<mutationRate> )  |> modelParamValue.MutationRate
+        let cfpivNoiseFraction1 = (rpNameC, 0.25 |> UMX.tag<noiseFraction> )  |> modelParamValue.NoiseFraction
+        let cfpivNoiseFraction2 = (rpNameC, 0.50 |> UMX.tag<noiseFraction> ) |> modelParamValue.NoiseFraction
         
         let cfgPlexItemValuesA = [| cfpivOrder1 |]
         let cfgPlexItemValuesB = [| cfpivMutationRate1; cfpivMutationRate2 |]

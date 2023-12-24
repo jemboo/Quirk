@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <Compile Include="CfgPlexItemDtoFixture.fs" />
-    <Compile Include="CfgParamSetDtoFixture.fs" />
+    <Compile Include="CfgPlexDtoFixture.fs" />
     <Compile Include="QuirkRunSetDtoFixture.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

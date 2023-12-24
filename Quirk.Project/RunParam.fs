@@ -29,16 +29,16 @@ module RunParamValue =
         ("reportIntervalLong" |> UMX.tag<runParamName>, genLong) |> runParamValue.ReportIntervalLong
 
 
-    let getRunParamName (cfgRunParamValue: runParamValue) =
-        match cfgRunParamValue with
+    let getRunParamName (runParamValue: runParamValue) =
+        match runParamValue with
         | GenerationStart (n, o) -> n
         | GenerationEnd (n, nf) -> n
         | ReportIntervalShort (n, o) -> n
         | ReportIntervalLong (n, pc) -> n
 
 
-    let toArrayOfStrings (cfgRunParamValue: runParamValue) =
-        match cfgRunParamValue with
+    let toArrayOfStrings (runParamValue: runParamValue) =
+        match runParamValue with
         | GenerationStart (n, o) ->
                 [|
                     "GenerationStart";

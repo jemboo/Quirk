@@ -12,7 +12,7 @@ type cfgPlexItem =
         { 
             cfgPlexItemName: string<cfgPlexItemName>
             cfgPlexItemRank: int<cfgPlexItemRank>
-            cfgPlexItemValues: cfgModelParamValue[]
+            cfgPlexItemValues: modelParamValue[]
         }
 
 
@@ -21,7 +21,7 @@ module CfgPlexItem =
     let create
             (cfgPlexItemName: string<cfgPlexItemName>)
             (cfgPlexItemRank: int<cfgPlexItemRank>)
-            (cfgPlexItemValues: cfgModelParamValue[])
+            (cfgPlexItemValues: modelParamValue[])
         =
         {
             cfgPlexItem.cfgPlexItemName = cfgPlexItemName;

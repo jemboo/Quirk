@@ -22,7 +22,7 @@ type modelParamSetDto =
                modelParamSet
                     |> ModelParamSet.getValueMap
                     |> Map.toArray
-                    |> Array.map(fun (k,v) -> v |> CfgModelParamValue.toArrayOfStrings)
+                    |> Array.map(fun (k,v) -> v |> ModelParamValue.toArrayOfStrings)
         }
     let toJson (quirkModelParamSet:modelParamSet) =
         quirkModelParamSet |> toDto |> Json.serialize
@@ -32,7 +32,7 @@ type modelParamSetDto =
         result {
             let! cfgPlexItemValueList =
                    modelParamSetDto.modelParamValues
-                   |> Array.map(CfgModelParamValue.fromArrayOfStrings)
+                   |> Array.map(ModelParamValue.fromArrayOfStrings)
                    |> Array.toList
                    |> Result.sequence
 

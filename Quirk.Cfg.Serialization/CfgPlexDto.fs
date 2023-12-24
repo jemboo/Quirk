@@ -24,7 +24,7 @@ type cfgPlexItemDto =
             cfgPlexItemValues =
                cfgPlexItem
                     |> CfgPlexItem.getCfgPlexItemValues
-                    |> Array.map(fun itm -> itm |> CfgModelParamValue.toArrayOfStrings)
+                    |> Array.map(fun itm -> itm |> ModelParamValue.toArrayOfStrings)
         }
     let toJson (cfgPlexItem:cfgPlexItem) =
         cfgPlexItem |> toDto |> Json.serialize
@@ -34,7 +34,7 @@ type cfgPlexItemDto =
         result {
             let! cfgPlexItemValueList =
                    cfgPlexItemDto.cfgPlexItemValues
-                   |> Array.map(CfgModelParamValue.fromArrayOfStrings)
+                   |> Array.map(ModelParamValue.fromArrayOfStrings)
                    |> Array.toList
                    |> Result.sequence
             

@@ -13,31 +13,31 @@ module O_64 =
             CfgPlexItem.create
                 ("mutationRates" |> UMX.tag<cfgPlexItemName>)
                 (0 |> UMX.tag<cfgPlexItemRank>)
-                (CfgModelParamValue.makeMutationRates [0.0075;])
+                (ModelParamValue.makeMutationRates [0.0075;])
 
     let cpiNoiseFractions =
             CfgPlexItem.create
                 ("noiseFractions" |> UMX.tag<cfgPlexItemName>)
                 (1 |> UMX.tag<cfgPlexItemRank>)
-                (CfgModelParamValue.makeNoiseFractions [0.001;])
+                (ModelParamValue.makeNoiseFractions [0.001;])
 
     let cpiOrders =
             CfgPlexItem.create
                 ("orders" |> UMX.tag<cfgPlexItemName>)
                 (2 |> UMX.tag<cfgPlexItemRank>)
-                (CfgModelParamValue.makeOrders [64;])
+                (ModelParamValue.makeOrders [64;])
 
     let cpiParentCounts =
             CfgPlexItem.create
                 ("parentCounts" |> UMX.tag<cfgPlexItemName>)
                 (3 |> UMX.tag<cfgPlexItemRank>)
-                (CfgModelParamValue.makeParentCounts [16;])
+                (ModelParamValue.makeParentCounts [16;])
 
     let cpiReproductionRates =
             CfgPlexItem.create
                 ("reproductionRates" |> UMX.tag<cfgPlexItemName>)
                 (4 |> UMX.tag<cfgPlexItemRank>)
-                (CfgModelParamValue.makeReproductionRates [2.0;])
+                (ModelParamValue.makeReproductionRates [2.0;])
 
 
     let spc1 = 1 |> UMX.tag<sorterPhenotypeCount>  |> sorterSetPruneMethod.PhenotypeCap
@@ -53,19 +53,19 @@ module O_64 =
             CfgPlexItem.create
                 ("sorterSetPruneMethods" |> UMX.tag<cfgPlexItemName>)
                 (5 |> UMX.tag<cfgPlexItemRank>)
-                (CfgModelParamValue.makeSorterSetPruneMethods [spc2; spc4; spc6])
+                (ModelParamValue.makeSorterSetPruneMethods [spc2; spc4; spc6])
 
     let cpiStageWeights =
             CfgPlexItem.create
                 ("stageWeights" |> UMX.tag<cfgPlexItemName>)
                 (6 |> UMX.tag<cfgPlexItemRank>)
-                (CfgModelParamValue.makeStageWeights [0.05; 0.1;])
+                (ModelParamValue.makeStageWeights [0.05; 0.1;])
 
     let cpiSwitchGenModes =
             CfgPlexItem.create
                 ("switchGenModes" |> UMX.tag<cfgPlexItemName>)
                 (7 |> UMX.tag<cfgPlexItemRank>)
-                (CfgModelParamValue.makeSwitchGenModes [switchGenMode.stage; switchGenMode.stageSymmetric])
+                (ModelParamValue.makeSwitchGenModes [switchGenMode.stage; switchGenMode.stageSymmetric])
 
 
     let plex64 = 

@@ -9,7 +9,7 @@ type scriptItemRunShc =
         { 
             quirkRunId: Guid<quirkRunId>
             quirkModelParamSet: modelParamSet
-            scriptParamSet:scriptParamSet
+            scriptParamSet: scriptParamSet
         }
 
 
@@ -37,7 +37,7 @@ type scriptItemRunGa =
         { 
             quirkRunId: Guid<quirkRunId>
             quirkModelParamSet: modelParamSet
-            scriptParamSet:scriptParamSet
+            scriptParamSet: scriptParamSet
         }
 
 
