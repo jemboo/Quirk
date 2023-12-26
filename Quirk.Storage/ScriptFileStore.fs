@@ -67,16 +67,6 @@ type scriptFileStore (wsRootDir:string, fileUtils:IFileUtils) =
                 (this.getScriptToDoPath projectName)
 
 
-    member this.SaveScript (quirkScript:quirkScript) =
-        result {
-
-            return ()
-        }
-
-
-    interface IScriptDataStore with
-        member this.SaveScript quirkScript = this.SaveScript quirkScript
-
 
 
     //member this.writeToFileIfMissing (wsCompType:workspaceComponentType option) (fileName:string) (data: string) =

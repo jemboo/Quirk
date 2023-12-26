@@ -7,7 +7,6 @@
 
   <ItemGroup>
     <Compile Include="QuirkScriptDto.fs" />
-    <Compile Include="ProjectParamSetDto.fs" />
     <Compile Include="CfgPlexDto.fs" />
     <Compile Include="QuirkRunDto.fs" />
     <Compile Include="Library.fs" />

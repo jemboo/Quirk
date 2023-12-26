@@ -10,7 +10,7 @@ open Quirk.Storage
 module ScriptDispatcher =
 
     let dispatchCfgPlex
-            (cCfgPlexDataStore:ICfgPlexDataStore)
+            (cCfgPlexDataStore:IProjectDataStore)
             (projectName:string<projectName>)
         =
         let fileUtils = new fileUtils()
@@ -29,7 +29,7 @@ module ScriptDispatcher =
 
 
     let dispatchGenScript
-            (cCfgPlexDataStore:ICfgPlexDataStore)
+            (cCfgPlexDataStore:IProjectDataStore)
             (projectName:string<projectName>)
             (firstScriptIndex:int)
             (scriptCount:int)
@@ -38,14 +38,14 @@ module ScriptDispatcher =
 
 
     let dispatchRunScript
-            (cCfgPlexDataStore:ICfgPlexDataStore)
+            (cCfgPlexDataStore:IProjectDataStore)
             (projectName:string<projectName>)
         =
         ()  |> Ok
 
 
     let fromQuirkProgramMode
-            (cCfgPlexDataStore:ICfgPlexDataStore)
+            (cCfgPlexDataStore:IProjectDataStore)
             (projectName:string<projectName>)
             (firstScriptIndex:int)
             (scriptCount:int)

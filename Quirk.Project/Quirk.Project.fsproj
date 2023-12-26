@@ -7,9 +7,10 @@
 
   <ItemGroup>
     <Compile Include="ProjectTypes.fs" />
-    <Compile Include="ReportParam.fs" />
-    <Compile Include="RunParam.fs" />
     <Compile Include="ModelParam.fs" />
+    <Compile Include="ReportParam.fs" />
+    <Compile Include="SimParam.fs" />
+    <Compile Include="RunParam.fs" />
     <Compile Include="QuirkRun.fs" />
   </ItemGroup>
 

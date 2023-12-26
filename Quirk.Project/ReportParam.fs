@@ -111,7 +111,7 @@ type reportParamSet =
         }
 
 
-module reportParamSet =
+module ReportParamSet =
 
     let create 
             (reportParamValues: reportParamValue seq)

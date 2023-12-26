@@ -86,7 +86,7 @@ module CfgPlex =
 
 
     let createScriptItem
-            (quirkProjectType:quirkProjectType)
+            (quirkProjectType:quirkModelType)
             (cfgPlex:cfgPlex)
             (replicaNumber: int<replicaNumber>) 
         =
@@ -95,7 +95,7 @@ module CfgPlex =
 
 
     let createQuirkRunSet
-            (quirkProjectType:quirkProjectType)
+            (quirkProjectType:quirkModelType)
             (cfgPlex:cfgPlex)
             (replicaNumber: int<replicaNumber>) 
         =

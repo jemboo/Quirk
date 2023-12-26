@@ -6,7 +6,7 @@ open Quirk.Core
 open Quirk.Project
 open Quirk.Cfg.Core
 open Quirk.Cfg.Serialization
-
+open Quirk.Script
 
 
 type projectFileStore (wsRootDir:string, fileUtils:IFileUtils) =
@@ -79,9 +79,24 @@ type projectFileStore (wsRootDir:string, fileUtils:IFileUtils) =
             return ()
         }
 
+    member this.SaveScript (quirkScript:quirkScript) =
+        result {
 
-    interface ICfgPlexDataStore with
+            return ()
+        }
+
+    member this.getProject (projectName : string<projectName>) =
+        result {
+        
+            return true
+        }
+
+
+
+    interface IProjectDataStore with
         member this.SaveCfgPlex cfgPlex = this.saveCfgPlex cfgPlex
+        member this.GetProject (projectName:string<projectName>) = this.getProject projectName
+        member this.SaveScript quirkScript = this.SaveScript quirkScript
 
 
 

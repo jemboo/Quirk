@@ -83,18 +83,18 @@ module O_64 =
                 |]
 
 
-    let runParamSet1 = 
-            RunParamSet.create
+    let simParamSet1 = 
+            SimParamSet.create
                 [|
-                    (0 |> UMX.tag<generation> |> RunParamValue.makeGenerationStart)
-                    (500 |> UMX.tag<generation> |> RunParamValue.makeGenerationStart)
-                    (5 |> UMX.tag<generation> |> RunParamValue.makeGenerationStart)
-                    (50 |> UMX.tag<generation> |> RunParamValue.makeGenerationStart)
+                    (0 |> UMX.tag<generation> |> SimParamValue.makeGenerationStart)
+                    (500 |> UMX.tag<generation> |> SimParamValue.makeGenerationStart)
+                    (5 |> UMX.tag<generation> |> SimParamValue.makeGenerationStart)
+                    (50 |> UMX.tag<generation> |> SimParamValue.makeGenerationStart)
                 |]
 
 
     let quirkRunSet = 
             CfgPlex.createQuirkRunSet
-                quirkProjectType.Shc
+                quirkModelType.Shc
                 plex64
                 (1 |> UMX.tag<replicaNumber>)
