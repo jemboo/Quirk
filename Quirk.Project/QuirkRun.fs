@@ -5,43 +5,19 @@ open Quirk.Core
 
 
 
-type quirkModelType =
-    | Shc
-    | Ga
-
-
-module QuirkModelType =
-
-    let toString 
-            (quirkProjectType:quirkModelType)
-        =
-        match quirkProjectType with
-        | Shc -> "Shc"
-        | Ga -> "Ga"
-
-
-    let fromString 
-            (qrt:string)
-        =
-        match qrt with
-        | "Shc" -> quirkModelType.Shc |> Ok
-        | "Ga" -> quirkModelType.Ga |> Ok
-        | _ -> $"{qrt} not handled in QuirkProjectType.fromString" |> Error
-
-
-
 type quirkRun = 
     private 
         { 
-            quirkRunId: Guid<quirkRunId>
+            quirkWorldLineId: Guid<quirkWorldLineId>
             quirkModelType: quirkModelType
-            quirkModelParamSet: modelParamSet
+            modelParamSet: modelParamSet
+            runParamSet: runParamSet
         }
 
 
 module QuirkRun =
 
-    let makeQuirkRunId
+    let makeQuirkWorldLineId
             (quirkModelParamSet:modelParamSet)
             (quirkProjectType:quirkModelType)
         =
@@ -50,29 +26,33 @@ module QuirkRun =
                 quirkProjectType :> obj
             ] 
             |> GuidUtils.guidFromObjs
-            |> UMX.tag<quirkRunId>
+            |> UMX.tag<quirkWorldLineId>
 
 
     let create 
             (quirkModelType: quirkModelType)
+            (runParamSet: runParamSet)
             (quirkModelParamSet: modelParamSet)
         =
         { 
-            quirkRunId = makeQuirkRunId quirkModelParamSet quirkModelType
+            quirkWorldLineId = makeQuirkWorldLineId quirkModelParamSet quirkModelType
             quirkModelType = quirkModelType
-            quirkModelParamSet = quirkModelParamSet
+            modelParamSet = quirkModelParamSet
+            runParamSet = runParamSet
         }
 
-
-
-    let getQuirkRunId (quirkRun:quirkRun) = 
-            quirkRun.quirkRunId
+    let getQuirkWorldLineId (quirkRun:quirkRun) = 
+            quirkRun.quirkWorldLineId
 
     let getQuirkModelType (quirkRun:quirkRun) = 
             quirkRun.quirkModelType
 
     let getModelParamSet (quirkRun:quirkRun) = 
-            quirkRun.quirkModelParamSet
+            quirkRun.modelParamSet
+
+    let getRunParamSet (quirkRun:quirkRun) = 
+            quirkRun.runParamSet
+
 
 
 

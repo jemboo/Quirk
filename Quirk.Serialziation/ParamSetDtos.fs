@@ -130,58 +130,58 @@ type reportParamSetDto =
         
 
 
-type scriptParamSetDto =
+type runParamSetDto =
         { 
-            scriptParamSetType : string
+            runParamSetType : string
             simParamSetDto: simParamSetDto option
             reportParamSetDto: reportParamSetDto option
         }
     
- module ScriptParamSetDto =
-    let toDto (scriptParamSet:runParamSet) : scriptParamSetDto =
-        match scriptParamSet with
+ module RunParamSetDto =
+    let toDto (runParamSet:runParamSet) : runParamSetDto =
+        match runParamSet with
         | runParamSet.Sim runPs ->
             {
-                scriptParamSetDto.scriptParamSetType = 
+                runParamSetDto.runParamSetType = 
                     runParamSetType.Sim |> RunParamSetType.toString
                 simParamSetDto = runPs |> SimParamSetDto.toDto |> Some
                 reportParamSetDto = None
             }
         | runParamSet.Report rptPs ->
             {
-                scriptParamSetDto.scriptParamSetType = 
+                runParamSetDto.runParamSetType = 
                     runParamSetType.Report |> RunParamSetType.toString
                 simParamSetDto = None
                 reportParamSetDto = rptPs |> ReportParamSetDto.toDto |> Some
             }
 
-    let toJson (scriptParamSet:runParamSet) =
-        scriptParamSet |> toDto |> Json.serialize
+    let toJson (runParamSet:runParamSet) =
+        runParamSet |> toDto |> Json.serialize
 
     
-    let fromDto (scriptParamSetDto:scriptParamSetDto) = 
+    let fromDto (runParamSetDto:runParamSetDto) = 
         result {
-            let! scriptParamSetType =
-                   scriptParamSetDto.scriptParamSetType
+            let! runParamSetType =
+                   runParamSetDto.runParamSetType
                    |> RunParamSetType.fromString
-            match scriptParamSetType with
+            match runParamSetType with
             | runParamSetType.Sim ->
                 let! simParamSetDto = 
-                    scriptParamSetDto.simParamSetDto 
+                    runParamSetDto.simParamSetDto 
                     |> Result.ofOption "simParamSetDto is missing"
                 let! simParamSet = simParamSetDto |> SimParamSetDto.fromDto
                 return simParamSet |> runParamSet.Sim
 
             | Report ->
                 let! reportParamSetDto = 
-                    scriptParamSetDto.reportParamSetDto 
+                    runParamSetDto.reportParamSetDto 
                     |> Result.ofOption "reportParamSetDto is missing"
                 let! reportParamSet = reportParamSetDto |> ReportParamSetDto.fromDto
                 return reportParamSet |> runParamSet.Report
         }
     let fromJson (cereal:string) =
         result {
-            let! dto = Json.deserialize<scriptParamSetDto> cereal
+            let! dto = Json.deserialize<runParamSetDto> cereal
             return! fromDto dto
         }
             

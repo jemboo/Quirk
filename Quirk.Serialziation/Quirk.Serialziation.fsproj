@@ -13,6 +13,7 @@
     <Compile Include="SorterSetPruneMethodDto.fs" />
     <Compile Include="SorterMutatorDto.fs" />
     <Compile Include="ParamSetDtos.fs" />
+    <Compile Include="QuirkProjectDto.fs" />
     <Compile Include="ScriptDtos.fs" />
     <Compile Include="Library.fs" />
   </ItemGroup>

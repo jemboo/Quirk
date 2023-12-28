@@ -1,7 +1,7 @@
 ﻿namespace Quirk.Project
 
 
-[<Measure>] type quirkRunId
+[<Measure>] type quirkWorldLineId
 [<Measure>] type projectName
 
 
@@ -32,14 +32,27 @@ type workspaceComponentType =
     | WorkspaceParams = 50
 
 
+type quirkModelType =
+    | Shc
+    | Ga
 
-//type IWorkspaceStore = 
-//    abstract member SaveWorkSpace: workspace -> (wsComponentName -> bool) -> Result<string,string>
-//    abstract member LoadWorkSpace: workspaceId -> Result<workspace,string>
-//    abstract member WorkSpaceExists: workspaceId -> Result<bool,string>
-//    abstract member GetLastWorkspaceId: unit -> Result<workspaceId,string>
-//    abstract member WriteLinesEnsureHeader: (workspaceComponentType option) -> (string) -> (seq<string>) -> (string seq) -> Result<bool,string>
-//    abstract member GetAllSorterSetEvalsWithParams: wsComponentName -> (workspaceParams -> bool) -> Result<(sorterSetEval*workspaceParams) list, string>
-//    abstract member GetAllSpeedSetBinsWithParams: wsComponentName -> (workspaceParams -> bool) -> Result<(sorterSpeedBinSet*workspaceParams) list, string>
-//    abstract member GetAllWorkspaceDescriptionsWithParams: unit -> Result<(workspaceDescription*workspaceParams) list, string>
-//    abstract member GetComponent: wsComponentName -> workspaceDescription -> Result<workspaceComponent, string>
+
+module QuirkModelType =
+
+    let toString 
+            (quirkProjectType:quirkModelType)
+        =
+        match quirkProjectType with
+        | Shc -> "Shc"
+        | Ga -> "Ga"
+
+
+    let fromString 
+            (qrt:string)
+        =
+        match qrt with
+        | "Shc" -> quirkModelType.Shc |> Ok
+        | "Ga" -> quirkModelType.Ga |> Ok
+        | _ -> $"{qrt} not handled in QuirkProjectType.fromString" |> Error
+
+

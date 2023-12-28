@@ -86,22 +86,40 @@ module CfgPlex =
 
 
     let createScriptItem
-            (quirkProjectType:quirkModelType)
+            (quirkModelType:quirkModelType)
+            (runParamSet: runParamSet)
             (cfgPlex:cfgPlex)
             (replicaNumber: int<replicaNumber>) 
         =
         makeModelParamSets cfgPlex replicaNumber
-        |> List.map(QuirkRun.create quirkProjectType)
+        |> List.map(QuirkRun.create quirkModelType runParamSet)
+
+
+    let createQuirkRuns
+            (quirkModelType:quirkModelType)
+            (runParamSet: runParamSet)
+            (cfgPlex:cfgPlex)
+        =
+            let replicaNums = 
+                Seq.initInfinite UMX.tag<replicaNumber>
+            let _quirkRuns rn =
+                makeModelParamSets cfgPlex rn
+                |> List.map(QuirkRun.create quirkModelType runParamSet)
+                |> List.toSeq
+
+            replicaNums |> Seq.map _quirkRuns |> Seq.concat
+
 
 
     let createQuirkRunSet
-            (quirkProjectType:quirkModelType)
+            (quirkModelType:quirkModelType)
+            (runParamSet: runParamSet)
             (cfgPlex:cfgPlex)
             (replicaNumber: int<replicaNumber>) 
         =
             let quirkRuns =
                 makeModelParamSets cfgPlex replicaNumber
-                |> List.map(QuirkRun.create quirkProjectType)
+                |> List.map(QuirkRun.create quirkModelType runParamSet)
                 |> List.toArray
 
             QuirkRunSet.create quirkRuns

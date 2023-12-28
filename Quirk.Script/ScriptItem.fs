@@ -7,7 +7,7 @@ open Quirk.Project
 type scriptItem = 
     private 
         { 
-            quirkRunId: Guid<quirkRunId>
+            quirkWorldLineId: Guid<quirkWorldLineId>
             quirkModelType: quirkModelType
             modelParamSet: modelParamSet
             scriptParamSet: runParamSet
@@ -21,18 +21,18 @@ module ScriptItem =
             (scriptParamSet: runParamSet)
             (modelParamSet: modelParamSet)
         =
-        let quirkRunId = modelParamSet 
+        let quirkWorldLineId = modelParamSet 
                             |> ModelParamSet.getId
-                            |> UMX.cast<modelParamSetId, quirkRunId>
+                            |> UMX.cast<modelParamSetId, quirkWorldLineId>
         {
-            scriptItem.quirkRunId = quirkRunId
+            scriptItem.quirkWorldLineId = quirkWorldLineId
             quirkModelType = quirkModelType
             modelParamSet = modelParamSet
             scriptParamSet = scriptParamSet
         }
 
-    let getQuirkRunId (scriptItem:scriptItem) =
-        scriptItem.quirkRunId
+    let getQuirkWorldlineId (scriptItem:scriptItem) =
+        scriptItem.quirkWorldLineId
 
     let getQuirkModelType (scriptItem:scriptItem) =
         scriptItem.quirkModelType

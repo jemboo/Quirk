@@ -91,10 +91,12 @@ module O_64 =
                     (5 |> UMX.tag<generation> |> SimParamValue.makeGenerationStart)
                     (50 |> UMX.tag<generation> |> SimParamValue.makeGenerationStart)
                 |]
+                |> runParamSet.Sim
 
 
-    let quirkRunSet = 
-            CfgPlex.createQuirkRunSet
+    let quirkRuns (indexStart:int) (runCount:int) = 
+            CfgPlex.createQuirkRuns
                 quirkModelType.Shc
+                simParamSet1
                 plex64
-                (1 |> UMX.tag<replicaNumber>)
+            |> Seq.skip(indexStart) |> Seq.take(runCount)

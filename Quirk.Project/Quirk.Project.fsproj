@@ -12,6 +12,7 @@
     <Compile Include="SimParam.fs" />
     <Compile Include="RunParam.fs" />
     <Compile Include="QuirkRun.fs" />
+    <Compile Include="QuirkProject.fs" />
   </ItemGroup>
 
   <ItemGroup>

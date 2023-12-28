@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="CliArguments.fs" />
+    <Compile Include="RunTypes.fs" />
     <Compile Include="ScriptDispatcher.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

@@ -9,19 +9,19 @@ open Quirk.Script
 
 type scriptItemDto =
         { 
-            quirkRunId: Guid
+            quirkWorldLineId: Guid
             quirkModelType: string
             modelParamSetDto: modelParamSetDto
-            scriptParamSetDto: scriptParamSetDto
+            runParamSetDto: runParamSetDto
         }
     
  module ScriptItemDto =
     let toDto (scriptItem:scriptItem) : scriptItemDto =
         {
-            scriptItemDto.quirkRunId = scriptItem |> ScriptItem.getQuirkRunId |> UMX.untag
+            scriptItemDto.quirkWorldLineId = scriptItem |> ScriptItem.getQuirkWorldlineId |> UMX.untag
             scriptItemDto.quirkModelType = scriptItem |> ScriptItem.getQuirkModelType |> QuirkModelType.toString
             scriptItemDto.modelParamSetDto = scriptItem |> ScriptItem.getModelParamSet |> ModelParamSetDto.toDto
-            scriptItemDto.scriptParamSetDto = scriptItem |> ScriptItem.getScriptParamSet |> ScriptParamSetDto.toDto
+            scriptItemDto.runParamSetDto = scriptItem |> ScriptItem.getScriptParamSet |> RunParamSetDto.toDto
         }
     let toJson (quirkscriptItem:scriptItem) =
         quirkscriptItem |> toDto |> Json.serialize
@@ -30,7 +30,7 @@ type scriptItemDto =
     let fromDto (scriptItemDto:scriptItemDto) = 
         result {
             let! scriptModelType = scriptItemDto.quirkModelType |> QuirkModelType.fromString
-            let! scriptParamSet = scriptItemDto.scriptParamSetDto |> ScriptParamSetDto.fromDto
+            let! scriptParamSet = scriptItemDto.runParamSetDto |> RunParamSetDto.fromDto
             let! modelParamSet = scriptItemDto.modelParamSetDto |> ModelParamSetDto.fromDto
 
             return ScriptItem.create

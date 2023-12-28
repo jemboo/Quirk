@@ -11,12 +11,12 @@ open Quirk.Run.Core
 module WorkspaceComponentTypeShc =
 
     let getShcComponentID 
-            (quirkRunId:Guid<quirkRunId>)
+            (quirkWorldLineId:Guid<quirkWorldLineId>)
             (generation:int<generation>)
             (workspaceComponentTypeShc:workspaceComponentType)
         =
         [
-            quirkRunId :> obj
+            quirkWorldLineId :> obj
             generation :> obj
             workspaceComponentTypeShc :> obj
         ] 
@@ -50,12 +50,12 @@ module RndGenProvider =
 
 
     let getShcWorkspaceComponentId
-            (quirkRunId: Guid<quirkRunId>)
+            (quirkWorldLineId: Guid<quirkWorldLineId>)
             (wsc:workspaceComponentType)
             (generation:int<generation>) 
         =
         [
-            quirkRunId :> obj;
+            quirkWorldLineId :> obj;
             wsc :> obj;
             generation :> obj
         ] 
