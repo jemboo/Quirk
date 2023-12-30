@@ -70,7 +70,6 @@ module CfgPlex =
             (cfgPlex: cfgPlex)
             (replicaNumber: int<replicaNumber>) 
         =
-        
         let _enumerateModelParamSetItems
                 (cfgPlexItems: cfgPlexItem[])
             =
@@ -99,28 +98,49 @@ module CfgPlex =
             (quirkModelType:quirkModelType)
             (runParamSet: runParamSet)
             (cfgPlex:cfgPlex)
+            (maxIndex:int)
         =
-            let replicaNums = 
-                Seq.initInfinite UMX.tag<replicaNumber>
-            let _quirkRuns rn =
-                makeModelParamSets cfgPlex rn
-                |> List.map(QuirkRun.create quirkModelType runParamSet)
-                |> List.toSeq
+        let replicaNums = 
+            Seq.initInfinite UMX.tag<replicaNumber>
+        let _quirkRuns rn =
+            makeModelParamSets cfgPlex rn
+            |> List.map(QuirkRun.create quirkModelType runParamSet)
+            |> List.toSeq
 
-            replicaNums |> Seq.map _quirkRuns |> Seq.concat
+        replicaNums 
+        |> Seq.map _quirkRuns 
+        |> Seq.concat
+        |> Seq.take (maxIndex + 1)
 
 
-
-    let createQuirkRunSet
+    let createSelectedQuirkRunSets
             (quirkModelType:quirkModelType)
             (runParamSet: runParamSet)
+            (selectedIndexes: int[])
+            (maxRunsetSize:int)
             (cfgPlex:cfgPlex)
-            (replicaNumber: int<replicaNumber>) 
         =
-            let quirkRuns =
-                makeModelParamSets cfgPlex replicaNumber
-                |> List.map(QuirkRun.create quirkModelType runParamSet)
-                |> List.toArray
+        let maxIndex = selectedIndexes |> Array.max
+        createQuirkRuns
+            quirkModelType
+            runParamSet
+            cfgPlex
+            maxIndex
+        |> CollectionProps.filterByIndexes selectedIndexes
+        |> Seq.chunkBySize maxRunsetSize
+        |> Seq.map(QuirkRunSet.create cfgPlex.projectName)
 
-            QuirkRunSet.create quirkRuns
+
+    //let createQuirkRunSet
+    //        (quirkModelType:quirkModelType)
+    //        (runParamSet: runParamSet)
+    //        (cfgPlex:cfgPlex)
+    //        (replicaNumber: int<replicaNumber>) 
+    //    =
+    //        let quirkRuns =
+    //            makeModelParamSets cfgPlex replicaNumber
+    //            |> List.map(QuirkRun.create quirkModelType runParamSet)
+    //            |> List.toArray
+
+    //        QuirkRunSet.create quirkRuns
 

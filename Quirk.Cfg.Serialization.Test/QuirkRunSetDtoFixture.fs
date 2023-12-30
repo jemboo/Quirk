@@ -15,7 +15,7 @@ module QuirkRunSetDtoFixture =
     [<Fact>]
     let ``QuirkRunSet`` () =
 
-        let quirkRunSet = O_64.quirkRuns
+        //let quirkRunSet = O_64.quirkRuns
 
         //let dtoCereal = quirkRunSet |> QuirkRunSetDto.toJson
 

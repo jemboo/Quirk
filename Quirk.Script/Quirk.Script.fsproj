@@ -7,7 +7,6 @@
 
   <ItemGroup>
     <Compile Include="ScriptTypes.fs" />
-    <Compile Include="ScriptItem.fs" />
     <Compile Include="QuirkScript.fs" />
   </ItemGroup>
 

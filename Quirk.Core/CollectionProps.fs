@@ -61,6 +61,16 @@ module CollectionProps =
         if (leftOvers = 0) then fullCrates else fullCrates + 1
 
 
+    let filterByIndexes (indexes: int array) (source: 'a seq) : 'a seq =
+        let maxDex = indexes |> Array.max
+        seq {
+            for i in indexes do
+                if i >= 0 && i <= maxDex then
+                    yield Seq.item i source
+                else
+                    failwithf "Index %d is out of bounds for the given sequence" i
+        }
+
     let check2dArraySize (arrayLength: int<arrayLength>) (arrayCount: int<arrayCount>) (data: 'T[]) =
         let expectedLen =
             (arrayLength |> UMX.untag ) * (arrayCount |> UMX.untag)

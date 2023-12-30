@@ -7,6 +7,7 @@ open Quirk.Project
 open Quirk.Cfg.Core
 open Quirk.Cfg.Serialization
 open Quirk.Script
+open Quirk.Serialization
 
 
 type projectFileStore (wsRootDir:string, fileUtils:IFileUtils) =
@@ -72,8 +73,8 @@ type projectFileStore (wsRootDir:string, fileUtils:IFileUtils) =
             let projectName = (cfgPlex |> CfgPlex.getProjectName |> UMX.untag)
             let projectPath = this.getProjectPath projectName
           
-            if Directory.Exists(projectPath) then
-                return! $"A project already exists at {projectPath}" |> Error
+            //if Directory.Exists(projectPath) then
+            //    return! $"A project already exists at {projectPath}" |> Error
             let dto = cfgPlex |> CfgPlexDto.toDto
             fileUtils.Save projectPath (this.getProjectFileName projectName) dto
             return ()
@@ -81,7 +82,12 @@ type projectFileStore (wsRootDir:string, fileUtils:IFileUtils) =
 
     member this.SaveScript (quirkScript:quirkScript) =
         result {
-
+            let projectName = (quirkScript |> QuirkScript.getProjectFolder |> UMX.untag)
+            let projectPath = this.getScriptToDoPath projectName
+          
+            let dto = quirkScript |> QuirkScriptDto.toDto
+            let scriptFileName = quirkScript  |> QuirkScript.getScriptName |> UMX.untag
+            fileUtils.Save projectPath (this.getProjectFileName scriptFileName) dto
             return ()
         }
 

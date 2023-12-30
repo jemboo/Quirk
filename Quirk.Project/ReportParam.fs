@@ -8,8 +8,8 @@ open Quirk.Core
 type reportParamValue =
     | GenerationStart of string<reportParamName> * int<generation>
     | GenerationEnd of string<reportParamName> * int<generation>
-    | ReportIntervalShort of string<reportParamName> * int<generation>
-    | ReportIntervalLong of string<reportParamName> * int<generation>
+    | ReportInterval of string<reportParamName> * int<generation>
+    | ReportName of string<reportParamName> * string<reportName>
 
 
 module ReportParamValue =
@@ -20,19 +20,19 @@ module ReportParamValue =
     let makeGenerationEnd (genEnd: int<generation>) =
         ("generationEnd" |> UMX.tag<reportParamName>, genEnd) |> reportParamValue.GenerationEnd
 
-    let makeReportIntervalShort (genShort: int<generation>) =
-        ("reportIntervalShort" |> UMX.tag<reportParamName>, genShort) |> reportParamValue.ReportIntervalShort
+    let makeReportInterval (genShort: int<generation>) =
+        ("reportInterval" |> UMX.tag<reportParamName>, genShort) |> reportParamValue.ReportInterval
 
-    let makeReportIntervalLong (genLong: int<generation>) =
-        ("reportIntervalLong" |> UMX.tag<reportParamName>, genLong) |> reportParamValue.ReportIntervalLong
+    let makeReportName (genLong: string<reportName>) =
+        ("reportName" |> UMX.tag<reportParamName>, genLong) |> reportParamValue.ReportName
 
 
     let reportParamName (reportParamValue: reportParamValue) =
         match reportParamValue with
         | GenerationStart (n, o) -> n
         | GenerationEnd (n, nf) -> n
-        | ReportIntervalShort (n, o) -> n
-        | ReportIntervalLong (n, pc) -> n
+        | ReportInterval (n, o) -> n
+        | ReportName (n, rn) -> n
 
 
     let toArrayOfStrings (reportParamValue: reportParamValue) =
@@ -50,16 +50,16 @@ module ReportParamValue =
                     nf |> UMX.untag |> string
                 |]
 
-        | ReportIntervalShort (n, o) ->
+        | ReportInterval (n, o) ->
                 [|
-                    "ReportIntervalShort";
+                    "ReportInterval";
                     n |> UMX.untag
                     o |> UMX.untag |> string
                 |]
 
-        | ReportIntervalLong (n, pc) ->
+        | ReportName (n, pc) ->
                 [|
-                     "ReportIntervalLong";
+                     "ReportName";
                      n |> UMX.untag
                      pc |> UMX.untag |> string
                 |]
@@ -84,19 +84,18 @@ module ReportParamValue =
                         |> reportParamValue.GenerationEnd
             }
 
-        | [|"ReportIntervalShort"; n; o|] ->
+        | [|"ReportInterval"; n; o|] ->
             result {
                 let! ov = StringUtil.parseInt o
                 let rpName = n |> UMX.tag<reportParamName>
-                return (rpName, ov |> UMX.tag<generation>) |> reportParamValue.ReportIntervalShort
+                return (rpName, ov |> UMX.tag<generation>) |> reportParamValue.ReportInterval
             }
 
-        | [|"ReportIntervalLong"; n; pc;|] ->
+        | [|"ReportName"; n; pc;|] ->
             result {
-                let! pcValue = StringUtil.parseInt pc
                 let rpName = n |> UMX.tag<reportParamName>
-                return (rpName, pcValue |> UMX.tag<generation> )
-                        |> reportParamValue.ReportIntervalLong
+                return (rpName, pc |> UMX.tag<reportName> )
+                        |> reportParamValue.ReportName
             }
 
         | uhv -> $"not handled in reportParamValue.fromArrayOfStrings %A{uhv}" |> Error

@@ -2,7 +2,10 @@
 
 open FSharp.UMX
 open Quirk.Core
+open System
 
+
+[<Measure>] type quirkRunSetName
 
 
 type quirkRun = 
@@ -54,11 +57,11 @@ module QuirkRun =
             quirkRun.runParamSet
 
 
-
-
 type quirkRunSet = 
     private 
         { 
+            id:Guid<quirkRunSetName>
+            projectName:string<projectName>
             quirkRuns:quirkRun[]
         }
 
@@ -66,12 +69,20 @@ type quirkRunSet =
 module QuirkRunSet = 
     
     let create 
+            (projectName:string<projectName>)
             (quirkRuns: quirkRun seq)
         =
-        { quirkRunSet.quirkRuns = quirkRuns |> Seq.toArray }
+        let quirkRunsA = quirkRuns |> Seq.toArray
+        let id = quirkRuns |> Seq.map box |> GuidUtils.guidFromObjs
+        { 
+            quirkRunSet.quirkRuns = quirkRunsA
+            projectName = projectName
+            id = id |> UMX.tag<quirkRunSetName>
+        }
 
+    let getId (quirkRunSet:quirkRunSet) = quirkRunSet.id
 
-    let getQuirkRuns 
-            (quirkRunSet:quirkRunSet) =
-        quirkRunSet.quirkRuns
+    let getProjectName (quirkRunSet:quirkRunSet) = quirkRunSet.projectName
+
+    let getQuirkRuns (quirkRunSet:quirkRunSet) = quirkRunSet.quirkRuns
 

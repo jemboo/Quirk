@@ -9,7 +9,7 @@ type quirkScript =
         {
             scriptName: string<scriptName>;
             projectFolder:string<projectName>
-            scriptItems: scriptItem[]
+            quirkRuns: quirkRun[]
         }
 
 module QuirkScript =
@@ -17,57 +17,56 @@ module QuirkScript =
     let create 
             (scriptName: string<scriptName>)
             (projectFolder:string<projectName>)
-            (scriptItems: scriptItem[])
+            (quirkRuns: quirkRun[])
         =
         {
             quirkScript.scriptName = scriptName
             projectFolder = projectFolder
-            scriptItems = scriptItems
+            quirkRuns = quirkRuns
         }
 
-    let createRunScripts
-            (quirkModelType: quirkModelType)
-            (scriptName: string<scriptName>)
-            (projectFolder:string<projectName>)
-            (simParamSet: simParamSet)
-            (modelParamSets: modelParamSet seq )
+    let createFromRunSet 
+            (quirkRunSet:quirkRunSet)
         =
-        let scriptParamSet = simParamSet |> runParamSet.Sim
-        let scriptItems = 
-                modelParamSets
-                |> Seq.map(ScriptItem.create quirkModelType scriptParamSet)
-                |> Seq.toArray
-        create
-            scriptName projectFolder scriptItems
+        {
+            scriptName = quirkRunSet |> QuirkRunSet.getId |> UMX.untag |> string |> UMX.tag<scriptName>
+            projectFolder = quirkRunSet |> QuirkRunSet.getProjectName  
+            quirkRuns = quirkRunSet |> QuirkRunSet.getQuirkRuns 
+        }
+
+    let getScriptName (quirkScript:quirkScript) = quirkScript.scriptName
+    let getProjectFolder (quirkScript:quirkScript) = quirkScript.projectFolder
+    let getScriptItems (quirkScript:quirkScript) = quirkScript.quirkRuns
 
 
-
-    let createReportScripts
-            (quirkModelType: quirkModelType)
-            (scriptName: string<scriptName>)
-            (projectFolder:string<projectName>)
-            (reportParamSet: reportParamSet)
-            (modelParamSets: modelParamSet seq )
-        =
-        let scriptParamSet = reportParamSet |> runParamSet.Report
-        let scriptItems = 
-                modelParamSets
-                |> Seq.map(ScriptItem.create quirkModelType scriptParamSet)
-                |> Seq.toArray
-        create
-            scriptName projectFolder scriptItems
-
+    //let createRunScripts
+    //        (quirkModelType: quirkModelType)
+    //        (scriptName: string<scriptName>)
+    //        (projectFolder:string<projectName>)
+    //        (simParamSet: simParamSet)
+    //        (modelParamSets: modelParamSet seq)
+    //    =
+    //    let scriptParamSet = simParamSet |> runParamSet.Sim
+    //    let scriptItems = 
+    //            modelParamSets
+    //            |> Seq.map(QuirkRun.create quirkModelType scriptParamSet)
+    //            |> Seq.toArray
+    //    create
+    //        scriptName projectFolder scriptItems
 
 
+    //let createReportScripts
+    //        (quirkModelType: quirkModelType)
+    //        (scriptName: string<scriptName>)
+    //        (projectFolder:string<projectName>)
+    //        (reportParamSet: reportParamSet)
+    //        (modelParamSets: modelParamSet seq)
+    //    =
+    //    let scriptParamSet = reportParamSet |> runParamSet.Report
+    //    let scriptItems = 
+    //            modelParamSets
+    //            |> Seq.map(QuirkRun.create quirkModelType scriptParamSet)
+    //            |> Seq.toArray
+    //    create
+    //        scriptName projectFolder scriptItems
 
-    let getScriptName 
-            (quirkScript:quirkScript) =
-        quirkScript.scriptName
-
-    let getProjectFolder
-            (quirkScript:quirkScript) =
-        quirkScript.projectFolder
-
-    let getScriptItems
-            (quirkScript:quirkScript) =
-        quirkScript.scriptItems

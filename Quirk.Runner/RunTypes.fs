@@ -4,7 +4,8 @@ open Argu
 
 type quirkProgramMode =
     | CfgPlex
-    | GenScript
+    | GenSimScript
+    | GenReportScript
     | RunScript
 
 
@@ -15,21 +16,21 @@ module quirkProgramMode =
         =
         match quirkProgramMode with
         | CfgPlex -> "CfgPlex"
-        | GenScript -> "GenScript"
+        | GenSimScript -> "GenSimScript"
+        | GenReportScript -> "GenReportScript"
         | RunScript -> "RunScript"
 
     let fromString (qrm: string) =
         match qrm.Split() with
         | [| "CfgPlex" |] -> quirkProgramMode.CfgPlex |> Ok 
-        | [| "GenScript" |] -> quirkProgramMode.GenScript |> Ok
+        | [| "GenSimScript" |] -> quirkProgramMode.GenSimScript |> Ok
+        | [| "GenReportScript" |] -> quirkProgramMode.GenReportScript |> Ok
         | [| "RunScript"; rn |] -> quirkProgramMode.RunScript |> Ok
         | _ -> Error $"{qrm} not handled in QuirkScriptMode.fromString"
 
 
 
     
-
-
 type CliArguments =
     | First_Script_Index of string
     | Log_level of int

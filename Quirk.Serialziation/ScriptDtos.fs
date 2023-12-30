@@ -7,7 +7,7 @@ open Quirk.Core
 open Quirk.Project
 open Quirk.Script
 
-type scriptItemDto =
+type quirkRunDto =
         { 
             quirkWorldLineId: Guid
             quirkModelType: string
@@ -15,32 +15,32 @@ type scriptItemDto =
             runParamSetDto: runParamSetDto
         }
     
- module ScriptItemDto =
-    let toDto (scriptItem:scriptItem) : scriptItemDto =
+ module quirkRunDto =
+    let toDto (quirkRun:quirkRun) : quirkRunDto =
         {
-            scriptItemDto.quirkWorldLineId = scriptItem |> ScriptItem.getQuirkWorldlineId |> UMX.untag
-            scriptItemDto.quirkModelType = scriptItem |> ScriptItem.getQuirkModelType |> QuirkModelType.toString
-            scriptItemDto.modelParamSetDto = scriptItem |> ScriptItem.getModelParamSet |> ModelParamSetDto.toDto
-            scriptItemDto.runParamSetDto = scriptItem |> ScriptItem.getScriptParamSet |> RunParamSetDto.toDto
+            quirkRunDto.quirkWorldLineId = quirkRun |> QuirkRun.getQuirkWorldLineId |> UMX.untag
+            quirkRunDto.quirkModelType = quirkRun |> QuirkRun.getQuirkModelType |> QuirkModelType.toString
+            quirkRunDto.modelParamSetDto = quirkRun |> QuirkRun.getModelParamSet |> ModelParamSetDto.toDto
+            quirkRunDto.runParamSetDto = quirkRun |> QuirkRun.getRunParamSet |> RunParamSetDto.toDto
         }
-    let toJson (quirkscriptItem:scriptItem) =
-        quirkscriptItem |> toDto |> Json.serialize
+    let toJson (quirkquirkRun:quirkRun) =
+        quirkquirkRun |> toDto |> Json.serialize
 
     
-    let fromDto (scriptItemDto:scriptItemDto) = 
+    let fromDto (quirkRunDto:quirkRunDto) = 
         result {
-            let! scriptModelType = scriptItemDto.quirkModelType |> QuirkModelType.fromString
-            let! scriptParamSet = scriptItemDto.runParamSetDto |> RunParamSetDto.fromDto
-            let! modelParamSet = scriptItemDto.modelParamSetDto |> ModelParamSetDto.fromDto
+            let! scriptModelType = quirkRunDto.quirkModelType |> QuirkModelType.fromString
+            let! scriptParamSet = quirkRunDto.runParamSetDto |> RunParamSetDto.fromDto
+            let! modelParamSet = quirkRunDto.modelParamSetDto |> ModelParamSetDto.fromDto
 
-            return ScriptItem.create
+            return QuirkRun.create
                         scriptModelType
                         scriptParamSet
                         modelParamSet
         }
     let fromJson (cereal:string) =
         result {
-            let! dto = Json.deserialize<scriptItemDto> cereal
+            let! dto = Json.deserialize<quirkRunDto> cereal
             return! fromDto dto
         }
          
@@ -50,7 +50,7 @@ type quirkScriptDto =
         { 
             scriptName: string
             projectFolder: string
-            scriptItems: scriptItemDto[]
+            quirkRuns: quirkRunDto[]
         }
     
  module QuirkScriptDto =
@@ -58,10 +58,10 @@ type quirkScriptDto =
         {
             quirkScriptDto.scriptName = quirkScript |> QuirkScript.getScriptName |> UMX.untag
             quirkScriptDto.projectFolder = quirkScript |> QuirkScript.getProjectFolder |> UMX.untag
-            quirkScriptDto.scriptItems = 
+            quirkScriptDto.quirkRuns = 
                     quirkScript 
                             |> QuirkScript.getScriptItems 
-                            |> Array.map(ScriptItemDto.toDto)
+                            |> Array.map(quirkRunDto.toDto)
         }
     let toJson (quirkquirkScript:quirkScript) =
         quirkquirkScript |> toDto |> Json.serialize
@@ -71,16 +71,16 @@ type quirkScriptDto =
         result {
             let scriptName = quirkScriptDto.scriptName |> UMX.tag<scriptName>
             let projectFolder = quirkScriptDto.projectFolder |> UMX.tag<projectName>
-            let! scriptItems = 
-                    quirkScriptDto.scriptItems
+            let! quirkRuns = 
+                    quirkScriptDto.quirkRuns
                     |> Array.toList
-                    |> List.map(ScriptItemDto.fromDto)
+                    |> List.map(quirkRunDto.fromDto)
                     |> Result.sequence
 
             return QuirkScript.create
                         scriptName
                         projectFolder
-                        (scriptItems |> List.toArray)
+                        (quirkRuns |> List.toArray)
         }
     let fromJson (cereal:string) =
         result {
