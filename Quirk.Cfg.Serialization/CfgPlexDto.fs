@@ -53,7 +53,8 @@ type cfgPlexItemDto =
         
  type cfgPlexDto =
         { 
-            name: string
+            cfgPlexName: string
+            projectName: string
             cfgPlexItemDtos: cfgPlexItemDto[]
         }
     
@@ -61,7 +62,8 @@ type cfgPlexItemDto =
     =
     let toDto (cfgPlex:cfgPlex) : cfgPlexDto =
         {
-            name = cfgPlex |> CfgPlex.getProjectName |> UMX.untag
+            cfgPlexName = cfgPlex |> CfgPlex.getCfgPlexName |> UMX.untag
+            projectName = cfgPlex |> CfgPlex.getProjectName |> UMX.untag
             cfgPlexItemDtos =
                cfgPlex
                     |> CfgPlex.getCfgPlexItems
@@ -79,7 +81,8 @@ type cfgPlexItemDto =
                    |> Array.toList
                    |> Result.sequence
             return CfgPlex.create
-                        (cfgPlexDto.name |> UMX.tag<projectName>)
+                        (cfgPlexDto.cfgPlexName |> UMX.tag<cfgPlexName>)
+                        (cfgPlexDto.projectName |> UMX.tag<projectName>)
                         (cfgPlexItems |> List.toArray)
         }
    

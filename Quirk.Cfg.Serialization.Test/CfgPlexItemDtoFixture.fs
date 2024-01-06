@@ -54,10 +54,11 @@ module CfgPlexItemDtoFixture =
         
         
         
-        let cfgPlexName = "cfgPlexName" |> UMX.tag<projectName>
+        let cfgPlexName = "cfgPlexName" |> UMX.tag<cfgPlexName>
+        let projectName = "projectName" |> UMX.tag<projectName>
         let cfgPlexItems = [|cfpiA; cfpiB; cfpiC|]
         
-        let cfgPlex = CfgPlex.create cfgPlexName cfgPlexItems
+        let cfgPlex = CfgPlex.create cfgPlexName projectName cfgPlexItems
         let strVal = sprintf "%A" cfgPlex
 
         let cfgPlexCereal = cfgPlex |> CfgPlexDto.toJson 

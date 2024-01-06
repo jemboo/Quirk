@@ -49,7 +49,7 @@ type quirkRunDto =
 type quirkScriptDto =
         { 
             scriptName: string
-            projectFolder: string
+            projectName: string
             quirkRuns: quirkRunDto[]
         }
     
@@ -57,7 +57,7 @@ type quirkScriptDto =
     let toDto (quirkScript:quirkScript) : quirkScriptDto =
         {
             quirkScriptDto.scriptName = quirkScript |> QuirkScript.getScriptName |> UMX.untag
-            quirkScriptDto.projectFolder = quirkScript |> QuirkScript.getProjectFolder |> UMX.untag
+            quirkScriptDto.projectName = quirkScript |> QuirkScript.getProjectName |> UMX.untag
             quirkScriptDto.quirkRuns = 
                     quirkScript 
                             |> QuirkScript.getScriptItems 
@@ -70,7 +70,7 @@ type quirkScriptDto =
     let fromDto (quirkScriptDto:quirkScriptDto) = 
         result {
             let scriptName = quirkScriptDto.scriptName |> UMX.tag<scriptName>
-            let projectFolder = quirkScriptDto.projectFolder |> UMX.tag<projectName>
+            let projectFolder = quirkScriptDto.projectName |> UMX.tag<projectName>
             let! quirkRuns = 
                     quirkScriptDto.quirkRuns
                     |> Array.toList

@@ -8,6 +8,7 @@ open Quirk.Cfg.Core
 open Quirk.Cfg.Serialization
 open Quirk.Script
 open Quirk.Serialization
+open System.Threading
 
 
 type projectFileStore (wsRootDir:string, fileUtils:IFileUtils) =
@@ -23,86 +24,135 @@ type projectFileStore (wsRootDir:string, fileUtils:IFileUtils) =
     member this.getComponentFolderName (wsCompType:workspaceComponentType) =
         wsCompType |> string
 
-    member this.getProjectPath (projectName:string) = 
-        Path.Combine(this.wsRootDir, projectName)
+    member this.getProjectPathToFolder (projectName:string<projectName>) = 
+        Path.Combine(this.wsRootDir, projectName |> UMX.untag)
+        |> UMX.tag<folderPath>
 
-    member this.getProjectFileName (projectName:string) =
-           $"{projectName}.{this.fileExt}"
+    member this.getProjectFileName (projectName:string<projectName>) =
+           $"{projectName |> UMX.untag}.{this.fileExt}"
+           |> UMX.tag<fnWExt>
 
-    member this.getScriptPath (projectName:string) = 
-        Path.Combine(this.getProjectPath projectName, this.scriptFolder)
+    member this.getProjectPath (projectName:string<projectName>) =
+           Path.Combine(
+                projectName |> this.getProjectPathToFolder |> UMX.untag,
+                projectName |> this.getProjectFileName |> UMX.untag
+                )
+           |> UMX.tag<fullFilePath>
 
-    member this.getReportPath (projectName:string) = 
-        Path.Combine(this.getProjectPath projectName, this.reportFolder)
+    member this.getCfgPlexPath (projectName:string<projectName>) =
+           Path.Combine(
+                projectName |> this.getProjectPathToFolder |> UMX.untag,
+                projectName |> this.getProjectFileName |> UMX.untag
+                )
+           |> UMX.tag<fullFilePath>
 
-    member this.getScriptToDoPath (projectName:string) = 
-        Path.Combine(this.getScriptPath projectName, this.scriptToDoFolder)
+    member this.getScriptPathToFolder (projectName:string<projectName>) = 
+        Path.Combine(projectName |> this.getProjectPathToFolder |> UMX.untag, this.scriptFolder)
+        |> UMX.tag<folderPath>
 
-    member this.getScriptRunningPath (projectName:string) = 
-        Path.Combine(this.getScriptPath projectName, this.scriptRunningFolder)
+    member this.getReportPathToFolder (projectName:string<projectName>) = 
+        Path.Combine(projectName |> this.getProjectPathToFolder |> UMX.untag, this.reportFolder)
+        |> UMX.tag<folderPath>
 
-    member this.getScriptCompletedPath (projectName:string) = 
-        Path.Combine(this.getScriptPath projectName, this.scriptCompletedFolder)
+    member this.getScriptToDoPathToFolder (projectName:string<projectName>) = 
+        Path.Combine(projectName |> this.getScriptPathToFolder |> UMX.untag, this.scriptToDoFolder)
+        |> UMX.tag<folderPath>
 
-    member this.getComponentFolderPath 
-                    (projectName:string)
+    member this.getScriptRunningPathToFolder (projectName:string<projectName>) = 
+        Path.Combine(projectName |> this.getScriptPathToFolder |> UMX.untag, this.scriptRunningFolder)
+        |> UMX.tag<folderPath>
+
+    member this.getScriptCompletedPathToFolder (projectName:string<projectName>) = 
+        Path.Combine(projectName |> this.getScriptPathToFolder |> UMX.untag, this.scriptCompletedFolder)
+        |> UMX.tag<folderPath>
+
+    member this.getComponentPathToFolder 
+                    (projectName:string<projectName>)
                     (wsCompType:workspaceComponentType) = 
-        Path.Combine(this.getProjectPath projectName, this.scriptCompletedFolder)
+        Path.Combine(projectName |> this.getProjectPathToFolder |> UMX.untag, this.scriptCompletedFolder)
 
 
-    member this.getProjectFolders (projectName:string) = 
-        this.fileUtils.GetFolders2 
-                this.wsRootDir 
-                projectName
+    member this.getNextScript (projectName:string<projectName>) = 
+        let sourceFolder = this.getScriptToDoPathToFolder projectName
+        let moveToFolder = this.getScriptRunningPathToFolder projectName
+        result {
+            let! (fileName, fileContents) = 
+                    TextIO.getFileTextFromFolderAndMove sourceFolder moveToFolder
+            let! quirkScript = fileContents |> QuirkScriptDto.fromJson
+            return (fileName, quirkScript)
+        }
 
-    member this.getComponentFiles       
-                (projectName:string) 
-                (wsCompType:workspaceComponentType) = 
-            this.fileUtils.GetFiles3
-                    this.wsRootDir
-                    projectName
-                    (this.getComponentFolderName wsCompType)
-
-    member this.scriptsToDo (projectName:string) =
-        this.fileUtils.GetFiles 
-                (this.getScriptToDoPath projectName)
-
+    member this.getCfgPlex (projectName:string<projectName>) =
+        result {
+            let projPath = this.getProjectPath projectName
+            let! cereal = TextIO.readAllText projPath
+            return! cereal |> QuirkProjectDto.fromJson
+        }
 
     member this.saveCfgPlex (cfgPlex:cfgPlex) =
         result {
-            let projectName = (cfgPlex |> CfgPlex.getProjectName |> UMX.untag)
-            let projectPath = this.getProjectPath projectName
+            let projectName = (cfgPlex |> CfgPlex.getProjectName)
+            let projectPath = projectName |> this.getProjectPathToFolder |> UMX.untag
           
             //if Directory.Exists(projectPath) then
             //    return! $"A project already exists at {projectPath}" |> Error
             let dto = cfgPlex |> CfgPlexDto.toDto
-            fileUtils.Save projectPath (this.getProjectFileName projectName) dto
+            fileUtils.Save projectPath (projectName |> this.getProjectFileName |> UMX.untag) dto
             return ()
         }
 
     member this.SaveScript (quirkScript:quirkScript) =
         result {
-            let projectName = (quirkScript |> QuirkScript.getProjectFolder |> UMX.untag)
-            let projectPath = this.getScriptToDoPath projectName
+            let projectName = (quirkScript |> QuirkScript.getProjectName)
+            let toDoPath = this.getScriptToDoPathToFolder projectName
           
             let dto = quirkScript |> QuirkScriptDto.toDto
-            let scriptFileName = quirkScript  |> QuirkScript.getScriptName |> UMX.untag
-            fileUtils.Save projectPath (this.getProjectFileName scriptFileName) dto
+            let scriptName = quirkScript  |> QuirkScript.getScriptName
+            fileUtils.Save 
+                (toDoPath |> UMX.untag)
+                (scriptName |> UMX.untag)
+                dto
             return ()
         }
 
-    member this.getProject (projectName : string<projectName>) =
+    member this.getProject (projectName:string<projectName>) =
         result {
-        
-            return true
+            let projPath = this.getProjectPath projectName
+            let! cereal = TextIO.readAllText projPath
+            return! cereal |> QuirkProjectDto.fromJson
         }
 
+    member this.saveProject (quirkProject:quirkProject) =
+        let projName = quirkProject |> QuirkProject.getProjectName
+        let projPath = this.getProjectPath projName
+        let cereal = quirkProject |> QuirkProjectDto.toJson
+        TextIO.writeToFileOverwrite projPath cereal
 
+
+    member this.finishScript (projectName:string<projectName>) (scriptName: string<scriptName>)  =
+        let scriptRunningFolder = this.getScriptRunningPathToFolder projectName |> UMX.untag
+        let scriptRunningPath = Path.Combine(scriptRunningFolder, scriptName |> UMX.untag)
+        let scriptCompletedFolder = this.getScriptCompletedPathToFolder projectName |> UMX.untag
+        let scriptCompletedPath = Path.Combine(scriptCompletedFolder, scriptName |> UMX.untag)
+        try
+            Directory.CreateDirectory(scriptCompletedFolder) |> ignore
+            File.Move(scriptRunningPath, scriptCompletedPath)
+            () |> Ok
+        with ex ->
+            $"error in finishScript: { ex.Message}" |> Result.Error
+            
 
     interface IProjectDataStore with
+        member this.GetProject (projectName:string<projectName>) 
+                    = this.getProject projectName
+        member this.SaveProject (quirkProject:quirkProject) = this.saveProject quirkProject
+        member this.GetNextScript (projectName:string<projectName>) = this.getNextScript projectName
+        member this.FinishScript (projectName:string<projectName>) (scriptName: string<scriptName>) 
+                    = this.finishScript projectName scriptName
+        member this.SaveScript quirkScript 
+                    = this.SaveScript quirkScript
+        member this.GetCfgPlex (projectName:string<projectName>) = () |> Ok
         member this.SaveCfgPlex cfgPlex = this.saveCfgPlex cfgPlex
-        member this.GetProject (projectName:string<projectName>) = this.getProject projectName
-        member this.SaveScript quirkScript = this.SaveScript quirkScript
 
 
 

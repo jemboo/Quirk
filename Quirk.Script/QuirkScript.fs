@@ -8,7 +8,7 @@ type quirkScript =
     private 
         {
             scriptName: string<scriptName>;
-            projectFolder:string<projectName>
+            projectName:string<projectName>
             quirkRuns: quirkRun[]
         }
 
@@ -16,12 +16,12 @@ module QuirkScript =
 
     let create 
             (scriptName: string<scriptName>)
-            (projectFolder:string<projectName>)
+            (projectName:string<projectName>)
             (quirkRuns: quirkRun[])
         =
         {
             quirkScript.scriptName = scriptName
-            projectFolder = projectFolder
+            projectName = projectName
             quirkRuns = quirkRuns
         }
 
@@ -30,12 +30,12 @@ module QuirkScript =
         =
         {
             scriptName = quirkRunSet |> QuirkRunSet.getId |> UMX.untag |> string |> UMX.tag<scriptName>
-            projectFolder = quirkRunSet |> QuirkRunSet.getProjectName  
+            projectName = quirkRunSet |> QuirkRunSet.getProjectName  
             quirkRuns = quirkRunSet |> QuirkRunSet.getQuirkRuns 
         }
 
     let getScriptName (quirkScript:quirkScript) = quirkScript.scriptName
-    let getProjectFolder (quirkScript:quirkScript) = quirkScript.projectFolder
+    let getProjectName (quirkScript:quirkScript) = quirkScript.projectName
     let getScriptItems (quirkScript:quirkScript) = quirkScript.quirkRuns
 
 

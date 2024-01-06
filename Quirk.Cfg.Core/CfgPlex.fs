@@ -7,6 +7,8 @@ open Quirk.Run.Core
 
 
 
+[<Measure>] type cfgPlexName
+
 type cfgPlexItem = 
     private 
         { 
@@ -44,21 +46,29 @@ module CfgPlexItem =
 type cfgPlex =
      private 
         { 
+            cfgPlexName: string<cfgPlexName>
             projectName: string<projectName>
             cfgPlexItems: cfgPlexItem[]
         }
 
 
 module CfgPlex =
+
     let create
-            (name:string<projectName>)
+            (cfgPlexName:string<cfgPlexName>)
+            (projectName:string<projectName>)
             (cfgPlexItems:cfgPlexItem[])
          =
         { 
-            projectName = name
+            cfgPlexName = cfgPlexName
+            projectName = projectName
             cfgPlexItems = cfgPlexItems
         }
         
+        
+    let getCfgPlexName (cfgPlex:cfgPlex) =
+        cfgPlex.cfgPlexName
+
     let getProjectName (cfgPlex:cfgPlex) =
         cfgPlex.projectName
         

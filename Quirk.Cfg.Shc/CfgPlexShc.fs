@@ -70,6 +70,7 @@ module O_64 =
 
     let plex64 = 
             CfgPlex.create
+                ("Shc_064" |> UMX.tag<cfgPlexName> )
                 ("Shc_064" |> UMX.tag<projectName> )
                 [| 
                    cpiMutationRates; 
@@ -109,7 +110,7 @@ module O_64 =
             (indexStart:int) 
             (runCount:int)
         =
-        let maxRunSetSize = 3
+        let maxRunSetSize = 20
         let rs = CfgPlex.createSelectedQuirkRunSets
                     quirkModelType.Shc
                     simParamSet1

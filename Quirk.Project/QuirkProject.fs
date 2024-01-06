@@ -1,8 +1,6 @@
 ﻿namespace Quirk.Project
 
 open FSharp.UMX
-open Quirk.Core
-
 
 
 type quirkWorldLine = 
