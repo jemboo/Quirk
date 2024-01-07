@@ -38,6 +38,14 @@ module TextIO =
         fullFilePath |> UMX.untag |> Path.GetDirectoryName |> UMX.tag<folderPath>
 
 
+    let getFolders (folderPath:string) =
+        result {
+            if (Directory.Exists folderPath |> not) then
+               return! $"directory: {folderPath} does not exist" |> Error
+            else
+               return Directory.EnumerateDirectories(folderPath)
+        }
+
     let getFileNameWithoutExt
             (fnWExt:string<fnWExt>)
         : string<fnWoExt>
@@ -178,120 +186,120 @@ module TextIO =
 
 
 
-type IFileUtils =
-    abstract member Read<'a> : string -> string -> Result<'a, string>
-    abstract member Read2<'a> : string -> string -> string -> Result<'a, string>
-    abstract member Read3<'a> : string -> string -> string -> string -> Result<'a, string>
-    abstract member Save<'a> : string -> string -> 'a -> unit
-    abstract member Save2<'a> : string -> string -> string -> 'a -> unit
-    abstract member Save3<'a> : string -> string -> string -> string -> 'a -> unit
-    abstract member GetFolders: string -> Result<seq<string>, string>
-    abstract member GetFolders2: string -> string -> Result<seq<string>, string>
-    abstract member GetFolders3: string -> string ->  string -> Result<seq<string>, string>
-    abstract member GetFiles:  string -> Result<seq<string>, string>
-    abstract member GetFiles2:  string -> string -> Result<seq<string>, string>
-    abstract member GetFiles3:  string -> string -> string -> Result<seq<string>, string>
+//type IFileUtils =
+//    abstract member Read<'a> : string -> string -> Result<'a, string>
+//    abstract member Read2<'a> : string -> string -> string -> Result<'a, string>
+//    abstract member Read3<'a> : string -> string -> string -> string -> Result<'a, string>
+//    abstract member Save<'a> : string -> string -> 'a -> unit
+//    abstract member Save2<'a> : string -> string -> string -> 'a -> unit
+//    abstract member Save3<'a> : string -> string -> string -> string -> 'a -> unit
+//    abstract member GetFolders: string -> Result<seq<string>, string>
+//    abstract member GetFolders2: string -> string -> Result<seq<string>, string>
+//    abstract member GetFolders3: string -> string ->  string -> Result<seq<string>, string>
+//    abstract member GetFiles:  string -> Result<seq<string>, string>
+//    abstract member GetFiles2:  string -> string -> Result<seq<string>, string>
+//    abstract member GetFiles3:  string -> string -> string -> Result<seq<string>, string>
 
 
-type fileUtils = 
+//type fileUtils = 
 
-    new () = {}
+//    new () = {}
 
-    member this.read<'a> (folderPath:string) (fileName:string) =
-        result {
-            let fp = Path.Combine(folderPath, fileName)
-            if File.Exists(fp) then
-                return! Json.deserialize<'a> fp
-            else
-                return! $"{fp} not found" |> Error
-        }
+//    member this.read<'a> (folderPath:string) (fileName:string) =
+//        result {
+//            let fp = Path.Combine(folderPath, fileName)
+//            if File.Exists(fp) then
+//                return! Json.deserialize<'a> fp
+//            else
+//                return! $"{fp} not found" |> Error
+//        }
 
-    member this.save<'a> (folderPath:string) (fileName:string) (content:'a) =
-        if (Directory.Exists folderPath |> not) then
-            Directory.CreateDirectory(folderPath) |> ignore
+//    member this.save<'a> (folderPath:string) (fileName:string) (content:'a) =
+//        if (Directory.Exists folderPath |> not) then
+//            Directory.CreateDirectory(folderPath) |> ignore
 
-        let fileContent = Json.serialize content
-        let fp = Path.Combine(folderPath, fileName)
-        File.WriteAllText(fp, fileContent)
-
-
-    member this.getFolders (folderPath:string) =
-        result {
-            if (Directory.Exists folderPath |> not) then
-               return! $"directory: {folderPath} does not exist" |> Error
-            else
-               return Directory.EnumerateDirectories(folderPath)
-        }
+//        let fileContent = Json.serialize content
+//        let fp = Path.Combine(folderPath, fileName)
+//        File.WriteAllText(fp, fileContent)
 
 
-    member this.getFiles (folderPath:string) =
-        result {
-            if (Directory.Exists folderPath |> not) then
-               return! $"directory: {folderPath} does not exist" |> Error
-            else
-               return Directory.EnumerateFiles (folderPath)
-        }
+//    member this.getFolders (folderPath:string) =
+//        result {
+//            if (Directory.Exists folderPath |> not) then
+//               return! $"directory: {folderPath} does not exist" |> Error
+//            else
+//               return Directory.EnumerateDirectories(folderPath)
+//        }
 
 
-    member this.read2<'a> (folderPath:string) (folder:string) (fileName:string) : Result<'a, string> =
-        let comby = Path.Combine(folderPath, folder)
-        this.read comby fileName
-
-    member this.read3<'a> (folderPath:string) (folder1:string) (folder2:string) (fileName:string) : Result<'a, string> =
-        this.read (Path.Combine(folderPath, folder1, folder2)) fileName
-
-    member this.save2<'a> (folderPath:string) (folder:string) (fileName:string) (content:'a) =
-        this.save (Path.Combine(folderPath, folder)) fileName content
-
-    member this.save3<'a> (folderPath:string) (folder1:string) (folder2:string) (fileName:string) (content:'a) =
-        this.save (Path.Combine(folderPath, folder1, folder2)) fileName content
-
-    member this.getFolders2<'a> (folderPath:string) (folder:string) =
-        this.getFolders (Path.Combine(folderPath, folder))
-
-    member this.getFolders3<'a> (folderPath:string) (folder1:string) (folder2:string) =
-        this.getFolders (Path.Combine(folderPath, folder1, folder2))
-
-    member this.getFiles2<'a> (folderPath:string) (folder:string) =
-        this.getFiles (Path.Combine(folderPath, folder))
-
-    member this.getFiles3<'a> (folderPath:string) (folder1:string) (folder2:string) =
-        this.getFiles (Path.Combine(folderPath, folder1, folder2))
+//    member this.getFiles (folderPath:string) =
+//        result {
+//            if (Directory.Exists folderPath |> not) then
+//               return! $"directory: {folderPath} does not exist" |> Error
+//            else
+//               return Directory.EnumerateFiles (folderPath)
+//        }
 
 
-    interface IFileUtils with
-        member this.Read<'a> (folderPath:string) (fileName:string) = 
-            this.read<'a> folderPath fileName
+//    member this.read2<'a> (folderPath:string) (folder:string) (fileName:string) : Result<'a, string> =
+//        let comby = Path.Combine(folderPath, folder)
+//        this.read comby fileName
 
-        member this.Read2<'a> (folderPath:string) (folder:string) (fileName:string) = 
-            this.read2<'a> folderPath folder fileName
+//    member this.read3<'a> (folderPath:string) (folder1:string) (folder2:string) (fileName:string) : Result<'a, string> =
+//        this.read (Path.Combine(folderPath, folder1, folder2)) fileName
 
-        member this.Read3<'a> (folderPath:string) (folder1:string) (folder2:string) (fileName:string) = 
-            this.read3<'a> folderPath folder1 folder2 fileName
+//    member this.save2<'a> (folderPath:string) (folder:string) (fileName:string) (content:'a) =
+//        this.save (Path.Combine(folderPath, folder)) fileName content
 
-        member this.Save<'a> (folderPath:string) (fileName:string) (content:'a)  = 
-            this.save<'a> folderPath fileName content
+//    member this.save3<'a> (folderPath:string) (folder1:string) (folder2:string) (fileName:string) (content:'a) =
+//        this.save (Path.Combine(folderPath, folder1, folder2)) fileName content
 
-        member this.Save2<'a> (folderPath:string) (folder:string) (fileName:string) (content:'a)  = 
-            this.save2<'a> folderPath folder fileName content
+//    member this.getFolders2<'a> (folderPath:string) (folder:string) =
+//        this.getFolders (Path.Combine(folderPath, folder))
 
-        member this.Save3<'a> (folderPath:string) (folder1:string) (folder2:string) (fileName:string) (content:'a)  = 
-            this.save3<'a> folderPath folder1 folder2 fileName content
+//    member this.getFolders3<'a> (folderPath:string) (folder1:string) (folder2:string) =
+//        this.getFolders (Path.Combine(folderPath, folder1, folder2))
 
-        member this.GetFolders (folderPath:string) = 
-            this.getFolders folderPath
+//    member this.getFiles2<'a> (folderPath:string) (folder:string) =
+//        this.getFiles (Path.Combine(folderPath, folder))
 
-        member this.GetFolders2 (folderPath:string) (folder:string) = 
-            this.getFolders2 folderPath folder
+//    member this.getFiles3<'a> (folderPath:string) (folder1:string) (folder2:string) =
+//        this.getFiles (Path.Combine(folderPath, folder1, folder2))
 
-        member this.GetFolders3 (folderPath:string) (folder1:string) (folder2:string) = 
-            this.getFolders3 folderPath folder1 folder2
 
-        member this.GetFiles (folderPath:string) = 
-            this.getFiles folderPath
+//    interface IFileUtils with
+//        member this.Read<'a> (folderPath:string) (fileName:string) = 
+//            this.read<'a> folderPath fileName
 
-        member this.GetFiles2 (folderPath:string) (folder:string) = 
-            this.getFiles2 folderPath folder
+//        member this.Read2<'a> (folderPath:string) (folder:string) (fileName:string) = 
+//            this.read2<'a> folderPath folder fileName
 
-        member this.GetFiles3 (folderPath:string) (folder1:string) (folder2:string) = 
-            this.getFiles3 folderPath folder1 folder2
+//        member this.Read3<'a> (folderPath:string) (folder1:string) (folder2:string) (fileName:string) = 
+//            this.read3<'a> folderPath folder1 folder2 fileName
+
+//        member this.Save<'a> (folderPath:string) (fileName:string) (content:'a)  = 
+//            this.save<'a> folderPath fileName content
+
+//        member this.Save2<'a> (folderPath:string) (folder:string) (fileName:string) (content:'a)  = 
+//            this.save2<'a> folderPath folder fileName content
+
+//        member this.Save3<'a> (folderPath:string) (folder1:string) (folder2:string) (fileName:string) (content:'a)  = 
+//            this.save3<'a> folderPath folder1 folder2 fileName content
+
+//        member this.GetFolders (folderPath:string) = 
+//            this.getFolders folderPath
+
+//        member this.GetFolders2 (folderPath:string) (folder:string) = 
+//            this.getFolders2 folderPath folder
+
+//        member this.GetFolders3 (folderPath:string) (folder1:string) (folder2:string) = 
+//            this.getFolders3 folderPath folder1 folder2
+
+//        member this.GetFiles (folderPath:string) = 
+//            this.getFiles folderPath
+
+//        member this.GetFiles2 (folderPath:string) (folder:string) = 
+//            this.getFiles2 folderPath folder
+
+//        member this.GetFiles3 (folderPath:string) (folder1:string) (folder2:string) = 
+//            this.getFiles3 folderPath folder1 folder2

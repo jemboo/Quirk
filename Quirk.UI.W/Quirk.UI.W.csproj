@@ -32,6 +32,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Quirk.Core\Quirk.Core.fsproj" />
+    <ProjectReference Include="..\Quirk.SortingResults\Quirk.SortingResults.fsproj" />
+    <ProjectReference Include="..\Quirk.Sorting\Quirk.Sorting.fsproj" />
+    <ProjectReference Include="..\Quirk.Storage\Quirk.Storage.fsproj" />
     <ProjectReference Include="..\Quirk.UI.W.Core\Quirk.UI.W.Core.csproj" />
   </ItemGroup>
   <ItemGroup>

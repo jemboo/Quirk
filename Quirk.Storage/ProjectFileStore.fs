@@ -11,7 +11,7 @@ open Quirk.Serialization
 open System.Threading
 
 
-type projectFileStore (wsRootDir:string, fileUtils:IFileUtils) =
+type projectFileStore (wsRootDir:string) =
     member this.scriptFolder = "scripts"
     member this.reportFolder = "reports"
     member this.scriptToDoFolder = "toDo"
@@ -19,7 +19,6 @@ type projectFileStore (wsRootDir:string, fileUtils:IFileUtils) =
     member this.scriptCompletedFolder = "completed"
     member this.fileExt = "txt"
     member this.wsRootDir = wsRootDir
-    member this.fileUtils = fileUtils;
 
     member this.getComponentFolderName (wsCompType:workspaceComponentType) =
         wsCompType |> string
@@ -39,10 +38,10 @@ type projectFileStore (wsRootDir:string, fileUtils:IFileUtils) =
                 )
            |> UMX.tag<fullFilePath>
 
-    member this.getCfgPlexPath (projectName:string<projectName>) =
+    member this.getCfgPlexPath (cfgPlex:cfgPlex) =
            Path.Combine(
-                projectName |> this.getProjectPathToFolder |> UMX.untag,
-                projectName |> this.getProjectFileName |> UMX.untag
+                cfgPlex |> CfgPlex.getProjectName |> this.getProjectPathToFolder |> UMX.untag,
+                cfgPlex |> CfgPlex.getCfgPlexName |> UMX.untag
                 )
            |> UMX.tag<fullFilePath>
 
@@ -65,6 +64,10 @@ type projectFileStore (wsRootDir:string, fileUtils:IFileUtils) =
     member this.getScriptCompletedPathToFolder (projectName:string<projectName>) = 
         Path.Combine(projectName |> this.getScriptPathToFolder |> UMX.untag, this.scriptCompletedFolder)
         |> UMX.tag<folderPath>
+
+    member this.getScriptFileName (quirkScript:quirkScript) =
+           $"{quirkScript |> QuirkScript.getScriptName |> UMX.untag}.{this.fileExt}"
+           |> UMX.tag<fnWExt>
 
     member this.getComponentPathToFolder 
                     (projectName:string<projectName>)
@@ -91,27 +94,21 @@ type projectFileStore (wsRootDir:string, fileUtils:IFileUtils) =
 
     member this.saveCfgPlex (cfgPlex:cfgPlex) =
         result {
-            let projectName = (cfgPlex |> CfgPlex.getProjectName)
-            let projectPath = projectName |> this.getProjectPathToFolder |> UMX.untag
-          
-            //if Directory.Exists(projectPath) then
-            //    return! $"A project already exists at {projectPath}" |> Error
-            let dto = cfgPlex |> CfgPlexDto.toDto
-            fileUtils.Save projectPath (projectName |> this.getProjectFileName |> UMX.untag) dto
+            let cfgPlexFullPath = cfgPlex |> this.getCfgPlexPath
+            let cereal = cfgPlex |> CfgPlexDto.toJson
+            TextIO.writeToFileOverwrite cfgPlexFullPath cereal |> ignore
             return ()
         }
 
     member this.SaveScript (quirkScript:quirkScript) =
         result {
             let projectName = (quirkScript |> QuirkScript.getProjectName)
-            let toDoPath = this.getScriptToDoPathToFolder projectName
-          
-            let dto = quirkScript |> QuirkScriptDto.toDto
-            let scriptName = quirkScript  |> QuirkScript.getScriptName
-            fileUtils.Save 
-                (toDoPath |> UMX.untag)
-                (scriptName |> UMX.untag)
-                dto
+            let scriptName = (quirkScript |> this.getScriptFileName)
+            let toDoFolderPath = this.getScriptToDoPathToFolder projectName
+            let toDoPath = Path.Combine(toDoFolderPath |> UMX.untag, scriptName |> UMX.untag)
+                            |> UMX.tag<fullFilePath>
+            let cereal = quirkScript |> QuirkScriptDto.toJson
+            let! res = TextIO.writeToFileOverwrite toDoPath cereal
             return ()
         }
 

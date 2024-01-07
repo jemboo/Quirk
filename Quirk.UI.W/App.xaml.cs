@@ -72,7 +72,7 @@ public partial class App : Application
             // Core Services
             services.AddSingleton<ISampleDataService, SampleDataService>();
             services.AddSingleton<IWorkspaceDataService, WorkspaceDataService>();
-            services.AddSingleton<Quirk.Core.IFileUtils, Quirk.Core.fileUtils>();
+            services.AddSingleton<Storage.IProjectDataStore, Storage.IProjectDataStore>();
 
             // Views and ViewModels
             services.AddTransient<ConfigsViewModel>();

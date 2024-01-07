@@ -36,8 +36,7 @@ module Program =
         let useParallelArg = argResults.GetResults Use_Parallel |> List.head
         let workingDirectoryArg = argResults.GetResults Working_Directory |> List.head |> UMX.tag<workingDirectory>
         
-        let fileUtils = new fileUtils()
-        let projectFileStore = new projectFileStore(workingDirectoryArg |> UMX.untag, fileUtils)
+        let projectFileStore = new projectFileStore(workingDirectoryArg |> UMX.untag)
 
         let runMode = runModeArg |> quirkProgramMode.fromString |> Result.ExtractOrThrow
            

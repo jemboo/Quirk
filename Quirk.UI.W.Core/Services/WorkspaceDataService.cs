@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
+using Quirk.Core;
 using Quirk.UI.W.Core.Contracts.Services;
 using Quirk.UI.W.Core.Models;
 using Quirk.UI.W.Core.Models.Workspace;
@@ -10,12 +11,12 @@ public class WorkspaceDataService : IWorkspaceDataService
 {
     private List<CfgPlexVm> _allOrders;
 
-    public WorkspaceDataService(Quirk.Core.IFileUtils fileService)
+    public WorkspaceDataService() //Quirk.Core.IFileUtils fileService)
     {
-        _fileService = fileService;
+       //_fileService = fileService;
     }
 
-    private readonly Quirk.Core.IFileUtils _fileService;
+    //private readonly Quirk.Core.IFileUtils _fileService;
 
     public async Task<IEnumerable<CfgPlexVm>> GetGridDataAsync()
     {
@@ -35,7 +36,7 @@ public class WorkspaceDataService : IWorkspaceDataService
 
     public async Task<IEnumerable<CfgPlexVm>> GetCfgPlexesInWorkspace(string workspacePath)
     {
-        var subfoldersR = _fileService.GetFolders(workspacePath);
+        var subfoldersR = TextIO.getFolders(workspacePath);
         if (subfoldersR.IsOk)
         {
             var subfolders = subfoldersR.ResultValue

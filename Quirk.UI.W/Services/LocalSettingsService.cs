@@ -16,8 +16,7 @@ public class LocalSettingsService : ILocalSettingsService
     private const string _defaultApplicationDataFolder = "Quirk.UI.W/ApplicationData";
     private const string _defaultLocalSettingsFile = "LocalSettings.json";
 
-    //private readonly IFileService _fileService;
-    private readonly Quirk.Core.IFileUtils _fileService;
+   //private readonly Quirk.Storage.IProjectDataStore _fileService;
     private readonly LocalSettingsOptions _options;
 
     private readonly string _localApplicationData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
@@ -28,9 +27,9 @@ public class LocalSettingsService : ILocalSettingsService
 
     private bool _isInitialized;
 
-    public LocalSettingsService(Quirk.Core.IFileUtils fileService, IOptions<LocalSettingsOptions> options)
+    public LocalSettingsService(IOptions<LocalSettingsOptions> options)
     {
-        _fileService = fileService;
+       // _fileService = fileService;
         _options = options.Value;
 
         _applicationDataFolder = Path.Combine(_localApplicationData, _options.ApplicationDataFolder ?? _defaultApplicationDataFolder);
@@ -46,15 +45,15 @@ public class LocalSettingsService : ILocalSettingsService
             _settings = await Task.Run(
                 () =>
                 {
-                    var res = _fileService.Read<IDictionary<string, object>>(_applicationDataFolder, _localsettingsFile);
-                    if (res.IsOk)
-                    {
-                        return res.ResultValue;
-                    }
-                    else
-                    {
+                 //   var res = _fileService.Read<IDictionary<string, object>>(_applicationDataFolder, _localsettingsFile);
+                    //if (false) //res.IsOk)
+                    //{
+                    //    return res.ResultValue;
+                    //}
+                    //else
+                    //{
                         return new Dictionary<string, object>();
-                    }
+                   // }
                 }
              );
 
@@ -96,7 +95,7 @@ public class LocalSettingsService : ILocalSettingsService
 
             _settings[key] = await Json.StringifyAsync(value);
 
-            await Task.Run(() => _fileService.Save(_applicationDataFolder, _localsettingsFile, _settings));
+           // await Task.Run(() => _fileService.Save(_applicationDataFolder, _localsettingsFile, _settings));
         }
     }
 }

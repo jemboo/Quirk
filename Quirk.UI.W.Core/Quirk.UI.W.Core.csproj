@@ -14,5 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Quirk.Core\Quirk.Core.fsproj" />
+    <ProjectReference Include="..\Quirk.SortingResults\Quirk.SortingResults.fsproj" />
+    <ProjectReference Include="..\Quirk.Storage\Quirk.Storage.fsproj" />
   </ItemGroup>
 </Project>
