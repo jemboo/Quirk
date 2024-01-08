@@ -68,10 +68,13 @@ module O_64 =
                 (ModelParamValue.makeSwitchGenModes [switchGenMode.stage; switchGenMode.stageSymmetric])
 
 
-    let plex64 = 
+    let plex64 
+            (projectName:string<projectName>) 
+            (cfgPlexName:string<cfgPlexName>) 
+        = 
             CfgPlex.create
-                ("Shc_064" |> UMX.tag<cfgPlexName> )
-                ("Shc_064" |> UMX.tag<projectName> )
+                cfgPlexName
+                projectName
                 [| 
                    cpiMutationRates; 
                    cpiNoiseFractions; 
@@ -107,6 +110,8 @@ module O_64 =
 
 
     let quirkSimScripts
+            (projectName:string<projectName>) 
+            (cfgPlexName:string<cfgPlexName>) 
             (indexStart:int) 
             (runCount:int)
         =
@@ -116,7 +121,7 @@ module O_64 =
                     simParamSet1
                     [| indexStart .. (indexStart + runCount - 1)|]
                     maxRunSetSize
-                    plex64
+                    (plex64 projectName cfgPlexName)
                  |> Seq.toArray
         let scripts = rs |> Array.map(QuirkScript.createFromRunSet)
 
@@ -125,6 +130,8 @@ module O_64 =
 
 
     let quirkReportScripts
+            (projectName:string<projectName>) 
+            (cfgPlexName:string<cfgPlexName>) 
             (indexStart:int) 
             (runCount:int)
         =
@@ -134,7 +141,7 @@ module O_64 =
                     reportParamSet1
                     [| indexStart .. (indexStart + runCount - 1)|]
                     maxRunSetSize
-                    plex64
+                    (plex64 projectName cfgPlexName)
                  |> Seq.toArray
         let scripts = rs |> Array.map(QuirkScript.createFromRunSet)
 

@@ -60,7 +60,7 @@ type quirkScriptDto =
             quirkScriptDto.projectName = quirkScript |> QuirkScript.getProjectName |> UMX.untag
             quirkScriptDto.quirkRuns = 
                     quirkScript 
-                            |> QuirkScript.getScriptItems 
+                            |> QuirkScript.getQuirkRuns 
                             |> Array.map(quirkRunDto.toDto)
         }
     let toJson (quirkquirkScript:quirkScript) =

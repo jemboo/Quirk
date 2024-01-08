@@ -11,10 +11,10 @@ open Quirk.Storage
 module Program =
 
 
+//--working-directory C:\Quirk --project-name Shc_064b --cfgplex-name Shc_064_cfgPlex --program-mode CfgPlex --first-script-index 0 --script-count 400 --report-file-name bins --use-parallel true --log-level 1
 
 
-//--first-script-index 0 --log-level 1 --project-name o64\StagePhenoPrune --report-file-name standard --run-mode CfgPlex --script-count 3 --use-parallel true --working-directory C:\Quirk 
-
+//--working-directory C:\Quirk --project-name Shc_064b --cfgplex-name Shc_064_cfgPlex --program-mode GenSimScript --first-script-index 0 --script-count 400 --report-file-name bins --use-parallel true --log-level 1
 
     let [<EntryPoint>] main argv =
 
@@ -29,22 +29,24 @@ module Program =
 
         let firstScriptIndexArg = argResults.GetResults First_Script_Index |> List.head |> int
         let logLevelArg = argResults.GetResults Log_level |> List.head
+        let cfgPlexNameArg = argResults.GetResults CfgPlex_Name |> List.head |> UMX.tag<cfgPlexName>
         let projectNameArg = argResults.GetResults Project_Name |> List.head |> UMX.tag<projectName>
         let reportFileNameArg = argResults.GetResults Report_File_Name |> List.head |> UMX.tag<reportName>
-        let runModeArg = argResults.GetResults Run_Mode |> List.head
+        let programModeArg = argResults.GetResults Program_Mode |> List.head
         let scriptCountArg = argResults.GetResults Script_Count |> List.head |> int
         let useParallelArg = argResults.GetResults Use_Parallel |> List.head
         let workingDirectoryArg = argResults.GetResults Working_Directory |> List.head |> UMX.tag<workingDirectory>
         
         let projectFileStore = new projectFileStore(workingDirectoryArg |> UMX.untag)
 
-        let runMode = runModeArg |> quirkProgramMode.fromString |> Result.ExtractOrThrow
+        let quirkProgramMode = programModeArg |> quirkProgramMode.fromString |> Result.ExtractOrThrow
            
         let scriptResult = 
-                runMode 
+                quirkProgramMode 
                     |> ScriptDispatcher.fromQuirkProgramMode
                             projectFileStore
                             projectNameArg
+                            cfgPlexNameArg
                             firstScriptIndexArg
                             scriptCountArg
 

@@ -25,7 +25,7 @@ module quirkProgramMode =
         | [| "CfgPlex" |] -> quirkProgramMode.CfgPlex |> Ok 
         | [| "GenSimScript" |] -> quirkProgramMode.GenSimScript |> Ok
         | [| "GenReportScript" |] -> quirkProgramMode.GenReportScript |> Ok
-        | [| "RunScript"; rn |] -> quirkProgramMode.RunScript |> Ok
+        | [| "RunScript" |] -> quirkProgramMode.RunScript |> Ok
         | _ -> Error $"{qrm} not handled in QuirkScriptMode.fromString"
 
 
@@ -34,9 +34,10 @@ module quirkProgramMode =
 type CliArguments =
     | First_Script_Index of string
     | Log_level of int
+    | CfgPlex_Name of string
     | Project_Name of string
     | Report_File_Name of string
-    | Run_Mode of string
+    | Program_Mode of string
     | Script_Count of string
     | Use_Parallel of bool
     | Working_Directory of path:string
@@ -46,8 +47,9 @@ type CliArguments =
             match s with
             | First_Script_Index _ -> "the first script index to generate from the cfgplex"
             | Log_level _ -> "set the log level (0, 1, or 2)"
+            | CfgPlex_Name _  -> "CfgPlex file name"
             | Project_Name _ -> "a subfolder of the working directory"
-            | Run_Mode _ -> "specify cfgPlex or genScript or runScript"
+            | Program_Mode _ -> "specify cfgPlex, genSimScript, genReportScript or runScript"
             | Report_File_Name _ -> "the report file name"
             | Script_Count _ -> "the number of scripts to generate after the first index"
             | Use_Parallel _ -> "run the sorterEval loop in parallel"

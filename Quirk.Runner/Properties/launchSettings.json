@@ -2,7 +2,7 @@
   "profiles": {
     "Quirk.Runner": {
       "commandName": "Project",
-      "commandLineArgs": "--working-directory C:\\Quirk --project-name Shc_064 --run-mode RunScript --first-script-index 0 --script-count 400 --report-file-name bins --use-parallel true --log-level 1"
+      "commandLineArgs": "--working-directory C:\\Quirk --project-name Shc_064b --cfgplex-name Shc_064_cfgPlex --program-mode RunScript --first-script-index 0 --script-count 400 --report-file-name bins --use-parallel true --log-level 1"
     }
   }
 }

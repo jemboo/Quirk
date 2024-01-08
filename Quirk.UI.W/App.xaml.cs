@@ -72,7 +72,7 @@ public partial class App : Application
             // Core Services
             services.AddSingleton<ISampleDataService, SampleDataService>();
             services.AddSingleton<IWorkspaceDataService, WorkspaceDataService>();
-            services.AddSingleton<Storage.IProjectDataStore, Storage.IProjectDataStore>();
+            services.AddSingleton<Storage.IProjectDataStore, Storage.projectFileStore>();
 
             // Views and ViewModels
             services.AddTransient<ConfigsViewModel>();

@@ -31,6 +31,15 @@ type projectFileStore (wsRootDir:string) =
            $"{projectName |> UMX.untag}.{this.fileExt}"
            |> UMX.tag<fnWExt>
 
+    member this.getCfgPlexFileName (cfgPlexName:string<cfgPlexName>) =
+           $"{cfgPlexName |> UMX.untag}.{this.fileExt}"
+           |> UMX.tag<fnWExt>
+
+    member this.getScriptFileName (scriptName:string<scriptName>) =
+           $"{scriptName |> UMX.untag}.{this.fileExt}"
+           |> UMX.tag<fnWExt>
+
+
     member this.getProjectPath (projectName:string<projectName>) =
            Path.Combine(
                 projectName |> this.getProjectPathToFolder |> UMX.untag,
@@ -38,10 +47,13 @@ type projectFileStore (wsRootDir:string) =
                 )
            |> UMX.tag<fullFilePath>
 
-    member this.getCfgPlexPath (cfgPlex:cfgPlex) =
+    member this.getCfgPlexPath 
+                (projectName:string<projectName>) 
+                (cfgPlexName:string<cfgPlexName>)
+           =
            Path.Combine(
-                cfgPlex |> CfgPlex.getProjectName |> this.getProjectPathToFolder |> UMX.untag,
-                cfgPlex |> CfgPlex.getCfgPlexName |> UMX.untag
+                projectName |> this.getProjectPathToFolder |> UMX.untag,
+                cfgPlexName |> this.getCfgPlexFileName  |> UMX.untag
                 )
            |> UMX.tag<fullFilePath>
 
@@ -82,19 +94,30 @@ type projectFileStore (wsRootDir:string) =
             let! (fileName, fileContents) = 
                     TextIO.getFileTextFromFolderAndMove sourceFolder moveToFolder
             let! quirkScript = fileContents |> QuirkScriptDto.fromJson
-            return (fileName, quirkScript)
+            let scriptName = fileName |> UMX.untag |> Path.GetFileNameWithoutExtension |> UMX.tag<scriptName>
+            return (scriptName, quirkScript)
         }
 
-    member this.getCfgPlex (projectName:string<projectName>) =
+    member this.getCfgPlex 
+                (projectName:string<projectName>)
+                (cfgPlexName:string<cfgPlexName>) 
+           =
         result {
-            let projPath = this.getProjectPath projectName
-            let! cereal = TextIO.readAllText projPath
-            return! cereal |> QuirkProjectDto.fromJson
+            let cfgPlexFullPath =
+                this.getCfgPlexPath
+                    projectName
+                    cfgPlexName
+            let! cereal = TextIO.readAllText cfgPlexFullPath
+            return! cereal |> CfgPlexDto.fromJson
         }
 
     member this.saveCfgPlex (cfgPlex:cfgPlex) =
         result {
-            let cfgPlexFullPath = cfgPlex |> this.getCfgPlexPath
+            let cfgPlexFullPath =
+                this.getCfgPlexPath
+                    (cfgPlex |> CfgPlex.getProjectName)
+                    (cfgPlex |> CfgPlex.getCfgPlexName)
+                                
             let cereal = cfgPlex |> CfgPlexDto.toJson
             TextIO.writeToFileOverwrite cfgPlexFullPath cereal |> ignore
             return ()
@@ -112,9 +135,13 @@ type projectFileStore (wsRootDir:string) =
             return ()
         }
 
+    // returns an empty project if none is found
     member this.getProject (projectName:string<projectName>) =
         result {
             let projPath = this.getProjectPath projectName
+            if (projPath |> UMX.untag |> File.Exists |> not) then
+                return QuirkProject.createEmpty projectName
+            else
             let! cereal = TextIO.readAllText projPath
             return! cereal |> QuirkProjectDto.fromJson
         }
@@ -126,11 +153,15 @@ type projectFileStore (wsRootDir:string) =
         TextIO.writeToFileOverwrite projPath cereal
 
 
-    member this.finishScript (projectName:string<projectName>) (scriptName: string<scriptName>)  =
+    member this.finishScript 
+                (projectName:string<projectName>) 
+                (scriptName: string<scriptName>) 
+            =
+        let scriptFileName = scriptName |> this.getScriptFileName
         let scriptRunningFolder = this.getScriptRunningPathToFolder projectName |> UMX.untag
-        let scriptRunningPath = Path.Combine(scriptRunningFolder, scriptName |> UMX.untag)
+        let scriptRunningPath = Path.Combine(scriptRunningFolder, scriptFileName |> UMX.untag)
         let scriptCompletedFolder = this.getScriptCompletedPathToFolder projectName |> UMX.untag
-        let scriptCompletedPath = Path.Combine(scriptCompletedFolder, scriptName |> UMX.untag)
+        let scriptCompletedPath = Path.Combine(scriptCompletedFolder, scriptFileName |> UMX.untag)
         try
             Directory.CreateDirectory(scriptCompletedFolder) |> ignore
             File.Move(scriptRunningPath, scriptCompletedPath)
@@ -142,13 +173,16 @@ type projectFileStore (wsRootDir:string) =
     interface IProjectDataStore with
         member this.GetProject (projectName:string<projectName>) 
                     = this.getProject projectName
-        member this.SaveProject (quirkProject:quirkProject) = this.saveProject quirkProject
-        member this.GetNextScript (projectName:string<projectName>) = this.getNextScript projectName
+        member this.SaveProject (quirkProject:quirkProject) 
+                    = this.saveProject quirkProject
+        member this.GetNextScript (projectName:string<projectName>) 
+                    = this.getNextScript projectName
         member this.FinishScript (projectName:string<projectName>) (scriptName: string<scriptName>) 
                     = this.finishScript projectName scriptName
         member this.SaveScript quirkScript 
                     = this.SaveScript quirkScript
-        member this.GetCfgPlex (projectName:string<projectName>) = () |> Ok
+        member this.GetCfgPlex (projectName:string<projectName>) (cfgPlexName:string<cfgPlexName>) 
+                    = this.getCfgPlex projectName cfgPlexName
         member this.SaveCfgPlex cfgPlex = this.saveCfgPlex cfgPlex
 
 

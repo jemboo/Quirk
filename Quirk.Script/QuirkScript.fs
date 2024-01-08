@@ -36,37 +36,5 @@ module QuirkScript =
 
     let getScriptName (quirkScript:quirkScript) = quirkScript.scriptName
     let getProjectName (quirkScript:quirkScript) = quirkScript.projectName
-    let getScriptItems (quirkScript:quirkScript) = quirkScript.quirkRuns
-
-
-    //let createRunScripts
-    //        (quirkModelType: quirkModelType)
-    //        (scriptName: string<scriptName>)
-    //        (projectFolder:string<projectName>)
-    //        (simParamSet: simParamSet)
-    //        (modelParamSets: modelParamSet seq)
-    //    =
-    //    let scriptParamSet = simParamSet |> runParamSet.Sim
-    //    let scriptItems = 
-    //            modelParamSets
-    //            |> Seq.map(QuirkRun.create quirkModelType scriptParamSet)
-    //            |> Seq.toArray
-    //    create
-    //        scriptName projectFolder scriptItems
-
-
-    //let createReportScripts
-    //        (quirkModelType: quirkModelType)
-    //        (scriptName: string<scriptName>)
-    //        (projectFolder:string<projectName>)
-    //        (reportParamSet: reportParamSet)
-    //        (modelParamSets: modelParamSet seq)
-    //    =
-    //    let scriptParamSet = reportParamSet |> runParamSet.Report
-    //    let scriptItems = 
-    //            modelParamSets
-    //            |> Seq.map(QuirkRun.create quirkModelType scriptParamSet)
-    //            |> Seq.toArray
-    //    create
-    //        scriptName projectFolder scriptItems
+    let getQuirkRuns (quirkScript:quirkScript) = quirkScript.quirkRuns
 

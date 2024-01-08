@@ -49,6 +49,7 @@ module SimParamValue =
         | GenerationEnd (n, nf) ->
                 [|
                     "GenerationEnd";
+                    n |> UMX.untag
                     nf |> UMX.untag |> string
                 |]
 
@@ -102,7 +103,7 @@ module SimParamValue =
                         |> simParamValue.ReportIntervalLong
             }
 
-        | uhv -> $"not handled in CfgPlexType.fromList %A{uhv}" |> Error
+        | uhv -> $"not handled in SimParamValue.fromArrayOfStrings %A{uhv}" |> Error
             
 
 type simParamSet = 

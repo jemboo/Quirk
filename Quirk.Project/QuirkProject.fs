@@ -60,6 +60,21 @@ module QuirkWorldLine =
         | runParamSet.Report rps -> addReportParamSet quirkWorldLine rps
 
 
+    let createFromQuirkRun
+            (quirkRun:quirkRun)
+        =
+        let quirkWorldLine =
+            { 
+                quirkWorldLine.id = quirkRun |> QuirkRun.getQuirkWorldLineId
+                quirkModelType =  quirkRun |> QuirkRun.getQuirkModelType
+                modelParamSet =  quirkRun |> QuirkRun.getModelParamSet
+                simParamSets =  [||]
+                reportParamSets =  [||]
+            }
+        addQuirkRun quirkRun quirkWorldLine
+
+
+
 type quirkProject =
     private 
         { 
@@ -78,6 +93,14 @@ module QuirkProject =
             quirkWorldLineMap = quirkWorldLineMap
         }
 
+    let createEmpty
+            (projectName: string<projectName>)
+        =
+        {
+            quirkProject.projectName = projectName
+            quirkWorldLineMap = Map.empty
+        }
+
     let getProjectName (quirkProject:quirkProject) = quirkProject.projectName
     let getQuirkWorldLineMap (quirkProject:quirkProject) = quirkProject.quirkWorldLineMap
 
@@ -87,10 +110,12 @@ module QuirkProject =
         =
         result {
             let wlId = quirkRun |> QuirkRun.getQuirkWorldLineId
-            if (quirkProject.quirkWorldLineMap.ContainsKey(wlId)) then
-                return! $"worldLine: {wlId} not found in project: {quirkProject.projectName |> UMX.untag}" |> Error
+            let wlNew =
+                if (quirkProject.quirkWorldLineMap.ContainsKey(wlId)) then
+                    quirkProject.quirkWorldLineMap[wlId] |> QuirkWorldLine.addQuirkRun quirkRun
+                else
+                    QuirkWorldLine.createFromQuirkRun quirkRun
 
-            let wlNew = quirkProject.quirkWorldLineMap[wlId] |> QuirkWorldLine.addQuirkRun quirkRun
             let mapNew = quirkProject.quirkWorldLineMap.Add(wlId, wlNew)
             return 
                 { quirkProject with 
