@@ -20,6 +20,7 @@ public class PageService : IPageService
         Configure<DataGridViewModel, DataGridPage>();
         Configure<SettingsViewModel, SettingsPage>();
         Configure<ConfigsViewModel, ConfigsPage>();
+        Configure<ProjectsViewModel, ProjectsPage>();
     }
 
     public Type GetPageType(string key)

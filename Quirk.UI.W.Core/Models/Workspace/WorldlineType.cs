@@ -1,6 +1,6 @@
 ﻿namespace Quirk.UI.W.Core.Models.Workspace;
 
-public enum CfgPlexType
+public enum WorldlineType
 {
     Sample,
     Shc,
@@ -11,19 +11,19 @@ public enum CfgPlexType
 
 public static class CfgPlexTypeExt
 {
-    public static int ToSymbolCode(this CfgPlexType cfgPlexType)
+    public static int ToSymbolCode(this WorldlineType cfgPlexType)
     {
         switch (cfgPlexType)
         {
-            case CfgPlexType.Sample:
+            case WorldlineType.Sample:
                 return 57643;  //Globe
-            case CfgPlexType.Shc:
+            case WorldlineType.Shc:
                 return 57699;  //Calendar
-            case CfgPlexType.Ga:
+            case WorldlineType.Ga:
                 return 57661;  //Contact
-            case CfgPlexType.None:
+            case WorldlineType.None:
                 return 57665;
-            case CfgPlexType.Unknown:
+            case WorldlineType.Unknown:
                 return 57666;
             default:
                 return 0;

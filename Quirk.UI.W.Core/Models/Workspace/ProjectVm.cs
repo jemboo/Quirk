@@ -3,14 +3,14 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Quirk.UI.W.Core.Models.Workspace;
-public partial class CfgPlexVm : ObservableObject
+public partial class ProjectVm : ObservableObject
 {
-    public CfgPlexVm()
+    public ProjectVm()
     {
         _cfgPlexType = WorldlineType.Unknown;
     }
 
-    public void CopyValuesFrom(CfgPlexVm cfgPlexVmSrc)
+    public void CopyValuesFrom(ProjectVm cfgPlexVmSrc)
     {
         Name = cfgPlexVmSrc.Name;
         CfgPlexType = cfgPlexVmSrc.CfgPlexType;
@@ -39,7 +39,7 @@ public partial class CfgPlexVm : ObservableObject
 
     public char Symbol => (char)SymbolCode;
 
-    public ObservableCollection<CfgPlexItem> CfgPlexItems { get; private set; } = new ObservableCollection<CfgPlexItem>();
+    public ObservableCollection<QuirkWordline> CfgPlexItems { get; private set; } = new ObservableCollection<QuirkWordline>();
 
     public string ShortDescription => $"Name: {Name}";
 

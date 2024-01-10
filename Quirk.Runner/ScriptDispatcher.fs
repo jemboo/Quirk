@@ -11,7 +11,7 @@ module ScriptDispatcher =
     
 
     let dispatchCfgPlex
-            (rootDir:string)
+            (rootDir:string<folderPath>)
             (cCfgPlexDataStore:IProjectDataStore)
             (projectName:string<projectName>)
             (cfgPlexName:string<cfgPlexName>)
@@ -31,7 +31,7 @@ module ScriptDispatcher =
 
 
     let dispatchGenSimScript
-            (rootDir:string)
+            (rootDir:string<folderPath>)
             (cCfgPlexDataStore:IProjectDataStore)
             (projectName:string<projectName>)
             (cfgPlexName:string<cfgPlexName>)
@@ -58,7 +58,7 @@ module ScriptDispatcher =
 
 
     let dispatchGenReportScript
-            (rootDir:string)
+            (rootDir:string<folderPath>)
             (cCfgPlexDataStore:IProjectDataStore)
             (projectName:string<projectName>)
             (cfgPlexName:string<cfgPlexName>)
@@ -84,7 +84,7 @@ module ScriptDispatcher =
 
 
     let dispatchRunScript
-            (rootDir:string)
+            (rootDir:string<folderPath>)
             (cCfgPlexDataStore:IProjectDataStore)
             (projectName:string<projectName>)
             (useParallel:bool)
@@ -106,7 +106,7 @@ module ScriptDispatcher =
 
 
     let fromQuirkProgramMode
-            (rootDir:string)
+            (rootDir:string<folderPath>)
             (cCfgPlexDataStore:IProjectDataStore)
             (projectNameOpt:string<projectName> option)
             (cfgPlexNameOpt:string<cfgPlexName> option)

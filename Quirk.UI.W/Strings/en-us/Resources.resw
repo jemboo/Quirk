@@ -112,4 +112,7 @@
   <data name="Shell_Configs.Content" xml:space="preserve">
     <value>Configs</value>
   </data>
+  <data name="Shell_Projects.Content" xml:space="preserve">
+    <value>Projects</value>
+  </data>
 </root>

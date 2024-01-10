@@ -75,6 +75,8 @@ public partial class App : Application
             services.AddSingleton<Storage.IProjectDataStore, Storage.projectFileStore>();
 
             // Views and ViewModels
+            services.AddTransient<ProjectsViewModel>();
+            services.AddTransient<ProjectsPage>();
             services.AddTransient<ConfigsViewModel>();
             services.AddTransient<ConfigsPage>();
             services.AddTransient<SettingsViewModel>();

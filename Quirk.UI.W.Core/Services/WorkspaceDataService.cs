@@ -69,7 +69,7 @@ public class WorkspaceDataService : IWorkspaceDataService
 
         if (! Path.Exists(cfgPlexPath))
         {
-            cfgPlexRet.CfgPlexType = CfgPlexType.None;
+            cfgPlexRet.CfgPlexType = WorldlineType.None;
         }
         else
         {

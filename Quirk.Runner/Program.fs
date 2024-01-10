@@ -43,7 +43,7 @@ module Program =
         let maxRunSetSizeArg = argResults.GetResults MaxRunSetSize |> ArguUtils.wak |> Option.map(int)
         let reportTypeArg = argResults.GetResults Report_Type |> ArguUtils.wak |> Option.map(UMX.tag<reportType> )
         let useParallelArg = argResults.GetResults Use_Parallel |> ArguUtils.wak
-        let rootDir = workingDirectoryArg |> Option.get |> UMX.untag
+        let rootDir = workingDirectoryArg |> Option.get |> UMX.cast<workingDirectory,folderPath>
         let projectFileStore = new projectFileStore()
  
         

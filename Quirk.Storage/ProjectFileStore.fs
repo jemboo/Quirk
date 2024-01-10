@@ -23,15 +23,22 @@ type projectFileStore () =
     member this.getComponentFolderName (wsCompType:workspaceComponentType) =
         wsCompType |> string
 
-    member this.getProjectPathToFolder (wsRootDir:string) (projectName:string<projectName>) = 
-        Path.Combine(wsRootDir, projectName |> UMX.untag)
+    member this.getProjectPathToFolder 
+                (wsRootDir:string<folderPath>) 
+                (projectName:string<projectName>) 
+            = 
+        Path.Combine(wsRootDir |> UMX.untag, projectName |> UMX.untag)
         |> UMX.tag<folderPath>
 
-    member this.getProjectFileName (projectName:string<projectName>) =
+    member this.getProjectFileName 
+                    (projectName:string<projectName>) 
+            =
            $"{projectName |> UMX.untag}.{this.fileExt}"
            |> UMX.tag<fnWExt>
 
-    member this.getCfgPlexFileName (cfgPlexName:string<cfgPlexName>) =
+    member this.getCfgPlexFileName 
+                    (cfgPlexName:string<cfgPlexName>) 
+              =
            $"{cfgPlexName |> UMX.untag}.{this.fileExt}"
            |> UMX.tag<fnWExt>
 
@@ -40,7 +47,10 @@ type projectFileStore () =
            |> UMX.tag<fnWExt>
 
 
-    member this.getProjectPath (wsRootDir:string) (projectName:string<projectName>) =
+    member this.getProjectPath 
+                (wsRootDir:string<folderPath>) 
+                (projectName:string<projectName>) 
+           =
            Path.Combine(
                 projectName |> (this.getProjectPathToFolder wsRootDir)  |> UMX.untag,
                 projectName |> this.getProjectFileName  |> UMX.untag
@@ -48,7 +58,7 @@ type projectFileStore () =
            |> UMX.tag<fullFilePath>
 
     member this.getCfgPlexPath 
-                (wsRootDir:string)
+                (wsRootDir:string<folderPath>)
                 (projectName:string<projectName>) 
                 (cfgPlexName:string<cfgPlexName>)
            =
@@ -60,31 +70,37 @@ type projectFileStore () =
            |> UMX.tag<fullFilePath>
 
     member this.getScriptPathToFolder 
-                (wsRootDir:string) 
+                (wsRootDir:string<folderPath>) 
                 (projectName:string<projectName>) 
            = 
         Path.Combine(projectName |> (this.getProjectPathToFolder wsRootDir) |> UMX.untag, this.scriptFolder)
         |> UMX.tag<folderPath>
 
     member this.getReportPathToFolder 
-                (wsRootDir:string) 
+                (wsRootDir:string<folderPath>) 
                 (projectName:string<projectName>) 
            = 
         Path.Combine(projectName |> (this.getProjectPathToFolder wsRootDir) |> UMX.untag, this.reportFolder)
         |> UMX.tag<folderPath>
 
     member this.getScriptToDoPathToFolder 
-            (wsRootDir:string) 
-            (projectName:string<projectName>) 
+              (wsRootDir:string<folderPath>) 
+              (projectName:string<projectName>) 
            = 
         Path.Combine(projectName |> (this.getScriptPathToFolder wsRootDir) |> UMX.untag, this.scriptToDoFolder)
         |> UMX.tag<folderPath>
 
-    member this.getScriptRunningPathToFolder (wsRootDir:string) (projectName:string<projectName>) = 
+    member this.getScriptRunningPathToFolder 
+                (wsRootDir:string<folderPath>) 
+                (projectName:string<projectName>) 
+            = 
         Path.Combine(projectName |> (this.getScriptPathToFolder wsRootDir) |> UMX.untag, this.scriptRunningFolder)
         |> UMX.tag<folderPath>
 
-    member this.getScriptCompletedPathToFolder (wsRootDir:string) (projectName:string<projectName>) = 
+    member this.getScriptCompletedPathToFolder 
+                (wsRootDir:string<folderPath>) 
+                (projectName:string<projectName>) 
+            = 
         Path.Combine(projectName |> (this.getScriptPathToFolder wsRootDir) |> UMX.untag, this.scriptCompletedFolder)
         |> UMX.tag<folderPath>
 
@@ -93,13 +109,17 @@ type projectFileStore () =
            |> UMX.tag<fnWExt>
 
     member this.getComponentPathToFolder
-                    (wsRootDir:string)
-                    (projectName:string<projectName>)
-                    (wsCompType:workspaceComponentType) = 
+                (wsRootDir:string<folderPath>)
+                (projectName:string<projectName>)
+                (wsCompType:workspaceComponentType) 
+           = 
         Path.Combine(projectName |> (this.getProjectPathToFolder wsRootDir) |> UMX.untag, this.scriptCompletedFolder)
 
 
-    member this.getNextScript (wsRootDir:string) (projectName:string<projectName>) = 
+    member this.getNextScript 
+                (wsRootDir:string<folderPath>) 
+                (projectName:string<projectName>) 
+            = 
         let sourceFolder = this.getScriptToDoPathToFolder wsRootDir projectName
         let moveToFolder = this.getScriptRunningPathToFolder wsRootDir projectName
         result {
@@ -111,7 +131,7 @@ type projectFileStore () =
         }
 
     member this.getCfgPlex
-                (wsRootDir:string)
+                (wsRootDir:string<folderPath>)
                 (projectName:string<projectName>)
                 (cfgPlexName:string<cfgPlexName>) 
            =
@@ -126,8 +146,9 @@ type projectFileStore () =
         }
 
     member this.saveCfgPlex 
-                (wsRootDir:string)
-                (cfgPlex:cfgPlex) =
+                (wsRootDir:string<folderPath>)
+                (cfgPlex:cfgPlex) 
+            =
         result {
             let cfgPlexFullPath =
                 this.getCfgPlexPath wsRootDir
@@ -140,8 +161,9 @@ type projectFileStore () =
         }
 
     member this.SaveScript
-            (wsRootDir:string)
-            (quirkScript:quirkScript) =
+              (wsRootDir:string<folderPath>)
+              (quirkScript:quirkScript) 
+           =
         result {
             let projectName = (quirkScript |> QuirkScript.getProjectName)
             let scriptName = (quirkScript |> this.getScriptFileName)
@@ -155,8 +177,9 @@ type projectFileStore () =
 
     // returns an empty project if none is found
     member this.getProject
-            (wsRootDir:string)
-            (projectName:string<projectName>) =
+              (wsRootDir:string<folderPath>)
+              (projectName:string<projectName>) 
+           =
         result {
             let projPath = this.getProjectPath wsRootDir projectName
             if (projPath |> UMX.untag |> File.Exists |> not) then
@@ -167,8 +190,9 @@ type projectFileStore () =
         }
 
     member this.saveProject
-            (wsRootDir:string)
-            (quirkProject:quirkProject) =
+                (wsRootDir:string<folderPath>)
+                (quirkProject:quirkProject) 
+            =
         let projName = quirkProject |> QuirkProject.getProjectName
         let projPath = this.getProjectPath wsRootDir projName
         let cereal = quirkProject |> QuirkProjectDto.toJson
@@ -176,7 +200,7 @@ type projectFileStore () =
 
 
     member this.finishScript
-                (wsRootDir:string)
+                (wsRootDir:string<folderPath>)
                 (projectName:string<projectName>) 
                 (scriptName: string<scriptName>) 
             =
@@ -193,11 +217,12 @@ type projectFileStore () =
             $"error in finishScript: { ex.Message}" |> Result.Error
             
 
-    member this.getAllProjects (wsRootDir:string)
+    member this.getAllProjects 
+                (wsRootDir:string<folderPath>)
             =
             result {
                 let! projects = 
-                    IO.Directory.EnumerateDirectories(wsRootDir)
+                    IO.Directory.EnumerateDirectories(wsRootDir |> UMX.untag)
                     |> Seq.map(fun p -> p.Split(Path.DirectorySeparatorChar) |> Array.last |> UMX.tag<projectName>)
                     |> Seq.map(this.getProject wsRootDir)
                     |> Seq.toList
@@ -207,18 +232,18 @@ type projectFileStore () =
 
 
     interface IProjectDataStore with
-        member this.GetProject (wsRootDir:string) (projectName:string<projectName>) 
+        member this.GetProject (wsRootDir:string<folderPath>) (projectName:string<projectName>) 
                     = this.getProject wsRootDir projectName
-        member this.GetAllProjects (wsRootDir:string)
+        member this.GetAllProjects (wsRootDir:string<folderPath>)
                     = this.getAllProjects wsRootDir
-        member this.SaveProject (wsRootDir:string) (quirkProject:quirkProject) 
+        member this.SaveProject (wsRootDir:string<folderPath>) (quirkProject:quirkProject) 
                     = this.saveProject wsRootDir quirkProject
-        member this.GetNextScript (wsRootDir:string) (projectName:string<projectName>) 
+        member this.GetNextScript (wsRootDir:string<folderPath>) (projectName:string<projectName>) 
                     = this.getNextScript wsRootDir projectName
-        member this.FinishScript (wsRootDir:string) (projectName:string<projectName>) (scriptName: string<scriptName>) 
+        member this.FinishScript (wsRootDir:string<folderPath>) (projectName:string<projectName>) (scriptName: string<scriptName>) 
                     = this.finishScript wsRootDir projectName scriptName
-        member this.SaveScript (wsRootDir:string) quirkScript 
+        member this.SaveScript (wsRootDir:string<folderPath>) quirkScript 
                     = this.SaveScript wsRootDir quirkScript
-        member this.GetCfgPlex (wsRootDir:string) (projectName:string<projectName>) (cfgPlexName:string<cfgPlexName>) 
+        member this.GetCfgPlex (wsRootDir:string<folderPath>) (projectName:string<projectName>) (cfgPlexName:string<cfgPlexName>) 
                     = this.getCfgPlex wsRootDir projectName cfgPlexName
-        member this.SaveCfgPlex (wsRootDir:string) cfgPlex = this.saveCfgPlex wsRootDir cfgPlex
+        member this.SaveCfgPlex (wsRootDir:string<folderPath>) cfgPlex = this.saveCfgPlex wsRootDir cfgPlex

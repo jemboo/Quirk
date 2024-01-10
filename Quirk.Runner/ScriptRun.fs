@@ -11,7 +11,7 @@ open System.Threading
 module ScriptRun =
 
     let updateProject
-            (rootDir:string)
+            (rootDir:string<folderPath>)
             (cCfgPlexDataStore:IProjectDataStore)
             (projectName:string<projectName>)
             (quirkRun:quirkRun)
@@ -28,7 +28,7 @@ module ScriptRun =
 
 
     let runQuirkRun
-            (rootDir:string)
+            (rootDir:string<folderPath>)
             (cCfgPlexDataStore:IProjectDataStore)
             (projectName:string<projectName>)
             (quirkRun:quirkRun)
@@ -40,7 +40,7 @@ module ScriptRun =
 
 
     let runQuirkScript
-            (rootDir:string)
+            (rootDir:string<folderPath>)
             (cCfgPlexDataStore:IProjectDataStore)
             (projectName:string<projectName>)
             (quirkScript:quirkScript)
