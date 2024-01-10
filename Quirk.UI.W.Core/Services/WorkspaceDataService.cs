@@ -11,6 +11,13 @@ public class WorkspaceDataService : IWorkspaceDataService
 {
     private List<CfgPlexVm> _allOrders;
 
+    private string _workspacePath;
+    public string WorkspacePath
+    {
+        get => _workspacePath;
+        set => _workspacePath = value;
+    }
+
     public WorkspaceDataService() //Quirk.Core.IFileUtils fileService)
     {
        //_fileService = fileService;

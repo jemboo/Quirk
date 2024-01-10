@@ -9,7 +9,7 @@
 [<Measure>] type modelParamName
 
 [<Measure>] type modelParamSetId
-[<Measure>] type reportName
+[<Measure>] type reportType
 [<Measure>] type reportParamName
 [<Measure>] type reportParamSetName
 

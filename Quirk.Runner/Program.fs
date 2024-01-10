@@ -10,11 +10,19 @@ open Quirk.Storage
 
 module Program =
 
+// CfgPlex
+//--working-directory C:\Quirk --program-mode CfgPlex --project-name Shc_064 --cfgplex-name Shc_064_cfgPlex --log-level 1
 
-//--working-directory C:\Quirk --project-name Shc_064b --cfgplex-name Shc_064_cfgPlex --program-mode CfgPlex --first-script-index 0 --script-count 400 --report-file-name bins --use-parallel true --log-level 1
+// GenSimScript
+//--working-directory C:\Quirk --program-mode GenSimScript --project-name Shc_064 --cfgplex-name Shc_064_cfgPlex --first-script-index 0 --run-count 400 --maxrunsetsize 20 --log-level 1
+
+// GenReportScript
+//--working-directory C:\Quirk --program-mode GenReportScript --project-name Shc_064 --cfgplex-name Shc_064_cfgPlex --first-script-index 0 --run-count 400 --maxrunsetsize 20 --report-type bins --log-level 1
+
+// RunScript
+//--working-directory C:\Quirk --program-mode RunScript --project-name Shc_064 --cfgplex-name Shc_064_cfgPlex --use-parallel true --log-level 1
 
 
-//--working-directory C:\Quirk --project-name Shc_064b --cfgplex-name Shc_064_cfgPlex --program-mode GenSimScript --first-script-index 0 --script-count 400 --report-file-name bins --use-parallel true --log-level 1
 
     let [<EntryPoint>] main argv =
 
@@ -25,51 +33,42 @@ module Program =
         let argResults = parser.Parse argv
         
         let all = argResults.GetAllResults()
+        let workingDirectoryArg = argResults.GetResults Working_Directory |> ArguUtils.wak |> Option.map(UMX.tag<workingDirectory>)
 
-
-        let firstScriptIndexArg = argResults.GetResults First_Script_Index |> List.head |> int
-        let logLevelArg = argResults.GetResults Log_level |> List.head
-        let cfgPlexNameArg = argResults.GetResults CfgPlex_Name |> List.head |> UMX.tag<cfgPlexName>
-        let projectNameArg = argResults.GetResults Project_Name |> List.head |> UMX.tag<projectName>
-        let reportFileNameArg = argResults.GetResults Report_File_Name |> List.head |> UMX.tag<reportName>
-        let programModeArg = argResults.GetResults Program_Mode |> List.head
-        let scriptCountArg = argResults.GetResults Script_Count |> List.head |> int
-        let useParallelArg = argResults.GetResults Use_Parallel |> List.head
-        let workingDirectoryArg = argResults.GetResults Working_Directory |> List.head |> UMX.tag<workingDirectory>
+        let quirkProgramModeArg = argResults.GetResults Program_Mode |> ArguUtils.wak
+        let projectNameArg = argResults.GetResults Project_Name |> ArguUtils.wak |> Option.map(UMX.tag<projectName>)
+        let cfgPlexNameArg = argResults.GetResults CfgPlex_Name |> ArguUtils.wak |> Option.map(UMX.tag<cfgPlexName>)
+        let firstScriptIndexArg = argResults.GetResults First_Script_Index |> ArguUtils.wak |> Option.map(int)
+        let runCountArg = argResults.GetResults Run_Count |> ArguUtils.wak |> Option.map(int)
+        let maxRunSetSizeArg = argResults.GetResults MaxRunSetSize |> ArguUtils.wak |> Option.map(int)
+        let reportTypeArg = argResults.GetResults Report_Type |> ArguUtils.wak |> Option.map(UMX.tag<reportType> )
+        let useParallelArg = argResults.GetResults Use_Parallel |> ArguUtils.wak
+        let rootDir = workingDirectoryArg |> Option.get |> UMX.untag
+        let projectFileStore = new projectFileStore()
+ 
         
-        let projectFileStore = new projectFileStore(workingDirectoryArg |> UMX.untag)
+        Console.WriteLine($"*****************************")
+        Console.WriteLine($"Running script")
+        Console.WriteLine($"*****************************")
 
-        let quirkProgramMode = programModeArg |> quirkProgramMode.fromString |> Result.ExtractOrThrow
-           
+
         let scriptResult = 
-                quirkProgramMode 
+                quirkProgramModeArg 
                     |> ScriptDispatcher.fromQuirkProgramMode
+                            rootDir
                             projectFileStore
                             projectNameArg
                             cfgPlexNameArg
                             firstScriptIndexArg
-                            scriptCountArg
-
+                            runCountArg
+                            maxRunSetSizeArg
+                            reportTypeArg
+                            useParallelArg
 
         match scriptResult with
-        | Result.Ok _ -> Console.WriteLine("Script ran successfully")
+        | Result.Ok _ -> Console.WriteLine("Script ran successfully (1)")
         | Result.Error m -> Console.WriteLine($"Script ran with error: {m}")
 
+        Console.ReadKey() |> ignore
 
-
-        //let projectFolderArg = argResults.GetResults Project_Folder |> List.head
-
-        //let projectFolder  = projectFolderArg |> ProjectFolder.create
-        //let projectFolderPath = IO.Path.Combine(workingDirectoryArg, projectFolder |> ProjectFolder.value)
-
-        //let (scriptFileName, klinkScript) = 
-        //        ScriptFileRun.getNextKlinkScript projectFolderPath
-        //        |> Result.ExtractOrThrow
-
-        //let _makeFileStore (path:string) = 
-        //    new WorkspaceFileStore(path) :> IWorkspaceStore
-
-        //let useParallel = true |> UseParallel.create
-
-        //Console.WriteLine($"Running script: {scriptFileName}")
         0

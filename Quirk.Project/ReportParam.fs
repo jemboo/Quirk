@@ -9,7 +9,7 @@ type reportParamValue =
     | GenerationStart of string<reportParamName> * int<generation>
     | GenerationEnd of string<reportParamName> * int<generation>
     | ReportInterval of string<reportParamName> * int<generation>
-    | ReportName of string<reportParamName> * string<reportName>
+    | ReportName of string<reportParamName> * string<reportType>
 
 
 module ReportParamValue =
@@ -23,7 +23,7 @@ module ReportParamValue =
     let makeReportInterval (genShort: int<generation>) =
         ("reportInterval" |> UMX.tag<reportParamName>, genShort) |> reportParamValue.ReportInterval
 
-    let makeReportName (genLong: string<reportName>) =
+    let makeReportName (genLong: string<reportType>) =
         ("reportName" |> UMX.tag<reportParamName>, genLong) |> reportParamValue.ReportName
 
 
@@ -47,6 +47,7 @@ module ReportParamValue =
         | GenerationEnd (n, nf) ->
                 [|
                     "GenerationEnd";
+                    n |> UMX.untag
                     nf |> UMX.untag |> string
                 |]
 
@@ -94,7 +95,7 @@ module ReportParamValue =
         | [|"ReportName"; n; pc;|] ->
             result {
                 let rpName = n |> UMX.tag<reportParamName>
-                return (rpName, pc |> UMX.tag<reportName> )
+                return (rpName, pc |> UMX.tag<reportType> )
                         |> reportParamValue.ReportName
             }
 

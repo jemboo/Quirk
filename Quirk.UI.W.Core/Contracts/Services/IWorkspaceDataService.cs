@@ -12,4 +12,9 @@ public interface IWorkspaceDataService
     Task<IEnumerable<CfgPlexVm>> GetCfgPlexesInWorkspace(string workspacePath);
 
     Task<CfgPlexVm> GetCfgPlexDetails(string workspacePath, CfgPlexVm cfgPlexVm);
+
+    public string WorkspacePath
+    {
+        get; set;
+    }
 }

@@ -104,7 +104,7 @@ module O_64 =
                     (0 |> UMX.tag<generation> |> ReportParamValue.makeGenerationStart)
                     (500 |> UMX.tag<generation> |> ReportParamValue.makeGenerationEnd)
                     (5 |> UMX.tag<generation> |> ReportParamValue.makeReportInterval)
-                    ("bins" |> UMX.tag<reportName> |> ReportParamValue.makeReportName)
+                    ("bins" |> UMX.tag<reportType> |> ReportParamValue.makeReportName)
                 |]
                 |> runParamSet.Report
 
@@ -112,10 +112,10 @@ module O_64 =
     let quirkSimScripts
             (projectName:string<projectName>) 
             (cfgPlexName:string<cfgPlexName>) 
-            (indexStart:int) 
+            (indexStart:int)
             (runCount:int)
+            (maxRunSetSize:int)
         =
-        let maxRunSetSize = 20
         let rs = CfgPlex.createSelectedQuirkRunSets
                     quirkModelType.Shc
                     simParamSet1
@@ -134,8 +134,8 @@ module O_64 =
             (cfgPlexName:string<cfgPlexName>) 
             (indexStart:int) 
             (runCount:int)
+            (maxRunSetSize:int)
         =
-        let maxRunSetSize = 3
         let rs = CfgPlex.createSelectedQuirkRunSets
                     quirkModelType.Shc
                     reportParamSet1
