@@ -1,4 +1,5 @@
 ﻿namespace Quirk.Runner
+open System.Threading.Tasks
 open FSharp.UMX
 open Quirk.Core
 open Quirk.Cfg.Core
@@ -19,9 +20,9 @@ module ScriptRun =
         result {
             use mutex = new Mutex(false, "ProjectUpdateMutex")
             if mutex.WaitOne() then
-                let! prj = cCfgPlexDataStore.GetProject rootDir projectName
+                let! prj = (cCfgPlexDataStore.GetProject rootDir projectName).Result
                 let! projUpdated = quirkRun |> QuirkProject.updateProject prj
-                let! res = cCfgPlexDataStore.SaveProject rootDir projUpdated
+                let! res = (cCfgPlexDataStore.SaveProject rootDir projUpdated).Result
                 mutex.ReleaseMutex()
             return ()
         }

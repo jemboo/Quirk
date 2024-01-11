@@ -33,7 +33,7 @@ public partial class ProjectsViewModel : ObservableRecipient
     private async void FindProjects()
     {
         var yab = 4;
-        var res = _projectDataStore.GetProject(@"C:\Quirk", "Shc_064");
+        var res = await _projectDataStore.GetProject(@"C:\Quirk", "Shc_064");
         var qp = Result.ExtractOrThrow(res);
         PathProjectsRoot = "Dats cool";
     }

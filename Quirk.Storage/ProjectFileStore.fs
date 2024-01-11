@@ -1,6 +1,7 @@
 ﻿namespace Quirk.Storage
 open System
 open System.IO
+open System.Threading.Tasks
 open FSharp.UMX
 open Quirk.Core
 open Quirk.Project
@@ -233,17 +234,18 @@ type projectFileStore () =
 
     interface IProjectDataStore with
         member this.GetProject (wsRootDir:string<folderPath>) (projectName:string<projectName>) 
-                    = this.getProject wsRootDir projectName
+                    = Task.Run(fun () -> this.getProject wsRootDir projectName)
         member this.GetAllProjects (wsRootDir:string<folderPath>)
-                    = this.getAllProjects wsRootDir
+                    = Task.Run(fun () -> this.getAllProjects wsRootDir)
         member this.SaveProject (wsRootDir:string<folderPath>) (quirkProject:quirkProject) 
-                    = this.saveProject wsRootDir quirkProject
+                    = Task.Run(fun () -> this.saveProject wsRootDir quirkProject)
         member this.GetNextScript (wsRootDir:string<folderPath>) (projectName:string<projectName>) 
-                    = this.getNextScript wsRootDir projectName
+                    = Task.Run(fun () -> this.getNextScript wsRootDir projectName)
         member this.FinishScript (wsRootDir:string<folderPath>) (projectName:string<projectName>) (scriptName: string<scriptName>) 
-                    = this.finishScript wsRootDir projectName scriptName
+                    = Task.Run(fun () -> this.finishScript wsRootDir projectName scriptName)
         member this.SaveScript (wsRootDir:string<folderPath>) quirkScript 
-                    = this.SaveScript wsRootDir quirkScript
+                    = Task.Run(fun () -> this.SaveScript wsRootDir quirkScript)
         member this.GetCfgPlex (wsRootDir:string<folderPath>) (projectName:string<projectName>) (cfgPlexName:string<cfgPlexName>) 
-                    = this.getCfgPlex wsRootDir projectName cfgPlexName
-        member this.SaveCfgPlex (wsRootDir:string<folderPath>) cfgPlex = this.saveCfgPlex wsRootDir cfgPlex
+                    = Task.Run(fun () -> this.getCfgPlex wsRootDir projectName cfgPlexName)
+        member this.SaveCfgPlex (wsRootDir:string<folderPath>) cfgPlex 
+                    = Task.Run(fun () -> this.saveCfgPlex wsRootDir cfgPlex)
