@@ -20,9 +20,9 @@ module ScriptRun =
         result {
             use mutex = new Mutex(false, "ProjectUpdateMutex")
             if mutex.WaitOne() then
-                let! prj = (cCfgPlexDataStore.GetProject rootDir projectName).Result
+                let! prj = (cCfgPlexDataStore.GetProjectAsync rootDir projectName).Result
                 let! projUpdated = quirkRun |> QuirkProject.updateProject prj
-                let! res = (cCfgPlexDataStore.SaveProject rootDir projUpdated).Result
+                let! res = (cCfgPlexDataStore.SaveProjectAsync rootDir projUpdated).Result
                 mutex.ReleaseMutex()
             return ()
         }

@@ -234,18 +234,34 @@ type projectFileStore () =
 
     interface IProjectDataStore with
         member this.GetProject (wsRootDir:string<folderPath>) (projectName:string<projectName>) 
-                    = Task.Run(fun () -> this.getProject wsRootDir projectName)
+                    = this.getProject wsRootDir projectName
         member this.GetAllProjects (wsRootDir:string<folderPath>)
-                    = Task.Run(fun () -> this.getAllProjects wsRootDir)
+                    = this.getAllProjects wsRootDir
         member this.SaveProject (wsRootDir:string<folderPath>) (quirkProject:quirkProject) 
-                    = Task.Run(fun () -> this.saveProject wsRootDir quirkProject)
+                    = this.saveProject wsRootDir quirkProject
         member this.GetNextScript (wsRootDir:string<folderPath>) (projectName:string<projectName>) 
-                    = Task.Run(fun () -> this.getNextScript wsRootDir projectName)
+                    = this.getNextScript wsRootDir projectName
         member this.FinishScript (wsRootDir:string<folderPath>) (projectName:string<projectName>) (scriptName: string<scriptName>) 
-                    = Task.Run(fun () -> this.finishScript wsRootDir projectName scriptName)
+                    = this.finishScript wsRootDir projectName scriptName
         member this.SaveScript (wsRootDir:string<folderPath>) quirkScript 
-                    = Task.Run(fun () -> this.SaveScript wsRootDir quirkScript)
+                    = this.SaveScript wsRootDir quirkScript
         member this.GetCfgPlex (wsRootDir:string<folderPath>) (projectName:string<projectName>) (cfgPlexName:string<cfgPlexName>) 
-                    = Task.Run(fun () -> this.getCfgPlex wsRootDir projectName cfgPlexName)
+                    = this.getCfgPlex wsRootDir projectName cfgPlexName
         member this.SaveCfgPlex (wsRootDir:string<folderPath>) cfgPlex 
+                    = this.saveCfgPlex wsRootDir cfgPlex
+        member this.GetProjectAsync (wsRootDir:string<folderPath>) (projectName:string<projectName>) 
+                    = Task.Run(fun () -> this.getProject wsRootDir projectName)
+        member this.GetAllProjectsAsync (wsRootDir:string<folderPath>)
+                    = Task.Run(fun () -> this.getAllProjects wsRootDir)
+        member this.SaveProjectAsync (wsRootDir:string<folderPath>) (quirkProject:quirkProject) 
+                    = Task.Run(fun () -> this.saveProject wsRootDir quirkProject)
+        member this.GetNextScriptAsync (wsRootDir:string<folderPath>) (projectName:string<projectName>) 
+                    = Task.Run(fun () -> this.getNextScript wsRootDir projectName)
+        member this.FinishScriptAsync (wsRootDir:string<folderPath>) (projectName:string<projectName>) (scriptName: string<scriptName>) 
+                    = Task.Run(fun () -> this.finishScript wsRootDir projectName scriptName)
+        member this.SaveScriptAsync (wsRootDir:string<folderPath>) quirkScript 
+                    = Task.Run(fun () -> this.SaveScript wsRootDir quirkScript)
+        member this.GetCfgPlexAsync (wsRootDir:string<folderPath>) (projectName:string<projectName>) (cfgPlexName:string<cfgPlexName>) 
+                    = Task.Run(fun () -> this.getCfgPlex wsRootDir projectName cfgPlexName)
+        member this.SaveCfgPlexAsync (wsRootDir:string<folderPath>) cfgPlex 
                     = Task.Run(fun () -> this.saveCfgPlex wsRootDir cfgPlex)

@@ -4,8 +4,64 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:models="using:Quirk.UI.W.Core.Models.Workspace"
+    xmlns:views="using:Quirk.UI.W.Views"
+    xmlns:behaviors="using:Quirk.UI.W.Behaviors"
+    behaviors:NavigationViewHeaderBehavior.HeaderMode="Never"
     mc:Ignorable="d">
+    
+    <Page.Resources>
+        <DataTemplate x:Key="ItemTemplate" x:DataType="models:ProjectVm">
+            <Grid Height="120">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBox Text="Hi Dere"/>
+                <!--<FontIcon
+                    Grid.Column="0"
+                    VerticalAlignment="Center"
+                    FontSize="32"
+                    Glyph="{x:Bind Symbol}" />
+                <StackPanel
+                    Grid.Column="1"
+                    Margin="{StaticResource SmallLeftMargin}"
+                    VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Name:" Style="{StaticResource ListTitleStyleLabel}"/>
+                        <TextBlock Text="{x:Bind Name }" Style="{StaticResource ListTitleStyle}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Type:" Style="{StaticResource ListTitleStyleLabel}"/>
+                        <TextBlock Text="{Binding CfgPlexType }" Style="{StaticResource ListTitleStyle}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="ItemCount:" Style="{StaticResource ListTitleStyleLabel}"/>
+                        <TextBlock Text="{x:Bind ItemCount }" Style="{StaticResource ListTitleStyle}" />
+                    </StackPanel>
+                </StackPanel>-->
+            </Grid>
+        </DataTemplate>
 
+        <DataTemplate x:Key="DetailsTemplate">
+            <Grid>
+                <views:ConfigsDetailControl CfgPlex="{Binding}" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="NoSelectionContentTemplate">
+            <Grid>
+                <TextBlock
+                    Text="{Binding DataContext.Instruction, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    TextAlignment="Center"
+                    Style="{ThemeResource SubtitleTextBlockStyle}" />
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+    
     <Grid x:Name="ContentArea">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -13,7 +69,12 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
+
         <Grid Margin="20" Grid.Row="0">
+            <TextBlock VerticalAlignment="Center" Grid.Column="1" Text="{x:Bind ViewModel.StatusMessage, Mode=OneWay}"/>
+        </Grid>
+        
+        <Grid Margin="20" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="140"/>
                 <ColumnDefinition />
@@ -22,6 +83,32 @@
                 Find Projects
             </Button>
             <TextBlock VerticalAlignment="Center" Grid.Column="1" Text="{x:Bind ViewModel.PathProjectsRoot, Mode=OneWay}"/>
+        </Grid>
+
+        <Grid Margin="20" Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Margin="10" VerticalAlignment="Center" Grid.Row="0" Text="Projects:"/>
+            
+            <controls:ListDetailsView
+                Grid.Row="1"
+                x:Uid="Configs"
+                x:Name="ListDetailsViewControl"
+                BackButtonBehavior="Manual"
+                Background="Transparent"
+                BorderBrush="Transparent"
+                DataContext="{x:Bind ViewModel}"
+                DetailsTemplate="{StaticResource DetailsTemplate}"
+                ItemsSource="{x:Bind ViewModel.ProjectVms}"
+                ItemTemplate="{StaticResource ItemTemplate}"
+                NoSelectionContentTemplate="{StaticResource NoSelectionContentTemplate}"
+                SelectedItem="{x:Bind ViewModel.SelectedProject, Mode=TwoWay}"
+                ViewStateChanged="OnViewStateChanged"/>
+
+
         </Grid>
         
     </Grid>

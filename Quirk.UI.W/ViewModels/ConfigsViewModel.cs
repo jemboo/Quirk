@@ -81,7 +81,7 @@ public partial class ConfigsViewModel : ObservableRecipient, INavigationAware
             ViewMode = PickerViewMode.Thumbnail,
             FileTypeFilter = { ".jpg", ".jpeg", ".png", ".gif" },
         };
-        nint windowHandle = WindowNative.GetWindowHandle(App.MainWindow);
+        var windowHandle = WindowNative.GetWindowHandle(App.MainWindow);
         InitializeWithWindow.Initialize(fileOpenPicker, windowHandle);
         var folder = await fileOpenPicker.PickSingleFolderAsync();
 

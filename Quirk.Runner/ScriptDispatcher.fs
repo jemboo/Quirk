@@ -21,7 +21,7 @@ module ScriptDispatcher =
         | [| "Shc_064" |] -> 
             result {
                 let shcO64 = (O_64.plex64 projectName cfgPlexName)
-                return! (cCfgPlexDataStore.SaveCfgPlex rootDir shcO64).Result
+                return! (cCfgPlexDataStore.SaveCfgPlexAsync rootDir shcO64).Result
             }
 
         | [| "Shc_0128" |] -> () |> Ok
@@ -47,7 +47,7 @@ module ScriptDispatcher =
 
                 let lsO64 = (O_64.quirkSimScripts projectName cfgPlexName firstScriptIndex runCount maxRunSetSize)
                              |> Array.toList
-                let! saveRes = lsO64 |> List.map(fun qs -> (cCfgPlexDataStore.SaveScript rootDir qs).Result)
+                let! saveRes = lsO64 |> List.map(fun qs -> (cCfgPlexDataStore.SaveScriptAsync rootDir qs).Result)
                               |> Result.sequence
                 return ()
             }
@@ -73,7 +73,7 @@ module ScriptDispatcher =
             result {
                 let lsO64 = (O_64.quirkReportScripts projectName cfgPlexName firstScriptIndex runCount maxRunSetSize)
                              |> Array.toList
-                let! saveRes = lsO64 |> List.map(fun qs -> (cCfgPlexDataStore.SaveScript rootDir qs).Result)
+                let! saveRes = lsO64 |> List.map(fun qs -> (cCfgPlexDataStore.SaveScriptAsync rootDir qs).Result)
                               |> Result.sequence
                 return ()
             }
@@ -93,7 +93,7 @@ module ScriptDispatcher =
         match nA with
         | [| "Shc_064" |] -> 
             result {
-                let! (scriptName, script) = (cCfgPlexDataStore.GetNextScript rootDir projectName).Result
+                let! (scriptName, script) = (cCfgPlexDataStore.GetNextScriptAsync rootDir projectName).Result
                 let ul = script |> ScriptRun.runQuirkScript rootDir cCfgPlexDataStore projectName
                 let qua = cCfgPlexDataStore.FinishScript rootDir projectName scriptName
 

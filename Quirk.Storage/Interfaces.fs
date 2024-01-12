@@ -8,15 +8,22 @@ open System.Threading.Tasks
 
 
 type IProjectDataStore =
-    abstract member GetProject : string<folderPath> -> string<projectName> -> Task<Result<quirkProject, string>>
-    abstract member GetAllProjects : string<folderPath> -> Task<Result<quirkProject[], string>>
-    abstract member SaveProject : string<folderPath> -> quirkProject -> Task<Result<unit, string>>
-    abstract member GetNextScript : string<folderPath> -> string<projectName> -> Task<Result<string<scriptName>*quirkScript, string>>
-    abstract member FinishScript : string<folderPath> -> string<projectName> -> string<scriptName> -> Task<Result<unit, string>>
-    abstract member SaveScript : string<folderPath> -> quirkScript -> Task<Result<unit, string>>
-    abstract member GetCfgPlex : string<folderPath> -> string<projectName> -> string<cfgPlexName> -> Task<Result<cfgPlex, string>>
-    abstract member SaveCfgPlex : string<folderPath> -> cfgPlex -> Task<Result<unit, string>>
-
+    abstract member GetProject : string<folderPath> -> string<projectName> -> Result<quirkProject, string>
+    abstract member GetAllProjects : string<folderPath> -> Result<quirkProject[], string>
+    abstract member SaveProject : string<folderPath> -> quirkProject -> Result<unit, string>
+    abstract member GetNextScript : string<folderPath> -> string<projectName> -> Result<string<scriptName>*quirkScript, string>
+    abstract member FinishScript : string<folderPath> -> string<projectName> -> string<scriptName> -> Result<unit, string>
+    abstract member SaveScript : string<folderPath> -> quirkScript -> Result<unit, string>
+    abstract member GetCfgPlex : string<folderPath> -> string<projectName> -> string<cfgPlexName> -> Result<cfgPlex, string>
+    abstract member SaveCfgPlex : string<folderPath> -> cfgPlex -> Result<unit, string>
+    abstract member GetProjectAsync : string<folderPath> -> string<projectName> -> Task<Result<quirkProject, string>>
+    abstract member GetAllProjectsAsync : string<folderPath> -> Task<Result<quirkProject[], string>>
+    abstract member SaveProjectAsync : string<folderPath> -> quirkProject -> Task<Result<unit, string>>
+    abstract member GetNextScriptAsync : string<folderPath> -> string<projectName> -> Task<Result<string<scriptName>*quirkScript, string>>
+    abstract member FinishScriptAsync : string<folderPath> -> string<projectName> -> string<scriptName> -> Task<Result<unit, string>>
+    abstract member SaveScriptAsync : string<folderPath> -> quirkScript -> Task<Result<unit, string>>
+    abstract member GetCfgPlexAsync : string<folderPath> -> string<projectName> -> string<cfgPlexName> -> Task<Result<cfgPlex, string>>
+    abstract member SaveCfgPlexAsync : string<folderPath> -> cfgPlex -> Task<Result<unit, string>>
 
 
 
