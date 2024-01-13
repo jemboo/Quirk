@@ -18,8 +18,7 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <TextBox Text="Hi Dere"/>
-                <!--<FontIcon
+                <FontIcon
                     Grid.Column="0"
                     VerticalAlignment="Center"
                     FontSize="32"
@@ -30,34 +29,36 @@
                     VerticalAlignment="Center">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Name:" Style="{StaticResource ListTitleStyleLabel}"/>
-                        <TextBlock Text="{x:Bind Name }" Style="{StaticResource ListTitleStyle}" />
+                        <TextBlock Text="{x:Bind ProjectName }" Style="{StaticResource ListTitleStyle}" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Type:" Style="{StaticResource ListTitleStyleLabel}"/>
-                        <TextBlock Text="{Binding CfgPlexType }" Style="{StaticResource ListTitleStyle}" />
+                        <TextBlock Text="WorldLine Count:" Style="{StaticResource ListTitleStyleLabel}"/>
+                        <TextBlock Text="{x:Bind QuirkWorldLineVms.Count }" Style="{StaticResource ListTitleStyle}" />
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="ItemCount:" Style="{StaticResource ListTitleStyleLabel}"/>
-                        <TextBlock Text="{x:Bind ItemCount }" Style="{StaticResource ListTitleStyle}" />
-                    </StackPanel>
-                </StackPanel>-->
+                </StackPanel>
             </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="DetailsTemplate">
             <Grid>
-                <views:ConfigsDetailControl CfgPlex="{Binding}" />
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="DetailsTemplate"/>
+                <views:ProjectDetailsControl Grid.Row="1" Project="{Binding}" />
             </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="NoSelectionContentTemplate">
             <Grid>
-                <TextBlock
+                <TextBlock Text="Not selected"/>
+                <!--<TextBlock
                     Text="{Binding DataContext.Instruction, RelativeSource={RelativeSource Mode=TemplatedParent}}"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     TextAlignment="Center"
-                    Style="{ThemeResource SubtitleTextBlockStyle}" />
+                    Style="{ThemeResource SubtitleTextBlockStyle}" />-->
             </Grid>
         </DataTemplate>
     </Page.Resources>

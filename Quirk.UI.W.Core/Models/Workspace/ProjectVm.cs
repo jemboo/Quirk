@@ -1,32 +1,36 @@
 ﻿
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Quirk.Project;
 
 namespace Quirk.UI.W.Core.Models.Workspace;
 public partial class ProjectVm : ObservableObject
 {
-    public ProjectVm()
+    public ProjectVm(quirkProject quirkProject)
     {
-        _cfgPlexType = WorldlineType.Unknown;
+        ProjectName = QuirkProject.getProjectName(quirkProject);
+
+        foreach (var quirkWorldLine in QuirkProject.getQuirkWorldLines(quirkProject))
+        {
+            QuirkWorldLineVms.Add(new QuirkWorldLineVm());
+        }
+
+
+        SymbolCode = WorldlineType.Shc.ToSymbolCode();
     }
 
-    public void CopyValuesFrom(ProjectVm cfgPlexVmSrc)
+    public void CopyValuesFrom(ProjectVm projectVm)
     {
-        Name = cfgPlexVmSrc.Name;
-        CfgPlexType = cfgPlexVmSrc.CfgPlexType;
-        SymbolCode = cfgPlexVmSrc.SymbolCode;
-        SymbolName = cfgPlexVmSrc.SymbolName;
+        ProjectName = projectVm.ProjectName;
+        QuirkWorldLineVms = projectVm.QuirkWorldLineVms;
+        SymbolCode = projectVm.SymbolCode;
+        SymbolName = projectVm.SymbolName;
     }
 
-    public int ItemCount => CfgPlexItems?.Count ?? 0;
-
-
-    [ObservableProperty]
-    private string _name;
-
+    public int ItemCount => QuirkWorldLineVms?.Count ?? 0;
 
     [ObservableProperty]
-    private WorldlineType _cfgPlexType;
+    private string _projectName;
 
 
     [ObservableProperty]
@@ -39,9 +43,10 @@ public partial class ProjectVm : ObservableObject
 
     public char Symbol => (char)SymbolCode;
 
-    public ObservableCollection<QuirkWordline> CfgPlexItems { get; private set; } = new ObservableCollection<QuirkWordline>();
+    public ObservableCollection<QuirkWorldLineVm> QuirkWorldLineVms { get; private set; } 
+        = new ObservableCollection<QuirkWorldLineVm>();
 
-    public string ShortDescription => $"Name: {Name}";
+    public string ShortDescription => $"Name: {ProjectName}";
 
-    public override string ToString() => $"{Name}";
+    public override string ToString() => $"{ProjectName}";
 }

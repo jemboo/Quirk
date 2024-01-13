@@ -9,7 +9,7 @@ public enum WorldlineType
     Unknown
 }
 
-public static class CfgPlexTypeExt
+public static class WorldlineTypeExt
 {
     public static int ToSymbolCode(this WorldlineType cfgPlexType)
     {

@@ -12,7 +12,12 @@ public sealed partial class ListDetailsDetailControl : UserControl
         set => SetValue(ListDetailsMenuItemProperty, value);
     }
 
-    public static readonly DependencyProperty ListDetailsMenuItemProperty = DependencyProperty.Register("ListDetailsMenuItem", typeof(SampleOrder), typeof(ListDetailsDetailControl), new PropertyMetadata(null, OnListDetailsMenuItemPropertyChanged));
+    public static readonly DependencyProperty ListDetailsMenuItemProperty = 
+        DependencyProperty.Register(
+                "ListDetailsMenuItem", 
+                typeof(SampleOrder), 
+                typeof(ListDetailsDetailControl), 
+                new PropertyMetadata(null, OnListDetailsMenuItemPropertyChanged));
 
     public ListDetailsDetailControl()
     {

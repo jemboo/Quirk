@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Quirk.UI.W.Contracts.ViewModels;
 using Quirk.UI.W.Core.Contracts.Services;
+using Quirk.UI.W.Core.Models;
 using Quirk.UI.W.Core.Models.Workspace;
 using Quirk.UI.W.Core.Services;
 using Windows.Storage.Pickers;
@@ -16,7 +17,6 @@ public partial class ProjectsViewModel : ObservableRecipient, INavigationAware
 {
     public ProjectsViewModel(Storage.IProjectDataStore projectDataStore)
     {
-        ProjectVms = new ObservableCollection<ProjectVm>();
         _projectDataStore = projectDataStore;
 
         FindProjectsCommand = new RelayCommand(
@@ -37,13 +37,6 @@ public partial class ProjectsViewModel : ObservableRecipient, INavigationAware
         get; set;
     }
 
-    //private async void FindProjects()
-    //{
-    //    var yab = 4;
-    //    var res = await _projectDataStore.GetProject(@"C:\Quirk", "Shc_064");
-    //    var qp = Result.ExtractOrThrow(res);
-    //    PathProjectsRoot = "Dats cool";
-    //}
     public async void OnNavigatedTo(object parameter)
     {
         StatusMessage = "Select a folder";
@@ -63,7 +56,7 @@ public partial class ProjectsViewModel : ObservableRecipient, INavigationAware
 
         if (folder != null)
         {
-            //CfgPlexes.Clear();
+            ProjectVms.Clear();
             PathProjectsRoot = folder.Path;
             //Instruction = "Select a project";
 
@@ -75,9 +68,9 @@ public partial class ProjectsViewModel : ObservableRecipient, INavigationAware
             else
             {
                 StatusMessage = $"ProjectsFound: {projectsFound.ResultValue.Length}";
-                foreach (var item in projectsFound.ResultValue)
+                foreach (var quirkProject in projectsFound.ResultValue)
                 {
-                   ProjectVms.Add(new ProjectVm());
+                   ProjectVms.Add(new ProjectVm(quirkProject));
                 }
             }
         }
@@ -110,8 +103,10 @@ public partial class ProjectsViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty]
     private ProjectVm? _selectedProject;
 
-    [ObservableProperty]
-    private ObservableCollection<ProjectVm> _projectVms;
+    public ObservableCollection<ProjectVm> ProjectVms
+    {
+        get; private set;
+    } = new ObservableCollection<ProjectVm>();
 
 
 }

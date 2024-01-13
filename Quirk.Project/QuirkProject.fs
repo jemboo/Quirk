@@ -101,8 +101,14 @@ module QuirkProject =
             quirkWorldLineMap = Map.empty
         }
 
-    let getProjectName (quirkProject:quirkProject) = quirkProject.projectName
-    let getQuirkWorldLineMap (quirkProject:quirkProject) = quirkProject.quirkWorldLineMap
+    let getProjectName (quirkProject:quirkProject) = 
+            quirkProject.projectName
+
+    let getQuirkWorldLineMap (quirkProject:quirkProject) = 
+            quirkProject.quirkWorldLineMap
+
+    let getQuirkWorldLines (quirkProject:quirkProject) = 
+            quirkProject.quirkWorldLineMap |> Map.toArray |> Array.map(snd)
 
     let updateProject 
             (quirkProject:quirkProject)
