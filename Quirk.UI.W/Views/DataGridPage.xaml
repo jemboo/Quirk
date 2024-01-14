@@ -9,7 +9,10 @@
 
     <Grid x:Name="ContentArea">
         <controls:DataGrid
+            x:Name="theDataGrid"
             AutoGenerateColumns="False"
+            CanUserSortColumns="True"
+            Sorting="dg_Sorting"
             GridLinesVisibility="Horizontal"
             ItemsSource="{x:Bind ViewModel.Source, Mode=OneWay}">
             <controls:DataGrid.Resources>
@@ -17,8 +20,8 @@
             </controls:DataGrid.Resources>
             <controls:DataGrid.Columns>
                 <!-- TODO: Replace column definitions to match real data. Consider adding Header values to Resources.resw. -->
-                <controls:DataGridTextColumn Binding="{Binding OrderID}" Header="OrderID" />
-                <controls:DataGridTextColumn Binding="{Binding OrderDate}" Header="OrderDate" />
+                <controls:DataGridTextColumn CanUserSort="True" Binding="{Binding OrderID}" Header="{x:Bind ViewModel.Hdr, Mode=OneWay}" Tag="OrderID"/>
+                <controls:DataGridTextColumn Binding="{Binding OrderDate}" Header="OrderDate" Visibility="{x:Bind ViewModel.Vis, Mode=OneWay}" />
                 <controls:DataGridTextColumn Binding="{Binding Company}" Header="Company" />
                 <controls:DataGridTextColumn Binding="{Binding ShipTo}" Header="ShipTo" />
                 <controls:DataGridTextColumn Binding="{Binding OrderTotal}" Header="OrderTotal" />

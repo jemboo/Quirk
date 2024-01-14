@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 
 using CommunityToolkit.Mvvm.ComponentModel;
-
+using Microsoft.UI.Xaml;
 using Quirk.UI.W.Contracts.ViewModels;
 using Quirk.UI.W.Core.Contracts.Services;
 using Quirk.UI.W.Core.Models;
@@ -31,6 +31,9 @@ public partial class DataGridViewModel : ObservableRecipient, INavigationAware
             Source.Add(item);
         }
     }
+
+    public string Hdr => "Ralph";
+    public Visibility Vis => Visibility.Visible;
 
     public void OnNavigatedFrom()
     {

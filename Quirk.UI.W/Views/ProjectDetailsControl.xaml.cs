@@ -1,5 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Quirk.UI.W.ComponentVms;
 using Quirk.UI.W.Core.Models;
 using Quirk.UI.W.Core.Models.Workspace;
 
@@ -29,7 +30,7 @@ public sealed partial class ProjectDetailsControl : UserControl
     {
         if (d is ProjectDetailsControl control)
         {
-            control.ForegroundElement.ChangeView(0, 0, 1);
+            //control.ForegroundElement.ChangeView(0, 0, 1);
         }
     }
 }

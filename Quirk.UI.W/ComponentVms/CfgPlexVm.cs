@@ -1,8 +1,9 @@
 ﻿
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Quirk.UI.W.Core.Models.Workspace;
 
-namespace Quirk.UI.W.Core.Models.Workspace;
+namespace Quirk.UI.W.ComponentVms;
 public partial class CfgPlexVm : ObservableObject
 {
     public CfgPlexVm()

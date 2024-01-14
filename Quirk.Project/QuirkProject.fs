@@ -108,7 +108,46 @@ module QuirkProject =
             quirkProject.quirkWorldLineMap
 
     let getQuirkWorldLines (quirkProject:quirkProject) = 
-            quirkProject.quirkWorldLineMap |> Map.toArray |> Array.map(snd)
+            quirkProject.quirkWorldLineMap |> Map.toSeq |> Seq.map(snd)
+
+    let getSingletonParams (quirkProject:quirkProject) = 
+        let modelParamValues = 
+                quirkProject 
+                |> getQuirkWorldLines
+                |> Seq.map(QuirkWorldLine.getModelParamSet)
+                |> Seq.map(ModelParamSet.getAllModelParamValues)
+                |> Seq.concat
+                |> Seq.toArray
+                |> Array.distinct
+                |> Array.groupBy(ModelParamValue.getModelParamName)
+                    
+        let singetonModelParamValues = 
+            modelParamValues 
+            |> Array.filter(fun (names, mbrs) -> mbrs.Length = 1)
+            |> Array.map(snd >> Array.head)
+
+        singetonModelParamValues
+
+
+    let getVariableParamNames (quirkProject:quirkProject) = 
+        let modelParamValues = 
+                quirkProject 
+                |> getQuirkWorldLines
+                |> Seq.map(QuirkWorldLine.getModelParamSet)
+                |> Seq.map(ModelParamSet.getAllModelParamValues)
+                |> Seq.concat
+                |> Seq.toArray
+                |> Array.distinct
+                |> Array.groupBy(ModelParamValue.getModelParamName)
+                    
+        let variableParamNames = 
+            modelParamValues 
+            |> Array.filter(fun (names, mbrs) -> mbrs.Length > 1)
+            |> Array.map(fst)
+
+        variableParamNames
+
+
 
     let updateProject 
             (quirkProject:quirkProject)

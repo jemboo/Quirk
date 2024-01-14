@@ -28,7 +28,6 @@ type modelParamValue =
 
 
 
-
 module ModelParamType =
     
     let toModelParamValue 
@@ -86,8 +85,6 @@ module ModelParamType =
             }
 
 
-
-
 module ModelParamValue =
 
     let makeMutationRates (rates: float seq) =
@@ -123,10 +120,8 @@ module ModelParamValue =
         |> Seq.toArray
 
 
-
-
-    let getModelParamName (cfgModelParamValue: modelParamValue) =
-        match cfgModelParamValue with
+    let getModelParamName (modelParamValue: modelParamValue) =
+        match modelParamValue with
         | MutationRate (n, o) -> n
         | NoiseFraction (n, nf) -> n
         | Order (n, o) -> n
@@ -137,8 +132,9 @@ module ModelParamValue =
         | SwitchGenMode (n, sgm) -> n
 
 
-    let toArrayOfStrings (cfgModelParamValue: modelParamValue) =
-        match cfgModelParamValue with
+
+    let toArrayOfStrings (modelParamValue: modelParamValue) =
+        match modelParamValue with
         | MutationRate (n, o) ->
                 [|
                     "MutationRate";
@@ -194,6 +190,11 @@ module ModelParamValue =
                     n |> UMX.untag
                     sgm |> string
                 |]
+
+
+    let toReportString  (modelParamValue: modelParamValue) =
+        let a = modelParamValue |> toArrayOfStrings
+        $"{a.[1]}: {a.[2]}"
 
 
     let fromArrayOfStrings (lst: string array) : Result<modelParamValue, string> =
@@ -304,11 +305,31 @@ module ModelParamSet =
         
     let getId (quirkModelParamSet:modelParamSet) =
         quirkModelParamSet.id
-        
             
-    let getReplicaNumber (quirkModelParamSet:modelParamSet) =
-        quirkModelParamSet.replicaNumber
+    let getReplicaNumber (modelParamSet:modelParamSet) =
+        modelParamSet.replicaNumber
 
-    let getValueMap (quirkModelParamSet:modelParamSet) =
-        quirkModelParamSet.valueMap
+    let getValueMap (modelParamSet:modelParamSet) =
+        modelParamSet.valueMap
   
+    let getAllModelParamValues (modelParamSet:modelParamSet) = 
+        modelParamSet.valueMap 
+        |> Map.toSeq
+        |> Seq.map(snd)
+
+    let getModelParamValue 
+            (modelParamName:string<modelParamName>) 
+            (modelParamSet:modelParamSet) 
+        =
+        modelParamSet.valueMap.TryFind modelParamName
+
+    let getModelParamValues
+            (modelParamNames:string<modelParamName> seq) 
+            (modelParamSet:modelParamSet) 
+        =
+        modelParamNames
+        |> Seq.map(modelParamSet.valueMap.TryFind)
+        |> Seq.filter(Option.isSome)
+        |> Seq.map(Option.get)
+        |> Seq.toArray
+

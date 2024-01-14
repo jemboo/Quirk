@@ -1,13 +1,14 @@
 ﻿<Page
+    x:Name="ProjectsPage_root"
     x:Class="Quirk.UI.W.Views.ProjectsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
-    xmlns:models="using:Quirk.UI.W.Core.Models.Workspace"
     xmlns:views="using:Quirk.UI.W.Views"
-    xmlns:behaviors="using:Quirk.UI.W.Behaviors"
+    xmlns:behaviors="using:Quirk.UI.W.Behaviors" 
+    xmlns:models="using:Quirk.UI.W.ComponentVms"
     behaviors:NavigationViewHeaderBehavior.HeaderMode="Never"
     mc:Ignorable="d">
     
@@ -18,11 +19,6 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <FontIcon
-                    Grid.Column="0"
-                    VerticalAlignment="Center"
-                    FontSize="32"
-                    Glyph="{x:Bind Symbol}" />
                 <StackPanel
                     Grid.Column="1"
                     Margin="{StaticResource SmallLeftMargin}"
@@ -41,11 +37,6 @@
 
         <DataTemplate x:Key="DetailsTemplate">
             <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <TextBlock Text="DetailsTemplate"/>
                 <views:ProjectDetailsControl Grid.Row="1" Project="{Binding}" />
             </Grid>
         </DataTemplate>

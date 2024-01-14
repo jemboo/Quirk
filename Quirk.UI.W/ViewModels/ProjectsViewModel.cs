@@ -3,6 +3,7 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml.Controls.Primitives;
+using Quirk.UI.W.ComponentVms;
 using Quirk.UI.W.Contracts.ViewModels;
 using Quirk.UI.W.Core.Contracts.Services;
 using Quirk.UI.W.Core.Models;
