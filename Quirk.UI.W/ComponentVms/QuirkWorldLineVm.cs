@@ -59,10 +59,6 @@ public partial class QuirkWorldLineVm : ObservableObject
         {
             Val2 = colVals[0];
         }
-        else
-        {
-           // _val2Vis = V
-        }
         if (colVals.Length > 1)
         {
             Val3 = colVals[1];
