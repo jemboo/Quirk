@@ -46,7 +46,7 @@
             Grid.Row="1"
             Margin="{StaticResource SmallBottomMargin}"
             VerticalAlignment="Center"
-            Text="{x:Bind Project.ConstantParams, Mode=OneWay}"
+            Text="{x:Bind ProjectVm.ConstantParams, Mode=OneWay}"
             TextWrapping="Wrap"
             />
 
@@ -69,8 +69,9 @@
                 x:Name="dg_worldLines"
                 AutoGenerateColumns="False"
                 CanUserSortColumns="True"
+                Sorting="dg_Sorting"
                 GridLinesVisibility="Horizontal"
-                ItemsSource="{x:Bind Project.QuirkWorldLineVms, Mode=OneWay }">
+                ItemsSource="{x:Bind ProjectVm.QuirkWorldLineVms, Mode=OneWay }">
                 <controls:DataGrid.Resources>
                     <SolidColorBrush x:Key="DataGridColumnHeaderBackgroundColor" Color="Transparent" />
                 </controls:DataGrid.Resources>
@@ -78,12 +79,25 @@
                     <controls:DataGridTextColumn CanUserSort="True" Binding="{Binding QuirkModelType}" Header="Type" Tag="QuirkModelType"/>
                     <controls:DataGridTextColumn Binding="{Binding QuirkWorldLineId}" Header="Id"  Tag="QuirkWorldLineId" />
                     <controls:DataGridTextColumn Binding="{Binding ReplicaNum}" Header="ReplicaNum"  Tag="ReplicaNum" />
-                <controls:DataGridTextColumn Binding="{Binding Val2}"  Header="{x:Bind Project.Hdr2, Mode=OneWay}"  Visibility="{x:Bind Project.Hdr2Vis, Mode=OneWay}" Tag="Val2" />
-                <controls:DataGridTextColumn Binding="{Binding Val3}"  Header="{x:Bind Project.Hdr3, Mode=OneWay}"  Visibility="{x:Bind Project.Hdr3Vis, Mode=OneWay}" Tag="Val3" />
-                <controls:DataGridTextColumn Binding="{Binding Val4}"  Header="{x:Bind Project.Hdr4, Mode=OneWay}"  Visibility="{x:Bind Project.Hdr4Vis, Mode=OneWay}" Tag="Val4" />
-                <controls:DataGridTextColumn Binding="{Binding Val5}"  Header="{x:Bind Project.Hdr5, Mode=OneWay}"  Visibility="{x:Bind Project.Hdr5Vis, Mode=OneWay}" Tag="Val5" />
-                <controls:DataGridTextColumn Binding="{Binding Val6}"  Header="{x:Bind Project.Hdr6, Mode=OneWay}"  Visibility="{x:Bind Project.Hdr6Vis, Mode=OneWay}" Tag="Val6" />
-                <controls:DataGridTextColumn Binding="{Binding Val7}"  Header="{x:Bind Project.Hdr7, Mode=OneWay}"  Visibility="{x:Bind Project.Hdr7Vis, Mode=OneWay}" Tag="Val7" />
+                    
+                <controls:DataGridTextColumn Binding="{Binding Val2}"  Header="{x:Bind ProjectVm.Hdr2, Mode=OneWay}"  
+                                             Visibility="{x:Bind ProjectVm.Hdr2Vis, Mode=OneWay}" Tag="Val2" />
+                    
+                <controls:DataGridTextColumn Binding="{Binding Val3}"  Header="{x:Bind ProjectVm.Hdr3, Mode=OneWay}"  
+                                             Visibility="{x:Bind ProjectVm.Hdr3Vis, Mode=OneWay}" Tag="Val3" />
+                    
+                <controls:DataGridTextColumn Binding="{Binding Val4}"  Header="{x:Bind ProjectVm.Hdr4, Mode=OneWay}"  
+                                             Visibility="{x:Bind ProjectVm.Hdr4Vis, Mode=OneWay}" Tag="Val4" />
+                    
+                <controls:DataGridTextColumn Binding="{Binding Val5}"  Header="{x:Bind ProjectVm.Hdr5, Mode=OneWay}"  
+                                             Visibility="{x:Bind ProjectVm.Hdr5Vis, Mode=OneWay}" Tag="Val5" />
+                    
+                <controls:DataGridTextColumn Binding="{Binding Val6}"  Header="{x:Bind ProjectVm.Hdr6, Mode=OneWay}"  
+                                             Visibility="{x:Bind ProjectVm.Hdr6Vis, Mode=OneWay}" Tag="Val6" />
+                    
+                <controls:DataGridTextColumn Binding="{Binding Val7}"  Header="{x:Bind ProjectVm.Hdr7, Mode=OneWay}"  
+                                             Visibility="{x:Bind ProjectVm.Hdr7Vis, Mode=OneWay}" Tag="Val7" />
+                    
                 </controls:DataGrid.Columns>
             </controls:DataGrid>
         <!--</ScrollViewer>-->

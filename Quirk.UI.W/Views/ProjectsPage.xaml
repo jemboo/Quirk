@@ -37,7 +37,7 @@
 
         <DataTemplate x:Key="DetailsTemplate">
             <Grid>
-                <views:ProjectDetailsControl Grid.Row="1" Project="{Binding}" />
+                <views:ProjectDetailsControl Grid.Row="1" ProjectVm="{Binding}" />
             </Grid>
         </DataTemplate>
 
