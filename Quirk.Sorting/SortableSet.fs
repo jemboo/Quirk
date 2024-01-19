@@ -1,22 +1,26 @@
 ﻿namespace Quirk.Sorting
+open FSharp.UMX
 
 open System
+open Quirk.Core
 
 type sortableSet =
     private
-        { sortableSetId: sortableSetId
+        { sortableSetId: Guid<sortableSetId>
           rollout: rollout
-          symbolSetSize: symbolSetSize }
+          symbolSetSize: uint64<symbolSetSize> }
 
 module SortableSet =
 
-    let getSymbolSetSize (sortableSet: sortableSet) = sortableSet.symbolSetSize
+    let getSymbolSetSize 
+            (sortableSet: sortableSet) 
+        = sortableSet.symbolSetSize
 
     let getSortableCount (sortableSet: sortableSet) =
         sortableSet.rollout
         |> Rollout.getArrayCount
-        |> ArrayCount.value
-        |> SortableCount.create
+        |> UMX.untag
+        |> UMX.tag<sortableCount>
 
     let getSortableSetId (sortableSet: sortableSet) = sortableSet.sortableSetId
 
@@ -25,20 +29,20 @@ module SortableSet =
     let getOrder (sortableSet: sortableSet) =
         sortableSet.rollout
         |> Rollout.getArrayLength
-        |> ArrayLength.value
-        |> Order.createNr
+        |> UMX.untag
+        |> UMX.tag<order>
 
     let getSummaryReport (sortableSet:sortableSet)
         =
         sprintf "%s\t%d"
-            (sortableSet |> getSortableSetId |> SortableSetId.value |> string)
-            (sortableSet |> getRollout |> Rollout.getArrayCount |> ArrayCount.value)
+            (sortableSet |> getSortableSetId |> UMX.untag |> string)
+            (sortableSet |> getRollout |> Rollout.getArrayCount |> UMX.untag)
 
     let makeTag (sortableSet:sortableSet)
         =
         sprintf "%s(%s)"
-            ((sortableSet |> getRollout |> Rollout.getArrayCount |> ArrayCount.value).ToString("D4"))
-            ((sortableSet |> getSortableSetId |> SortableSetId.value |> string).Substring(0,8))
+            ((sortableSet |> getRollout |> Rollout.getArrayCount |> UMX.untag ).ToString("D4"))
+            ((sortableSet |> getSortableSetId |> UMX.untag |> string).Substring(0,8))
 
     // returns the first sortable, which would be the permutaion root of an orbit type sortable set
     let getIdAndPermRoot 
@@ -54,8 +58,8 @@ module SortableSet =
 
 
     let make
-        (sortableSetId: sortableSetId) 
-        (symbolSetSize: symbolSetSize) 
+        (sortableSetId: Guid<sortableSetId>) 
+        (symbolSetSize: uint64<symbolSetSize>) 
         (rollout: rollout) 
         =
         { sortableSetId = sortableSetId
@@ -65,20 +69,20 @@ module SortableSet =
 
     let createEmpty = 
         make 
-            (Guid.Empty |> SortableSetId.create) 
-            (0UL |> SymbolSetSize.createNr) 
+            (Guid.Empty |> UMX.tag<sortableSetId>) 
+            (0UL |> UMX.tag<symbolSetSize>) 
             Rollout.createEmpty
 
 
     let fromSortableBoolArrays
-        (sortableSetId: sortableSetId)
+        (sortableSetId: Guid<sortableSetId>)
         (rolloutFormat: rolloutFormat)
-        (order: order)
+        (order: int<order>)
         (sortableBoolSeq: seq<sortableBoolArray>)
         =
         result {
-            let! symbolSetSize = 2uL |> SymbolSetSize.create
-            let! arrayLength = order |> Order.value |> ArrayLength.create
+            let symbolSetSize = 2uL |> UMX.tag<symbolSetSize>
+            let arrayLength = order |> UMX.cast<order, arrayLength>
             let boolArraySeq = sortableBoolSeq |> Seq.map (SortableBoolArray.getValues)
             let! rollout = boolArraySeq |> Rollout.fromBoolArrays rolloutFormat arrayLength
             return make sortableSetId symbolSetSize rollout
@@ -107,13 +111,13 @@ module SortableSet =
 
 
     let fromSortableIntArrays
-            (sortableSetId: sortableSetId)
-            (order: order)
-            (symbolSetSize: symbolSetSize)
+            (sortableSetId: Guid<sortableSetId>)
+            (order: int<order>)
+            (symbolSetSize: uint64<symbolSetSize>)
             (sortableInts: seq<sortableIntArray>)
             =
         result {
-            let arrayLength = order |> Order.value |> ArrayLength.createNr
+            let arrayLength = order |> UMX.cast<order, arrayLength>
             let bitsPerSymbol = symbolSetSize |> BitsPerSymbol.fromSymbolSetSize
             let! rolly =
                 sortableInts
@@ -125,14 +129,14 @@ module SortableSet =
 
 
     let fromBitPack
-        (sortableSetId: sortableSetId)
+        (sortableSetId: Guid<sortableSetId>)
         (rolloutFormat: rolloutFormat)
-        (order: order)
-        (symbolSetSize: symbolSetSize)
+        (order: int<order>)
+        (symbolSetSize: uint64<symbolSetSize>)
         (bitPk: bitPack)
         =
         result {
-            let arrayLength = order |> Order.value |> ArrayLength.createNr
+            let arrayLength = order |> UMX.cast<order, arrayLength>
             let! rollout = bitPk |> Rollout.fromBitPack rolloutFormat arrayLength
             return make sortableSetId symbolSetSize rollout
         }
@@ -147,38 +151,38 @@ module SortableSet =
 
 
     let makeAllBits 
-            (sortableSetId: sortableSetId) 
+            (sortableSetId: Guid<sortableSetId>) 
             (rolloutFormat: rolloutFormat) 
-            (order: order) 
+            (order: int<order>) 
             =
         let sortableBits = SortableBoolArray.makeAllBits order
         fromSortableBoolArrays sortableSetId rolloutFormat order sortableBits
 
 
     let makeOrbits
-        (sortableSetId: sortableSetId)
-        (maxCount: sortableCount option)
+        (sortableSetId: Guid<sortableSetId>)
+        (maxCount: int<sortableCount> option)
         (perm: permutation)
         =
         let order = perm |> Permutation.getOrder
-        let symbolSetSize = order |> Order.value |> uint64 |> SymbolSetSize.createNr
+        let symbolSetSize = order |> UMX.untag |> uint64 |> UMX.tag<symbolSetSize>
         let sortableInts = SortableIntArray.makeOrbits maxCount perm
         fromSortableIntArrays sortableSetId order symbolSetSize sortableInts
 
 
     let makeMergeSortTestWithInts
-            (sortableSetId: sortableSetId)
-            (order: order) 
+            (sortableSetId: Guid<sortableSetId>)
+            (order: int<order>) 
             =
-        let symbolSetSize = order |> Order.value |> uint64 |> SymbolSetSize.createNr
+        let symbolSetSize = order |> UMX.untag |> uint64 |> UMX.tag<symbolSetSize>
         let sortableInts = SortableIntArray.makeMergeSortTestWithInts order
         fromSortableIntArrays sortableSetId order symbolSetSize sortableInts
 
 
     let makeSortedStacks 
-            (sortableSetId: sortableSetId) 
+            (sortableSetId: Guid<sortableSetId>) 
             (rolloutFormat: rolloutFormat) 
-            (orderStack: order[]) 
+            (orderStack: int<order>[]) 
             =
         let stackedOrder = Order.add orderStack
         let sortableBits = SortableBoolArray.makeSortedStacks orderStack
@@ -186,12 +190,12 @@ module SortableSet =
 
 
     let makeRandomPermutation
-        (order: order)
-        (sortableCount: sortableCount)
+        (order: int<order>)
+        (sortableCount: int<sortableCount>)
         (rando: IRando)
-        (sortableSetId: sortableSetId)
+        (sortableSetId: Guid<sortableSetId>)
         =
-        let symbolSetSize = order |> Order.value |> uint64 |> SymbolSetSize.createNr
+        let symbolSetSize = order |> UMX.untag |> uint64 |> UMX.tag<symbolSetSize>
 
         let sortableInts =
             SortableCount.makeSeq sortableCount
@@ -202,25 +206,25 @@ module SortableSet =
 
     let makeRandomBits
         (rolloutFormat: rolloutFormat)
-        (order: order)
+        (order: int<order>)
         (pctTrue: float)
-        (sortableCount: sortableCount)
+        (sortableCount: int<sortableCount>)
         (rando: IRando)
-        (sortableSetId: sortableSetId)
+        (sortableSetId: Guid<sortableSetId>)
         =
         let sortableBools =
             SortableBoolArray.makeRandomBits order pctTrue rando
-            |> Seq.take (sortableCount |> SortableCount.value)
+            |> Seq.take (sortableCount |> UMX.untag)
 
         fromSortableBoolArrays sortableSetId rolloutFormat order sortableBools
 
 
     let makeRandomSymbols
-        (order: order)
-        (symbolSetSize: symbolSetSize)
-        (sortableCount: sortableCount)
+        (order: int<order>)
+        (symbolSetSize: uint64<symbolSetSize>)
+        (sortableCount: int<sortableCount>)
         (rando: IRando)
-        (sortableSetId: sortableSetId)
+        (sortableSetId: Guid<sortableSetId>)
         =
         let sortableInts =
             SortableCount.makeSeq sortableCount
@@ -230,7 +234,7 @@ module SortableSet =
 
     // Not finished
     let switchReduce
-        (sortableSetId: sortableSetId)
+        (sortableSetId: Guid<sortableSetId>)
         (sortableSet: sortableSet)
         (sorter: sorter)
         =
@@ -243,8 +247,8 @@ module SortableSet =
 
 type setOfSortableSet =
     private
-        { setOfSortableSetId: setOfSortableSetId
-          sortableSetMap: Map<sortableSetId, sortableSet> }
+        { setOfSortableSetId: Guid<setOfSortableSetId>
+          sortableSetMap: Map<Guid<sortableSetId>, sortableSet> }
 
 
 module SetOfSortableSet =
@@ -266,13 +270,13 @@ module SetOfSortableSet =
 
 
     let generateSortableSetIds 
-        (setOfSortableSetId:setOfSortableSetId) 
+        (setOfSortableSetId:Guid<setOfSortableSetId>) 
         =
-        RandVars.rndGuidsLcg (setOfSortableSetId |> SetOfSortableSetId.value)
-        |> Seq.map(SortableSetId.create)
+        RandVars.rndGuidsLcg (setOfSortableSetId |> UMX.untag)
+        |> Seq.map(UMX.tag<sortableSetId>)
 
 
-    let load (setOfSortableSetId:setOfSortableSetId) 
+    let load (setOfSortableSetId:Guid<setOfSortableSetId>) 
              (sortableSets: seq<sortableSet>) 
              =
         let sortableSetMap =
@@ -283,23 +287,23 @@ module SetOfSortableSet =
           sortableSetMap = sortableSetMap }
 
     let create
-        (setOfSortableSetId:setOfSortableSetId)
-        (sortableSetCount: sortableSetCount)
-        (sortableSetGen: sortableSetId -> sortableSet option)
+        (setOfSortableSetId:Guid<setOfSortableSetId>)
+        (sortableSetCount: int<sortableSetCount>)
+        (sortableSetGen: Guid<sortableSetId> -> sortableSet option)
         =
         generateSortableSetIds setOfSortableSetId
         |> Seq.map (fun sId -> sortableSetGen sId )
         |> Seq.filter(Option.isSome)
         |> Seq.map(Option.get)
-        |> Seq.take(sortableSetCount |> SortableSetCount.value)
+        |> Seq.take(sortableSetCount |> UMX.untag)
         |> load setOfSortableSetId
 
 
     let createRandom
-        (setOfSortableSetId:setOfSortableSetId)
-        (sortableSetCount: sortableSetCount)
+        (setOfSortableSetId:Guid<setOfSortableSetId>)
+        (sortableSetCount: int<sortableSetCount>)
         (rnGen: rngGen)
-        (sortableSetRndGen: IRando -> sortableSetId -> sortableSet option)
+        (sortableSetRndGen: IRando -> Guid<sortableSetId> -> sortableSet option)
         =
         let randy = rnGen |> Rando.fromRngGen
         let sortableSetGen = sortableSetRndGen randy
@@ -307,9 +311,9 @@ module SetOfSortableSet =
 
 
     let makeOrbits
-        (setOfSortableSetId:setOfSortableSetId)
-        (sortableSetCount: sortableSetCount)
-        (maxSortableCount: sortableCount option)
+        (setOfSortableSetId:Guid<setOfSortableSetId>)
+        (sortableSetCount: int<sortableSetCount>)
+        (maxSortableCount: int<sortableCount> option)
         (perms: permutation array)
         =
         let mutable dex = -1
@@ -317,22 +321,22 @@ module SetOfSortableSet =
             dex <- dex + 1
             perms.[dex]
 
-        let sortableSetGen (id:sortableSetId) = 
+        let sortableSetGen (id:Guid<sortableSetId>) = 
             SortableSet.makeOrbits id maxSortableCount (getPerm ()) 
             |> Result.toOption
         create setOfSortableSetId sortableSetCount sortableSetGen
 
 
     let makeRandomOrbits
-        (setOfSortableSetId:setOfSortableSetId)
-        (sortableSetCount: sortableSetCount)
-        (order:order)
-        (maxSortableCount: sortableCount option)
+        (setOfSortableSetId:Guid<setOfSortableSetId>)
+        (sortableSetCount: int<sortableSetCount>)
+        (order:int<order>)
+        (maxSortableCount: int<sortableCount> option)
         (rnGen: rngGen)
         =
         let randy = rnGen |> Rando.fromRngGen
         let perms = Permutation.createRandoms order randy
-                    |> Seq.take(sortableSetCount |> SortableSetCount.value)
+                    |> Seq.take(sortableSetCount |> UMX.untag)
                     |> Seq.toArray
         makeOrbits
             setOfSortableSetId

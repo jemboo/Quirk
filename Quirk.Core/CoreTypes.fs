@@ -89,7 +89,7 @@ module Order =
 
 module BitsPerSymbol =
 
-    let fromSymbolSetSize (symbolSetSiz: int<symbolSetSize>) =
+    let fromSymbolSetSize (symbolSetSiz: uint64<symbolSetSize>) =
         let sc = symbolSetSiz |> UMX.untag
         (sc.leftmost_index + 1) |> UMX.tag<bitsPerSymbol>
 

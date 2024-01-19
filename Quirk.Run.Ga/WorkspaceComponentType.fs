@@ -1,4 +1,4 @@
-﻿namespace Quirk.Run.Ga
+﻿namespace Quirk.Run.Shc
 
 open System
 open FSharp.UMX
@@ -6,9 +6,9 @@ open Quirk.Core
 open Quirk.Project
 open Quirk.Run.Core
 
-[<Measure>] type gaComponentId
+[<Measure>] type shcComponentId
 
-module WorkspaceComponentTypeGa =
+module WorkspaceComponentTypeShc =
 
     let getShcComponentID 
             (quirkWorldLineId:Guid<quirkWorldLineId>)
@@ -21,11 +21,11 @@ module WorkspaceComponentTypeGa =
             workspaceComponentTypeShc :> obj
         ] 
         |> GuidUtils.guidFromObjs
-        |> UMX.tag<gaComponentId>
+        |> UMX.tag<shcComponentId>
 
 
 
-type rndGenTypeGa =
+type rndGenTypeShc =
     | Create
     | Mutate
     | Prune
@@ -36,7 +36,7 @@ module RndGenProvider =
 
     let getRngGen 
             (rngType:rngType)
-            (rndGenTypeShc:rndGenTypeGa)
+            (rndGenTypeShc:rndGenTypeShc)
             (generation:int<generation>) 
         =
         let gu = 

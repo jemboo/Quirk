@@ -1,5 +1,5 @@
 ﻿namespace Quirk.Core
-
+open FSharp.UMX
 open System
 
 module RandVars =
@@ -8,7 +8,7 @@ module RandVars =
         let rndGud = RndGuid.makeLcg gud
         Seq.initInfinite(fun _ -> RndGuid.nextGuid rndGud)
 
-    let rndBitsUint64 (order: order) (rnd: IRando) =
+    let rndBitsUint64 (order: int<order>) (rnd: IRando) =
         (rnd.NextULong ()) &&& (order |> Order.bitMaskUint64)
 
     // For making a 2d Gaussian distribution
@@ -44,16 +44,16 @@ module RandVars =
         Seq.init len (fun _ -> if ((rnd.NextFloat ()) > pctTrue) then false else true)
 
 
-    let randSymbols (symbolCount: symbolSetSize) (rnd: IRando) (len: int) =
-        let sc = symbolCount |> SymbolSetSize.value |> int
-        Seq.init len (fun _ -> (rnd.NextPositiveInt ()) % sc)
+    let randSymbols (symbolCount: uint64<symbolSetSize>) (rnd: IRando) (len: int) =
+        let sc = symbolCount |> UMX.untag
+        Seq.init len (fun _ -> (rnd.NextPositiveInt ()) % (sc |> int))
 
 
     let drawTwoWithoutRep 
-        (symbolCount: symbolSetSize) 
+        (symbolCount: uint64<symbolSetSize>) 
         (rnd: IRando) 
         =
-        let sc = symbolCount |> SymbolSetSize.value |> int
+        let sc = symbolCount |> UMX.untag |> int
         let aBit = (rnd.NextPositiveInt ()) % sc
         let mutable bBit = (rnd.NextPositiveInt ()) % sc
 
@@ -104,7 +104,7 @@ module RandVars =
     // Does not change initialList
     let fisherYatesReflShuffle (rnd: IRando) (initialList: array<int>) =
         let len = initialList.Length
-        let order = len |> Order.createNr
+        let order = len |> UMX.tag<order>
 
         let rndmx max = (rnd.NextUInt ()) % max
         let availableFlags = Array.init initialList.Length (fun i -> (i, true))
@@ -138,26 +138,26 @@ module RandVars =
 
 
 
-    let randomPermutation (rnd: IRando) (order: order) =
-        (fisherYatesShuffle rnd) [| 0 .. (Order.value (order) - 1) |] |> Seq.toArray
+    let randomPermutation (rnd: IRando) (order: int<order>) =
+        (fisherYatesShuffle rnd) [| 0 .. ((order |> UMX.untag) - 1) |] |> Seq.toArray
 
 
-    let randomPermutations (rnd: IRando) (order: order) =
+    let randomPermutations (rnd: IRando) (order: int<order>) =
         Seq.initInfinite (fun _ -> randomPermutation rnd order)
 
 
-    let rndPartialTwoCycle (rnd: IRando) (order: order) (cycleCount: int) =
+    let rndPartialTwoCycle (rnd: IRando) (order: int<order>) (cycleCount: int) =
         let rndTupes = randomPermutation rnd order 
                         |> (Seq.chunkBySize 2) |> Seq.toArray
         
-        let arrayRet = Array.init (Order.value order) (id)
+        let arrayRet = Array.init (order |> UMX.untag) (id)
         for i = 0 to cycleCount - 1 do
             arrayRet.[rndTupes.[i].[0]] <- rndTupes.[i].[1]
             arrayRet.[rndTupes.[i].[1]] <- rndTupes.[i].[0]
         arrayRet
 
 
-    let rndFullTwoCycle (rnd: IRando) (order: order) =
+    let rndFullTwoCycle (rnd: IRando) (order: int<order>) =
         rndPartialTwoCycle rnd order (order |> Order.maxSwitchesPerStage)
 
 
@@ -173,7 +173,7 @@ module RandVars =
             }
             |> Seq.toList
 
-        randomPermutations rnd (Order.createNr n) |> Seq.map (_capN n m)
+        randomPermutations rnd (n |> UMX.tag<order>) |> Seq.map (_capN n m)
 
 
     let binomial (rnd: IRando) (freq: float) (numDraws: int) =

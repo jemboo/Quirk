@@ -1,4 +1,4 @@
-﻿namespace Quirk.Sorting
+﻿namespace Quirk.Workspace
 
 module Say =
     let hello name =

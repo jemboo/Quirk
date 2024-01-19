@@ -1,21 +1,24 @@
 ﻿namespace Quirk.Sorting
+open FSharp.UMX
+open Quirk.Core
+open Quirk.Sorting
 
 type sortableIntArray =
     private
         { values: int[]
-          order: order
-          symbolSetSize: symbolSetSize }
+          order: int<order>
+          symbolSetSize: uint64<symbolSetSize> }
 
 
 type sortableBoolArray =
-    private { values: bool[]; order: order }
+    private { values: bool[]; order: int<order> }
 
 
 module SortableIntArray =
 
-    let Identity (order: order) (symbolCount: symbolSetSize) =
-        let ordV = (order |> Order.value)
-        let sc = symbolCount |> SymbolSetSize.value |> int
+    let Identity (order: int<order>) (symbolCount: uint64<symbolSetSize>) =
+        let ordV = (order |> UMX.untag)
+        let sc = symbolCount |> UMX.untag |> int
 
         if (ordV <> sc) then
             sprintf "order %d and symbolcount %d don't match" ordV sc |> Error
@@ -32,7 +35,7 @@ module SortableIntArray =
     let getSymbolSetSize (sia: sortableIntArray) = sia.symbolSetSize
 
 
-    let make (order: order) (symbolSetSize: symbolSetSize) (vals: int[]) =
+    let make (order: int<order>) (symbolSetSize: uint64<symbolSetSize>) (vals: int[]) =
         { sortableIntArray.values = vals
           order = order
           symbolSetSize = symbolSetSize }
@@ -46,10 +49,10 @@ module SortableIntArray =
         sortableInts |> getValues |> CollectionProps.isSorted_idiom
 
 
-    let makeOrbits (maxCount: sortableCount option) (perm: permutation) =
+    let makeOrbits (maxCount: int<sortableCount> option) (perm: permutation) =
         let order = perm |> Permutation.getOrder
-        let symbolSetSize = order |> Order.value |> uint64 |> SymbolSetSize.createNr
-        let intOpt = maxCount |> Option.map SortableCount.value
+        let symbolSetSize = order |> UMX.untag |> uint64 |> UMX.tag<symbolSetSize>
+        let intOpt = maxCount |> Option.map UMX.untag
 
         Permutation.powers intOpt perm
         |> Seq.map (Permutation.getArray)
@@ -60,9 +63,9 @@ module SortableIntArray =
 
 
     // test set for the merge sort (merge two sorted sets of order/2)
-    let makeMergeSortTestWithInts (order: order) =
-        let hov = (order |> Order.value) / 2
-        let symbolSetSize = order |> Order.value |> uint64 |> SymbolSetSize.createNr
+    let makeMergeSortTestWithInts (order: int<order>) =
+        let hov = (order |> UMX.untag ) / 2
+        let symbolSetSize = order |> UMX.untag |> uint64 |> UMX.tag<symbolSetSize>
         [|0 .. hov|]
         |> Array.map (
             fun dex ->
@@ -72,16 +75,16 @@ module SortableIntArray =
             )
 
 
-    let makeRandomPermutation (order: order) (randy: IRando) =
-        let symbolSetSize = order |> Order.value |> uint64 |> SymbolSetSize.createNr
+    let makeRandomPermutation (order: int<order>) (randy: IRando) =
+        let symbolSetSize = order |> UMX.untag |> uint64 |> UMX.tag<symbolSetSize>
 
         { sortableIntArray.values = RandVars.randomPermutation randy order
           order = order
           symbolSetSize = symbolSetSize }
 
 
-    let makeRandomSymbol (order: order) (symbolSetSize: symbolSetSize) (randy: IRando) =
-        let arrayLength = order |> Order.value
+    let makeRandomSymbol (order: int<order>) (symbolSetSize: uint64<symbolSetSize>) (randy: IRando) =
+        let arrayLength = order |> UMX.untag
         let intArray = RandVars.randSymbols symbolSetSize randy arrayLength |> Seq.toArray
 
         { sortableIntArray.values = intArray
@@ -89,7 +92,11 @@ module SortableIntArray =
           symbolSetSize = symbolSetSize }
 
 
-    let makeRandomSymbols (order: order) (symbolSetSize: symbolSetSize) (rnd: IRando) =
+    let makeRandomSymbols 
+                (order: int<order>) 
+                (symbolSetSize: uint64<symbolSetSize>) 
+                (rnd: IRando) 
+        =
         seq {
             while true do
                 yield makeRandomSymbol order symbolSetSize rnd
@@ -103,7 +110,7 @@ module SortableBoolArray =
     let getValues p = apply id p
     let getOrder (sia: sortableBoolArray) = sia.order
 
-    let make (order: order) (vals: bool[]) =
+    let make (order: int<order>) (vals: bool[]) =
         { sortableBoolArray.values = vals
           order = order }
 
@@ -116,9 +123,9 @@ module SortableBoolArray =
         sortableBools |> getValues |> CollectionProps.isSorted_idiom
 
 
-    let makeAllBits (order: order) =
-        let symbolSetSize = 2uL |> SymbolSetSize.createNr
-        let bitShift = order |> Order.value
+    let makeAllBits (order: int<order>) =
+        let symbolSetSize = 2uL |> UMX.tag<symbolSetSize>
+        let bitShift = order |> UMX.untag
 
         { 0uL .. (1uL <<< bitShift) - 1uL }
         |> Seq.map (ByteUtils.uint64ToBoolArray order)
@@ -127,8 +134,8 @@ module SortableBoolArray =
               order = order })
 
 
-    let makeAllForOrder (order: order) =
-        let bitShift = order |> Order.value
+    let makeAllForOrder (order: int<order>) =
+        let bitShift = order |> UMX.untag
 
         { 0uL .. (1uL <<< bitShift) - 1uL }
         |> Seq.map (ByteUtils.uint64ToBoolArray order)
@@ -137,7 +144,7 @@ module SortableBoolArray =
               order = order })
 
 
-    let makeSortedStacks (orderStack: order[]) =
+    let makeSortedStacks (orderStack: int<order>[]) =
         let stackedOrder = Order.add orderStack
 
         CollectionOps.stackSortedBlocks orderStack
@@ -146,8 +153,12 @@ module SortableBoolArray =
               order = stackedOrder })
 
 
-    let makeRandomBits (order: order) (pctTrue: float) (randy: IRando) =
-        let arrayLength = order |> Order.value
+    let makeRandomBits 
+            (order: int<order>) 
+            (pctTrue: float) 
+            (randy: IRando) 
+        =
+        let arrayLength = order |> UMX.untag
 
         Seq.initInfinite (fun _ ->
             { sortableBoolArray.values = RandVars.randBits pctTrue randy arrayLength |> Seq.toArray
@@ -155,7 +166,7 @@ module SortableBoolArray =
 
 
     let allBooleanVersions (sortableInts: sortableIntArray) =
-        let order = sortableInts |> SortableIntArray.getOrder |> Order.value
+        let order = sortableInts |> SortableIntArray.getOrder |> UMX.untag
         let values = sortableInts |> SortableIntArray.getValues
         let threshHolds = values |> Set.ofArray |> Set.toArray |> Array.sort |> Array.skip 1
 

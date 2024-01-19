@@ -2,7 +2,6 @@
 
 open SysExt
 open Microsoft.FSharp.Core
-open Microsoft.FSharp.Math
 
 
 module Combinatorics =

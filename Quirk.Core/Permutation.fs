@@ -3,7 +3,7 @@
 open SysExt
 open Microsoft.FSharp.Core
 open System
-
+open FSharp.UMX
 
 // a permutation of the set {0, 1,.. (order-1)}
 type permutation = private { values: int[] }
@@ -25,28 +25,32 @@ module Permutation =
 
     let getArray (perm: permutation) = perm.values
 
-    let getOrder (perm: permutation) = Order.createNr perm.values.Length
+    let getOrder (perm: permutation) = perm.values.Length |> UMX.tag<order>
     
-    let identity (order: order) =
-        { values = CollectionProps.identity (Order.value order) }
+    let identity (order: int<order>) =
+        { values = CollectionProps.identity (order |> UMX.untag) }
 
-    let makeMonoCycle (order: order) (aDex: int) (bDex: int) =
+    let makeMonoCycle 
+            (order: int<order>) 
+            (aDex: int) 
+            (bDex: int) 
+        =
         { values =
-            Array.init (Order.value order) (fun i ->
+            Array.init (order |> UMX.untag) (fun i ->
                 if (i = aDex) then bDex
                 elif (i = bDex) then aDex
                 else i) }
 
-    let makeAllMonoCycles (ord: order) =
+    let makeAllMonoCycles (ord: int<order>) =
         seq {
-            for i = 0 to (Order.value (ord) - 1) do
+            for i = 0 to ((ord |> UMX.untag) - 1) do
                 for j = 0 to i - 1 do
                     yield makeMonoCycle ord i j
         }
 
     let switchVals aVal bVal (perm:permutation)  
         =
-        let ov = perm |> getOrder |> Order.value
+        let ov = perm |> getOrder |> UMX.untag
         let oA = perm |> getArray
         { values =
             Array.init 
@@ -57,8 +61,8 @@ module Permutation =
                     else oA.[i] )
         }
 
-    let rotate (order: order) (dir: int) =
-        let d = (Order.value order)
+    let rotate (order: int<order>) (dir: int) =
+        let d = (order |> UMX.untag)
         { values = Array.init d (fun i -> (i + dir) % d) }
 
     let powers (maxCount: int option) (perm: permutation) =
@@ -70,14 +74,14 @@ module Permutation =
         permSeq |> Seq.map (fun vs -> { permutation.values = vs })
 
 
-    let fullRotationGroup (order: order) =
+    let fullRotationGroup (order: int<order>) =
         let r1 = rotate order 1
         powers None r1 |> Seq.toArray
 
     // {stackedSource(0) .. stackedSource(order/2)} creates a complete
     // test set for the merge sort (merge two sorted sets of order/2)
-    let stackedSource (order: order) (index:int) =
-        let ov = (order |> Order.value)
+    let stackedSource (order: int<order>) (index:int) =
+        let ov = (order |> UMX.untag)
         let hov = ov / 2
         let retVal = CollectionProps.identity (hov * 2)
         let mutable dex = 0
@@ -100,7 +104,7 @@ module Permutation =
         retVal
 
     let conjugate (conj: permutation) (pA: permutation) =
-        let a_out = Array.zeroCreate (conj|> getOrder |> Order.value)
+        let a_out = Array.zeroCreate (conj|> getOrder |> UMX.untag)
         CollectionOps.conjIntArrays (pA |> getArray) (conj |> getArray) a_out
 
 
@@ -109,8 +113,8 @@ module Permutation =
     let toIntSet8 (perm: permutation) =
         { intSet8.values = perm.values |> Array.map (uint8) }
 
-    let inRange (order: order) (value: int) =
-        ((value > -1) && (value < (Order.value order)))
+    let inRange (order: int<order>) (value: int) =
+        ((value > -1) && (value < (order |> UMX.untag)))
 
     let inverse (perm: permutation) =
         let ia = Array.zeroCreate perm.values.Length
@@ -144,7 +148,7 @@ module Permutation =
 
 
     let applyToBoolArray (perm:permutation) (target:bool[]) =
-        let arrayLen = perm |> getOrder |> Order.value
+        let arrayLen = perm |> getOrder |> UMX.untag
         let permA = perm |> getArray
         let aRet = Array.create (target.Length) false
         for dex = 0 to (arrayLen - 1) do
@@ -153,7 +157,7 @@ module Permutation =
 
 
     let applyToInt32 (perm:permutation) (target:int) =
-        let arrayLen = perm |> getOrder |> Order.value
+        let arrayLen = perm |> getOrder |> UMX.untag
         let aa = applyToBoolArray perm (target.toBoolArray arrayLen)
         0l.applyBoolArray aa
 
@@ -188,14 +192,14 @@ module Permutation =
     //***************    IRando dependent   ***********************
     //*************************************************************
 
-    let createRandom (order: order) (rnd: IRando) =
+    let createRandom (order: int<order>) (rnd: IRando) =
         let idArray = (identity order) |> getArray
         { values = (RandVars.fisherYatesShuffle rnd idArray |> Seq.toArray) }
 
-    let createRandoms (order: order) (rnd: IRando) =
+    let createRandoms (order: int<order>) (rnd: IRando) =
         Seq.initInfinite (fun _ -> createRandom order rnd)
 
-    let getRandomSeparated (order: order) 
+    let getRandomSeparated (order: int<order>) 
             (minSeparation:int) 
             (maxSeparation: int)
             (rnd: IRando)
@@ -213,7 +217,7 @@ module Permutation =
 
     let mutate (rnd: IRando) (perm:permutation) 
         =
-        let ov = perm |> getOrder |> Order.value
-        let sc =  ov |> uint64 |> SymbolSetSize.createNr
+        let ov = perm |> getOrder |> UMX.untag
+        let sc =  ov |> uint64 |> UMX.tag<symbolSetSize>
         let aDex, bDex = RandVars.drawTwoWithoutRep sc rnd
         switchVals aDex bDex perm

@@ -196,6 +196,40 @@ module Rando =
         toRngGen randy
 
 
+type rndGuid = private { r1:IRando; r2:IRando; r3:IRando; r4:IRando }
+
+module RndGuid = 
+
+    let make 
+            (gud:Guid) 
+            (rngTyp:rngType) 
+        =
+        let randos = 
+            gud 
+            |> GuidUtils.toUint64s
+            |> Array.map(UMX.tag<randomSeed>)
+            |> Array.map(Rando.create rngTyp)
+        { rndGuid.r1= randos.[0];
+          rndGuid.r2= randos.[1];
+          rndGuid.r3= randos.[2];
+          rndGuid.r4= randos.[3]; }
+
+    let makeLcg (gud:Guid) =
+        make gud rngType.Lcg
+
+    let makeNet (gud:Guid) =
+        make gud rngType.Net
+
+    let nextUints (rndGud:rndGuid) =
+        [| rndGud.r1.NextUInt; rndGud.r2.NextUInt; 
+           rndGud.r3.NextUInt; rndGud.r4.NextUInt; |]
+
+    let nextGuid (rndGud:rndGuid) =
+        GuidUtils.fromUint32s 
+            (rndGud.r1.NextUInt ()) (rndGud.r2.NextUInt ())
+            (rndGud.r3.NextUInt ()) (rndGud.r4.NextUInt ())
+
+
 
 type rngGenProviderId = private RngGenProviderId of Guid
 module RngGenProviderId =

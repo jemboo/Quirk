@@ -1,6 +1,8 @@
 ﻿namespace Quirk.Sorting
 
 open System
+open FSharp.UMX
+open Quirk.Core
 
 type stageCover = { stageDex: int; lineCovs: int list }
 
@@ -63,11 +65,11 @@ module StageCover =
         }
 
     let getStageCount (sws: switch seq) =
-        sws |> addStageIndexes |> Seq.groupBy (snd) |> Seq.length |> StageCount.create
+        sws |> addStageIndexes |> Seq.groupBy (snd) |> Seq.length |> UMX.tag<stageCount>
 
 
 
-type stage = { switches: switch list; order: order }
+type stage = { switches: switch list; order: int<order> }
 
 module Stage =
 
@@ -87,8 +89,11 @@ module Stage =
         |> CollectionOps.itemsOccuringMoreThanOnce
 
 
-    let fromSwitches (order: order) (switches: seq<switch>) =
-        let mutable stageTracker = Array.init (Order.value order) (fun _ -> false)
+    let fromSwitches 
+            (order: int<order>) 
+            (switches: seq<switch>) 
+        =
+        let mutable stageTracker = Array.init (order |> UMX.untag) (fun _ -> false)
         let switchesForStage = new ResizeArray<switch>()
 
         seq {
@@ -99,7 +104,7 @@ module Stage =
                             { stage.switches = switchesForStage |> Seq.toList
                               stage.order = order }
 
-                        stageTracker <- Array.create (Order.value order) false
+                        stageTracker <- Array.create (order |> UMX.untag) false
                         switchesForStage.Clear()
 
                     stageTracker.[sw.hi] <- true
@@ -113,8 +118,11 @@ module Stage =
         }
 
 
-    let getStageIndexesFromSwitches (order: order) (switches: seq<switch>) =
-        let mutable stageTracker = Array.init (Order.value order) (fun _ -> false)
+    let getStageIndexesFromSwitches 
+            (order: int<order>) 
+            (switches: seq<switch>) 
+        =
+        let mutable stageTracker = Array.init (order |> UMX.untag) (fun _ -> false)
         let mutable curDex = 0
 
         seq {
@@ -123,7 +131,7 @@ module Stage =
             for sw in switches do
                 if (stageTracker.[sw.hi] || stageTracker.[sw.low]) then
                     yield curDex
-                    stageTracker <- Array.create (Order.value order) false
+                    stageTracker <- Array.create (order |> UMX.untag) false
 
                 stageTracker.[sw.hi] <- true
                 stageTracker.[sw.low] <- true
@@ -133,8 +141,11 @@ module Stage =
         }
 
 
-    let getStageCount (order: order) (switches: seq<switch>) =
-        fromSwitches order switches |> Seq.length |> StageCount.create
+    let getStageCount 
+            (order: int<order>) 
+            (switches: seq<switch>) 
+        =
+        fromSwitches order switches |> Seq.length |> UMX.tag<stageCount>
 
 
     let convertToTwoCycle (stage: stage) =
@@ -156,9 +167,13 @@ module Stage =
 
 
     // IRando dependent
-    let rndSeq (order: order) (switchFreq: switchFrequency) (rnd: IRando) =
+    let rndSeq 
+            (order: int<order>) 
+            (switchFreq: float<switchFrequency>) 
+            (rnd: IRando) 
+        =
         let nextCycleCount () = 
-            RandVars.binomial rnd (SwitchFrequency.value switchFreq) 
+            RandVars.binomial rnd (switchFreq |> UMX.untag) 
                                   (order |> Order.maxSwitchesPerStage)
         let _aa (rnd: IRando) =
             { switches =
@@ -173,8 +188,10 @@ module Stage =
         }
 
 
-    let rndSeq2 (coreTc: twoCycle) (rnd: IRando) =
-        //let coreTc = TwoCycle.evenMode order
+    let rndSeq2 
+            (coreTc: twoCycle) 
+            (rnd: IRando) 
+        =
         let _aa (rnd: IRando) =
             { switches =
                 TwoCycle.rndConj coreTc rnd
@@ -187,7 +204,10 @@ module Stage =
                 yield (_aa rnd)
         }
 
-    let rndSeqCoConj (order: order) (rnd: IRando) =
+    let rndSeqCoConj 
+            (order: int<order>) 
+            (rnd: IRando) 
+        =
         let _aa (rnd: IRando) =
             TwoCycle.rndCoConj order rnd
             |> Seq.map(fun tc -> 
@@ -204,10 +224,11 @@ module Stage =
 
 
     let rndSeqSeparated 
-                (order: order)
-                (minSeparation: int)
-                (maxSeparation: int)
-                (rnd: IRando) =
+            (order: int<order>)
+            (minSeparation: int)
+            (maxSeparation: int)
+            (rnd: IRando) 
+        =
         let coreTc = TwoCycle.evenMode order
         let _aa (rnd: IRando) =
             TwoCycle.rndSeqSeparated order coreTc minSeparation maxSeparation rnd
@@ -224,10 +245,11 @@ module Stage =
         }
 
 
-    let rndPermDraw (coreTc:twoCycle) 
-                    (perms:permutation[]) 
-                    (rnd: IRando) =
-        
+    let rndPermDraw 
+            (coreTc:twoCycle) 
+            (perms:permutation[]) 
+            (rnd: IRando) 
+        =
         seq {
             while true do
                 let bread = perms.[(rnd.NextPositiveInt ()) %  perms.Length]
@@ -241,7 +263,10 @@ module Stage =
         }
 
 
-    let rndSymmetric (order: order) (rnd: IRando) =
+    let rndSymmetric 
+            (order: int<order>) 
+            (rnd: IRando) 
+        =
         let _aa (rnd: IRando) =
             { stage.switches = TwoCycle.rndSymmetric order rnd |> Switch.fromTwoCycle |> Seq.toList
               order = order }
@@ -252,19 +277,27 @@ module Stage =
         }
 
 
-    let randomMutate (rnd: IRando) (mutationRate: mutationRate) (stage: stage) =
+    let randomMutate 
+            (rnd: IRando) 
+            (mutationRate: float<mutationRate>) 
+            (stage: stage) 
+        =
         match (rnd.NextFloat ()) with
-        | k when k < (MutationRate.value mutationRate) ->
-            let symbolSetSize = stage.order |> Order.value |> uint64 |> SymbolSetSize.createNr
+        | k when k < (mutationRate |> UMX.untag) ->
+            let symbolSetSize = stage.order |> UMX.untag |> uint64 |> UMX.tag<symbolSetSize>
             let tcp = RandVars.drawTwoWithoutRep symbolSetSize rnd
             mutateStageByPair stage tcp
         | _ -> stage
 
 
-    let randomReflMutate (rnd: IRando) (mutationRate: mutationRate) (stage: stage) =
+    let randomReflMutate 
+            (rnd: IRando) 
+            (mutationRate: float<mutationRate>) 
+            (stage: stage) 
+        =
         match (rnd.NextFloat ()) with
-        | k when k < (MutationRate.value mutationRate) ->
-            let sc = stage.order |> Order.value |> uint64 |> SymbolSetSize.createNr
+        | k when k < (mutationRate |> UMX.untag) ->
+            let sc = stage.order |> UMX.untag |> uint64 |> UMX.tag<symbolSetSize>
 
             let tcp =
                 seq {
@@ -277,14 +310,13 @@ module Stage =
 
 
     let toBuddyStages
-        (stagesPfx: stage list)
-        (stageWindowSize: stageCount)
-        (stageSeq: seq<stage>)
-        (targetStageCount: stageCount)
-        (trialStageCount: stageCount)
+            (stagesPfx: stage list)
+            (stageWindowSize: int<stageCount>)
+            (stageSeq: seq<stage>)
+            (targetStageCount: int<stageCount>)
+            (trialStageCount: int<stageCount>)
         =
-
-        let maxWindow = (StageCount.value stageWindowSize)
+        let maxWindow = (stageWindowSize |> UMX.untag)
         let mutable window = stagesPfx |> CollectionProps.last maxWindow
 
         let trim () =
@@ -299,13 +331,13 @@ module Stage =
 
         let mutable stagesFound = 0
         let mutable stagesTested = 0
-        let appendedStageCount = (StageCount.value targetStageCount) - stagesPfx.Length
+        let appendedStageCount = (targetStageCount |> UMX.untag) - stagesPfx.Length
 
         let stager = stageSeq.GetEnumerator()
 
         seq {
             while ((stagesFound < appendedStageCount)
-                   && (stagesTested < (StageCount.value trialStageCount))) do
+                   && (stagesTested < (trialStageCount |> UMX.untag))) do
                 window <- trim ()
                 stager.MoveNext() |> ignore
                 stagesTested <- stagesTested + 1
@@ -318,14 +350,14 @@ module Stage =
 
 
     let rndBuddyStages
-        (stageWindowSz: stageWindowSize)
-        (switchFreq: switchFrequency)
-        (order: order)
-        (rnd: IRando)
-        (stagesPfx: stage list)
+            (stageWindowSz: int<stageWindowSize>)
+            (switchFreq: float<switchFrequency>)
+            (order: int<order>)
+            (rnd: IRando)
+            (stagesPfx: stage list)
         =
         let stageSeq = rndSeq order switchFreq rnd
-        let maxWindow = (StageWindowSize.value stageWindowSz)
+        let maxWindow = (stageWindowSz |> UMX.untag)
         let mutable window = stagesPfx |> CollectionProps.last maxWindow
 
         let trim () =
@@ -352,21 +384,21 @@ module Stage =
 
 
     let rec rndSymmetricBuddyStages
-        (stageWindowSize: stageCount)
-        (switchFreq: switchFrequency)
-        (order: order)
-        (rnd: IRando)
-        (stagesPfx: stage list)
-        (trialStageCount: stageCount)
-        (stageCount: stageCount)
+            (stageWindowSize: int<stageCount>)
+            (switchFreq: float<switchFrequency>)
+            (order: int<order>)
+            (rnd: IRando)
+            (stagesPfx: stage list)
+            (trialStageCount: int<stageCount>)
+            (stageCount: int<stageCount>)
         =
 
         let trial =
             toBuddyStages stagesPfx stageWindowSize (rndSymmetric order rnd) stageCount trialStageCount
             |> Seq.toArray
 
-        if (trial.Length >= (StageCount.value stageCount)) then
-            trial |> Array.take (StageCount.value stageCount)
+        if (trial.Length >= (stageCount |> UMX.untag)) then
+            trial |> Array.take (stageCount |> UMX.untag)
         else
             rndSymmetricBuddyStages stageWindowSize switchFreq order rnd stagesPfx trialStageCount stageCount
 
@@ -376,8 +408,11 @@ type indexedSelector<'V> = { array: ('V * int)[] }
 
 module IndexedSelector =
 
-    let nextIndex<'V> (selector: indexedSelector<'V>) (qualifier: 'V -> bool) (rnd: IRando) =
-
+    let nextIndex<'V> 
+            (selector: indexedSelector<'V>) 
+            (qualifier: 'V -> bool) 
+            (rnd: IRando) 
+         =
         let _choose (rando: IRando) (items: 'T[]) =
             if (items.Length > 0) then
                 Some items.[(rando.NextPositiveInt ()) % items.Length]

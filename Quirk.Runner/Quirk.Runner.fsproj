@@ -7,6 +7,8 @@
 
   <ItemGroup>
     <Compile Include="RunTypes.fs" />
+    <Compile Include="RunGa.fs" />
+    <Compile Include="RunShc.fs" />
     <Compile Include="ScriptRun.fs" />
     <Compile Include="ScriptDispatcher.fs" />
     <Compile Include="Program.fs" />
@@ -32,6 +34,7 @@
     <ProjectReference Include="..\Quirk.SortingResults\Quirk.SortingResults.fsproj" />
     <ProjectReference Include="..\Quirk.Sorting\Quirk.Sorting.fsproj" />
     <ProjectReference Include="..\Quirk.Storage\Quirk.Storage.fsproj" />
+    <ProjectReference Include="..\Quirk.Workspace\Quirk.Workspace.fsproj" />
   </ItemGroup>
 
 </Project>

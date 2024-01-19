@@ -1,13 +1,16 @@
 ﻿namespace Quirk.Sorting
 
 open System
+open FSharp.UMX
+open Quirk.Core
 
 [<Struct>]
 type switch = { low: int; hi: int }
 
 module Switch =
 
-    let toString (sw: switch) = sprintf "(%d, %d)" sw.low sw.hi
+    let toString (sw: switch) = 
+            sprintf "(%d, %d)" sw.low sw.hi
 
     let fromIndex (dex:int) = 
         let indexFlt = (dex |> float) + 1.0
@@ -20,8 +23,8 @@ module Switch =
             let hi = (int pfloor)
             {switch.low = lo; hi = hi }
 
-    let maxSwitchIndexForOrder (ord: order) =
-        uint32 ((Order.value ord) * (Order.value ord + 1) / 2)
+    let maxSwitchIndexForOrder (ord: int<order>) =
+        uint32 ((ord |> UMX.untag) * ((ord |> UMX.untag) + 1) / 2)
 
     let fromSwitchIndexes (dexes: int seq) =
         dexes |> Seq.map (fromIndex)
@@ -35,18 +38,18 @@ module Switch =
     let toIndexes (switches: seq<switch>) =
         switches |> Seq.map(toIndex)
 
-    let maxIndexForOrder (ordr:order) =
-        let ov = ordr |> Order.value 
+    let maxIndexForOrder (ordr:int<order>) =
+        let ov = ordr |> UMX.untag
         (ov * (ov + 3)) / 2
 
 
-    let bitsPerSymbolRequired (ordr:order) =
+    let bitsPerSymbolRequired (ordr:int<order>) =
         ordr |> maxIndexForOrder |> uint64
-             |> SymbolSetSize.createNr
+             |> UMX.tag<symbolSetSize>
              |> BitsPerSymbol.fromSymbolSetSize
 
 
-    let toBitPack (ordr:order)
+    let toBitPack (ordr:int<order>)
                   (switchs: seq<switch>) =
         let bps = bitsPerSymbolRequired ordr
         switchs |> Seq.map(toIndex)
@@ -59,14 +62,14 @@ module Switch =
 
 
     // all switch indexes for order with lowVal
-    let lowOverlapping (ord: order) (lowVal: int) =
+    let lowOverlapping (ord: int<order>) (lowVal: int) =
         seq {
-            for hv = (lowVal + 1) to (Order.value ord) - 1 do
+            for hv = (lowVal + 1) to (ord |> UMX.untag) - 1 do
                 yield (hv * (hv + 1)) / 2 + lowVal
         }
 
     // all switch indexes for order with hiVal
-    let hiOverlapping (ord: order) (hiVal: int) =
+    let hiOverlapping (ord: int<order>) (hiVal: int) =
         seq {
             for lv = 0 to (hiVal - 1) do
                 yield (hiVal * (hiVal + 1)) / 2 + lv
@@ -93,17 +96,20 @@ module Switch =
 
     let fromTwoCycle (tc: twoCycle) = extractFromInts (TwoCycle.getArray tc)
 
-    let makeAltEvenOdd (order: order) (stageCt: stageCount) =
+    let makeAltEvenOdd 
+            (order: int<order>) 
+            (stageCt: int<stageCount>) 
+        =
         result {
             let stages =
                 TwoCycle.makeAltEvenOdd order (Permutation.identity order)
-                |> Seq.take (StageCount.value stageCt)
+                |> Seq.take (stageCt |> UMX.untag)
 
             return stages |> Seq.map (fromTwoCycle) |> Seq.concat
         }
 
     // IRando dependent
-    let rndNonDegenSwitchesOfOrder (order: order) (rnd: IRando) =
+    let rndNonDegenSwitchesOfOrder (order: int<order>) (rnd: IRando) =
         let maxDex = maxSwitchIndexForOrder order
         seq {
             while true do
@@ -114,7 +120,10 @@ module Switch =
         }
 
 
-    let rndSwitchesOfOrder (order: order) (rnd: IRando) =
+    let rndSwitchesOfOrder 
+            (order: int<order>) 
+            (rnd: IRando) 
+        =
         let maxDex = maxSwitchIndexForOrder order
         seq {
             while true do
@@ -123,7 +132,7 @@ module Switch =
         }
 
 
-    let rndSymmetric (order: order) (rnd: IRando) =
+    let rndSymmetric (order: int<order>) (rnd: IRando) =
         let aa (rnd: IRando) =
             (TwoCycle.rndSymmetric order rnd) |> fromTwoCycle
         seq {
@@ -132,20 +141,27 @@ module Switch =
         }
 
 
-    let mutateSwitches (order: order) (mutationRate: mutationRate) 
-                       (rnd: IRando) (switches: seq<switch>) =
-        let mDex = uint32 ((Order.value order) * (Order.value order + 1) / 2)
+    let mutateSwitches 
+            (order: int<order>) 
+            (mutationRate: float<mutationRate>) 
+            (rnd: IRando) 
+            (switches: seq<switch>) 
+        =
+        let mDex = uint32 ((order |> UMX.untag) * ((order |> UMX.untag ) + 1) / 2)
 
         let mutateSwitch (switch: switch) =
             match (rnd.NextFloat ()) with
-            | k when k < (MutationRate.value mutationRate)
+            | k when k < (mutationRate |> UMX.untag)
                         -> fromIndex (int ((rnd.NextUInt ()) % mDex))
             | _ -> switch
 
         switches |> Seq.map (fun sw -> mutateSwitch sw)
 
 
-    let reflect (ord: order) (sw: switch) =
+    let reflect 
+            (ord: int<order>) 
+            (sw: switch) 
+        =
         { switch.low = sw.hi |> Order.reflect ord
           switch.hi = sw.low |> Order.reflect ord }
 
@@ -155,9 +171,13 @@ module Switch =
     // indexes that are not in subset. It then relabels the indexes
     // according to the subset. Ex, if the subset was [2;5;8], then
     // index 2 -> 0; index 5-> 1; index 8 -> 2
-    let rebufo (order: order) (swa: switch array) (subset: int list) =
-        let _mapSubset (order: order) (subset: int list) =
-            let aRet = Array.create (Order.value order) None
+    let rebufo 
+            (order: int<order>) 
+            (swa: switch array) 
+            (subset: int list) 
+        =
+        let _mapSubset (order: int<order>) (subset: int list) =
+            let aRet = Array.create (order |> UMX.untag) None
             subset |> List.iteri (fun dex dv -> aRet.[dv] <- Some dex)
             aRet
 
@@ -179,11 +199,11 @@ module Switch =
     // returns a sequence containing all the possible
     // order reductions of the switch array
     let allMasks 
-        (orderSource: order) 
-        (orderDest: order) 
+        (orderSource: int<order>) 
+        (orderDest: int<order>) 
         (swa: switch array) 
         =
-        let sd, dd = (Order.value orderSource), (Order.value orderDest)
+        let sd, dd = (orderSource |> UMX.untag), (orderDest |> UMX.untag)
         if sd < dd then
             failwith "source order cannot be smaller than dest"
         Combinatorics.enumNchooseM sd dd |> Seq.map (rebufo orderSource swa)
@@ -191,12 +211,12 @@ module Switch =
     // returns a sequence containing random
     // order reductions of the switch array
     let rndMasks 
-        (orderSource: order) 
-        (orderDest: order) 
+        (orderSource: int<order>) 
+        (orderDest: int<order>) 
         (swa: switch array) 
         (rnd: IRando) 
         =
-        let sd, dd = (Order.value orderSource), (Order.value orderDest)
+        let sd, dd = (orderSource |> UMX.untag), (orderDest |> UMX.untag)
         if sd < dd then
             failwith "source order cannot be smaller than dest"
         RandVars.rndNchooseM sd dd rnd |> Seq.map (rebufo orderSource swa)

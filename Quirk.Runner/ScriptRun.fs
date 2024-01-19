@@ -1,5 +1,6 @@
 ﻿namespace Quirk.Runner
-open System.Threading.Tasks
+namespace Quirk.Runner
+
 open FSharp.UMX
 open Quirk.Core
 open Quirk.Cfg.Core
@@ -30,12 +31,18 @@ module ScriptRun =
 
     let runQuirkRun
             (rootDir:string<folderPath>)
-            (cCfgPlexDataStore:IProjectDataStore)
+            (projectDataStore:IProjectDataStore)
             (projectName:string<projectName>)
             (quirkRun:quirkRun)
         =
         result {
-            let! res = updateProject rootDir cCfgPlexDataStore projectName quirkRun
+            let! runRes = 
+                match (quirkRun |> QuirkRun.getQuirkModelType) with
+                    | quirkModelType.Shc ->
+                        RunShc.doRun rootDir projectDataStore quirkRun
+                    | quirkModelType.Ga ->
+                        RunGa.doRun rootDir projectDataStore quirkRun
+            let! updateRes = updateProject rootDir projectDataStore projectName quirkRun
             return ()
         }
 

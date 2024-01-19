@@ -1,18 +1,22 @@
 ﻿namespace Quirk.Core
 
 open System
+open FSharp.UMX
 
 
 type switchRfl =
-    | Single of int * int * order
-    | Unreflectable of int * int * order
-    | Pair of (int * int) * (int * int) * order
-    | LeftOver of int * int * order
+    | Single of int * int * int<order>
+    | Unreflectable of int * int * int<order>
+    | Pair of (int * int) * (int * int) * int<order>
+    | LeftOver of int * int * int<order>
 
 
 module SwitchRfl =
 
-    let isReflSymmetric (order: order) (pair: int * int) =
+    let isReflSymmetric 
+            (order: int<order>) 
+            (pair: int * int) 
+        =
         (pair |> fst |> Order.reflect order) = (snd pair)
 
 
@@ -50,17 +54,23 @@ module SwitchRfl =
         | LeftOver _ -> false
 
 
-    let isAFullSet (order: order) (rflses: switchRfl seq) =
+    let isAFullSet 
+            (order: int<order>) 
+            (rflses: switchRfl seq) 
+        =
         let dexes = rflses |> Seq.map (getIndexes) |> Seq.concat |> Seq.sort |> Seq.toList
-        [ 1 .. ((Order.value order) - 1) ] = dexes
+        [ 1 .. ((order |> UMX.untag) - 1) ] = dexes
 
 
     //makes reflective pairs to fill up order slots.
-    let rndReflectivePairs (order: order) (rnd: IRando) =
+    let rndReflectivePairs 
+            (order: int<order>) 
+            (rnd: IRando) 
+        =
         let _rndmx max = (int (rnd.NextPositiveInt ())) % max
         let _reflectD (dex: int) = dex |> Order.reflect order
 
-        let _flagedArray = Array.init (Order.value order) (fun i -> (i, true))
+        let _flagedArray = Array.init (order |> UMX.untag) (fun i -> (i, true))
 
         let _availableFlags () =
             _flagedArray |> Seq.filter (fun (ndx, f) -> f)
@@ -110,7 +120,10 @@ module SwitchRfl =
 
     // the reflectivePairs function above generates only good
     // reflective pairs for even order
-    let goodRndReflectivePairs (order: order) (rnd: IRando) =
+    let goodRndReflectivePairs 
+            (order: int<order>) 
+            (rnd: IRando) 
+        =
         seq {
             while true do
                 let rfpa = rndReflectivePairs order rnd |> Seq.toArray

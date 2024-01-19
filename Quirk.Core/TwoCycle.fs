@@ -1,6 +1,7 @@
 ﻿namespace Quirk.Core
 
 open System
+open FSharp.UMX
 
 // a permutation of the set {0, 1,.. (order-1)}, that is it's own inverse
 type twoCycle = private { values: int[] }
@@ -30,20 +31,21 @@ module TwoCycle =
 
     let getArray (tc: twoCycle) = tc.values
 
-    let getOrder (tc: twoCycle) = Order.createNr tc.values.Length
+    let getOrder (tc: twoCycle) =
+            tc.values.Length |> UMX.tag<order>
 
-    let identity  (ord: order) =
-        { twoCycle.values = [| 0 .. (Order.value ord) - 1 |] }
+    let identity  (ord: int<order>) =
+        { twoCycle.values = [| 0 .. (ord |> UMX.untag) - 1 |] }
 
     let isSorted (tc: twoCycle) =
         CollectionProps.isSorted tc.values
 
-    let makeMonoCycle (order: order) (aDex: int) (bDex: int) =
+    let makeMonoCycle (order: int<order>) (aDex: int) (bDex: int) =
         { values = 
             Permutation.makeMonoCycle order aDex bDex
                    |> Permutation.getArray }
 
-    let makeAllMonoCycles (ord: order) =
+    let makeAllMonoCycles (ord: int<order>) =
         Permutation.makeAllMonoCycles ord
         |> Seq.map(Permutation.getArray >> createNr)
 
@@ -73,13 +75,12 @@ module TwoCycle =
 
     let reflect (tcp: twoCycle) =
         let _refV pos =
-            Order.reflect (Order.createNr tcp.values.Length) pos
+            Order.reflect (tcp.values.Length |> UMX.tag<order>) pos
 
         let _refl =
             Array.init (tcp.values.Length) (fun dex -> tcp.values.[_refV dex] |> _refV)
 
         { twoCycle.values = _refl }
-
 
 
 
@@ -108,7 +109,10 @@ module TwoCycle =
     //*******************  mutators  ******************************
     //*************************************************************
 
-    let mutateByPair (pair: int * int) (tcp: twoCycle) =
+    let mutateByPair 
+            (pair: int * int) 
+            (tcp: twoCycle) 
+        =
         let tcpA = tcp |> getArray |> Array.copy
         let a, b = pair
         let c = tcpA.[a]
@@ -135,7 +139,7 @@ module TwoCycle =
 
 
     let mutateByReflPair (pairs: seq<(int * int)>) (tcp: twoCycle) =
-        let ord = tcp.values.Length |> Order.createNr
+        let ord = tcp.values.Length |> UMX.tag<order>
         //true if _mutato will always turn this into another twoCyclePerm
         let _isMutatoCompatable (mut: twoCycle) =
             (CollectionProps.isTwoCycle mut.values)
@@ -184,8 +188,11 @@ module TwoCycle =
 
 
     // does not error - ignores bad inputs
-    let makeFromTupleSeq (ord: order) (tupes: seq<int * int>) =
-        let curPa = [| 0 .. (Order.value ord) - 1 |]
+    let makeFromTupleSeq 
+            (ord: int<order>) 
+            (tupes: seq<int * int>) 
+        =
+        let curPa = [| 0 .. (ord |> UMX.untag) - 1 |]
 
         let _validTupe t =
             ((fst t) <> (snd t)) && (Order.within ord (fst t)) && (Order.within ord (snd t))
@@ -203,8 +210,8 @@ module TwoCycle =
 
 
 
-    let evenMode (order: order) =
-        let d = (Order.value order)
+    let evenMode (order: int<order>) =
+        let d = order |> UMX.untag
         let dm = if (d % 2 > 0) then d - 1 else d
 
         let yak p =
@@ -215,8 +222,10 @@ module TwoCycle =
         { twoCycle.values = Array.init d (yak) }
 
 
-    let oddMode (order: order) =
-        let d = (Order.value order)
+    let oddMode 
+            (order: int<order>) 
+        =
+        let d = order |> UMX.untag
         let dm = if (d % 2 = 0) then d - 1 else d
 
         let yak p =
@@ -228,8 +237,8 @@ module TwoCycle =
         { twoCycle.values = Array.init d (yak) }
 
 
-    let oddModeFromEvenDegreeWithCap (order: order) =
-        let d = (Order.value order)
+    let oddModeFromEvenDegreeWithCap (order: int<order>) =
+        let d = order |> UMX.untag
 
         let yak p =
             if p = 0 then d - 1
@@ -240,8 +249,10 @@ module TwoCycle =
         { twoCycle.values = Array.init d (yak) }
 
 
-    let oddModeWithCap (order: order) =
-        let d = (Order.value order)
+    let oddModeWithCap 
+            (order: int<order>) 
+        =
+        let d = order |> UMX.untag
 
         if (d % 2 = 0) then
             oddModeFromEvenDegreeWithCap order
@@ -249,22 +260,27 @@ module TwoCycle =
             oddMode order
 
 
-    let makeAltEvenOdd (order: order) (conj: permutation) =
+    let makeAltEvenOdd 
+            (order: int<order>) 
+            (conj: permutation) 
+        =
         seq {
             while true do
                 yield conjugate conj (evenMode order)
                 yield conjugate conj (oddModeWithCap order)
         }
 
+
     let coConjugate (perm: permutation) =
-        let order = Order.createNr perm.values.Length 
+        let order = perm.values.Length |> UMX.tag<order>
         seq {
             yield conjugate perm (evenMode order) 
             yield conjugate perm (oddModeWithCap order)
         }
 
+
     let bitConjugateEvenMode 
-            (order:order) 
+            (order:int<order>) 
             (perms: permutation seq) 
         =
         let bread = evenMode order
@@ -278,17 +294,27 @@ module TwoCycle =
     //***************    IRando dependent   ***********************
     //*************************************************************
 
-    let makeRndMonoCycle (order: order) (rnd: IRando) =
-        let sc = order |> Order.value |> uint64 |> SymbolSetSize.createNr
+    let makeRndMonoCycle 
+            (order: int<order>) 
+            (rnd: IRando) 
+        =
+        let sc = order |> UMX.untag |> uint64 |> UMX.tag<symbolSetSize>
         let tup = RandVars.drawTwoWithoutRep sc rnd
         makeMonoCycle order (fst tup) (snd tup)
 
 
-    let rndPartialTwoCycle (order: order) (cycleCount: int) (rnd: IRando) =
+    let rndPartialTwoCycle 
+            (order: int<order>) 
+            (cycleCount: int) 
+            (rnd: IRando) 
+        =
         { twoCycle.values = RandVars.rndPartialTwoCycle rnd order cycleCount }
 
 
-    let rndFullTwoCycle (order: order) (rnd: IRando) =
+    let rndFullTwoCycle 
+            (order: int<order>) 
+            (rnd: IRando) 
+        =
         { values = RandVars.rndFullTwoCycle rnd order }
 
 
@@ -297,18 +323,29 @@ module TwoCycle =
         conjugate bread tc
 
 
-    let rndCoConj (order: order) (rnd:IRando) = 
+    let rndCoConj 
+            (order: int<order>) 
+            (rnd:IRando) 
+        = 
         let bread = Permutation.createNr (RandVars.randomPermutation rnd order)
         coConjugate bread
 
-    let rndSeqSeparated (order: order) (tc: twoCycle) 
-                    (minSeparation: int) (maxSeparation: int) (rnd:IRando) = 
+    let rndSeqSeparated 
+            (order: int<order>) 
+            (tc: twoCycle) 
+            (minSeparation: int) 
+            (maxSeparation: int) 
+            (rnd:IRando) 
+        = 
         Permutation.getRandomSeparated order minSeparation maxSeparation rnd
         |> Seq.map(fun perm -> conjugate perm tc)
 
 
-    let rndSymmetric (ord: order) (rnd: IRando) =
-        let deg = (Order.value ord)
+    let rndSymmetric 
+            (ord: int<order>) 
+            (rnd: IRando) 
+        =
+        let deg = ord |> UMX.untag
         let aRet = Array.init deg (id)
 
         let chunkRi (rfls: switchRfl) =

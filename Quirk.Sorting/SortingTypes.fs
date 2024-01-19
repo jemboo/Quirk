@@ -36,6 +36,11 @@ type orderToSwitchCount =
     | For999
 
 
+module SortableCount =
+    let makeSeq (sc:int<sortableCount>) = 
+        seq { 0 .. ((sc |> UMX.untag ) - 1) }
+
+
 module SwitchCount =
     let orderToRecordSwitchCount (ord: int<order>) =
         let d = ord |> UMX.untag

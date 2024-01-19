@@ -6,9 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Library.fs" />
-    <Compile Include="SorterData.fs" />
     <Compile Include="SortingTypes.fs" />
+    <Compile Include="SortableArrays.fs" />
+    <Compile Include="Switch.fs" />
+    <Compile Include="Stage.fs" />
+    <Compile Include="Sorter.fs" />
+    <Compile Include="SortableSet.fs" />
+    <Compile Include="SorterData.fs" />
   </ItemGroup>
 
   <ItemGroup>

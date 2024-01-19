@@ -1,26 +1,14 @@
 ﻿namespace Quirk.Sorting
 
 open System
+open FSharp.UMX
+open Quirk.Core
 
-type switchGenMode =
-    | switch = 0
-    | stage = 1
-    | stageSymmetric = 2
-
-module SwitchGenMode =
-    let toString (sgm:switchGenMode) = 
-        sgm |> string
-    let fromString (cereal:string) =
-        match cereal with
-        | "switch" -> switchGenMode.switch |> Ok
-        | "stage" -> switchGenMode.stage |> Ok
-        | "stageSymmetric" -> switchGenMode.stageSymmetric |> Ok
-        | _ -> $"Invalid string: { cereal } for switchGenMode" |> Error
         
 type sorter =
     private
-        { sorterId: sorterId
-          order: order
+        { sorterId: Guid<sorterId>
+          order: int<order>
           switches: array<switch> }
 
 module Sorter =
@@ -32,7 +20,7 @@ module Sorter =
     let getSwitches (sorter: sorter) = sorter.switches
 
     let getSwitchCount (sorter: sorter) =
-        sorter.switches.Length |> SwitchCount.create
+        sorter.switches.Length |> UMX.tag<sorterCount>
 
     let toByteArray (sorter: sorter) =
         sorter |> getSwitches 
@@ -42,8 +30,8 @@ module Sorter =
 
 
     let fromSwitches 
-            (sorterD:sorterId)
-            (order: order) 
+            (sorterD:Guid<sorterId>)
+            (order: int<order>) 
             (switches: seq<switch>) =
         { sorter.sorterId = sorterD
           sorter.order = order
@@ -51,22 +39,22 @@ module Sorter =
 
 
     let fromSwitchesWithPrefix
-            (sorterD:sorterId)
-            (order: order)
-            (switchCtTarget: switchCount)
+            (sorterD:Guid<sorterId>)
+            (order: int<order>)
+            (switchCtTarget: int<switchCount>)
             (switchesPfx: seq<switch>)
             (switches: seq<switch>) =
         let combinedSwitches =
             switches
             |> Seq.append switchesPfx
-            |> Seq.take (switchCtTarget |> SwitchCount.value)
+            |> Seq.take (switchCtTarget |> UMX.untag)
         fromSwitches sorterD order combinedSwitches
 
 
     let fromStagesWithPrefix
-            (sorterD:sorterId)
-            (order: order)
-            (switchCtTarget: switchCount)
+            (sorterD:Guid<sorterId>)
+            (order: int<order>)
+            (switchCtTarget: int<switchCount>)
             (switchesPfx: seq<switch>)
             (stages: seq<stage>) =
         let switches = stages |> Seq.map (fun st -> st.switches) |> Seq.concat
@@ -75,7 +63,7 @@ module Sorter =
 
     // creates a longer sorter with the switches added to the end.
     let appendSwitches
-            (sorterD:sorterId)
+            (sorterD:Guid<sorterId>)
             (switchesToAppend: seq<switch>) 
             (sorter: sorter) =
         let newSwitches = switchesToAppend |> Seq.append sorter.switches |> Seq.toArray
@@ -84,8 +72,8 @@ module Sorter =
 
     // concats the switches from all of the sorters into one.
     let concatSwitches
-            (sorterD:sorterId)
-            (order:order)
+            (sorterD:Guid<sorterId>)
+            (order:int<order>)
             (sorters: sorter seq) =
         let newSwitches = sorters |> Seq.map(getSwitches) |> Seq.concat
         fromSwitches sorterD order newSwitches
@@ -93,7 +81,7 @@ module Sorter =
 
     // creates a longer sorter with the switches added to the beginning.
     let prependSwitches 
-            (sorterD:sorterId)
+            (sorterD:Guid<sorterId>)
             (newSwitches: seq<switch>) 
             (sorter: sorter) 
         =
@@ -102,12 +90,12 @@ module Sorter =
 
 
     let removeSwitchesFromTheStart
-            (sorterD:sorterId)
-            (newLength: switchCount) 
+            (sorterD:Guid<sorterId>)
+            (newLength: int<switchCount>) 
             (sortr: sorter) 
         =
-        let curSwitchCt = sortr |> getSwitchCount |> SwitchCount.value
-        let numSwitchesToRemove = curSwitchCt - (SwitchCount.value newLength)
+        let curSwitchCt = sortr |> getSwitchCount |> UMX.untag
+        let numSwitchesToRemove = curSwitchCt - (newLength |> UMX.untag)
 
         if numSwitchesToRemove < 0 then
             "New length is longer than sorter" |> Error
@@ -116,18 +104,18 @@ module Sorter =
                 sortr
                 |> getSwitches
                 |> Seq.skip (numSwitchesToRemove)
-                |> Seq.take (newLength |> SwitchCount.value)
+                |> Seq.take (newLength |> UMX.untag)
 
             fromSwitches sorterD (sortr |> getOrder) trimmedSwitches |> Ok
 
 
     let removeSwitchesFromTheEnd
-            (sorterD:sorterId)
-            (newLength: switchCount) 
+            (sorterD:Guid<sorterId>)
+            (newLength: int<switchCount>) 
             (sortr: sorter) 
         =
-        let curSwitchCt = sortr |> getSwitchCount |> SwitchCount.value
-        let numSwitchesToRemove = curSwitchCt - (SwitchCount.value newLength)
+        let curSwitchCt = sortr |> getSwitchCount |> UMX.untag
+        let numSwitchesToRemove = curSwitchCt - (newLength |> UMX.untag)
 
         if numSwitchesToRemove < 0 then
             "New length is longer than sorter" |> Error
@@ -137,20 +125,20 @@ module Sorter =
 
 
     let getSwitchesFromFirstStages 
-            (stageCount: stageCount) 
+            (stageCount: int<stageCount>) 
             (sorter: sorter) 
         =
         sorter.switches
         |> Stage.fromSwitches sorter.order
-        |> Seq.take (StageCount.value stageCount)
+        |> Seq.take (stageCount |> UMX.untag)
         |> Seq.map (fun t -> t.switches)
         |> Seq.concat
 
 
     let fromTwoCycles
-            (sorterD:sorterId)
-            (order: order) 
-            (switchCtTarget: switchCount) 
+            (sorterD:Guid<sorterId>)
+            (order: int<order>) 
+            (switchCtTarget: int<switchCount>) 
             (wPfx: switch seq) 
             (twoCycleSeq: twoCycle seq) 
         =
@@ -161,10 +149,10 @@ module Sorter =
 
 
     let makeAltEvenOdd
-            (sorterD:sorterId)
-            (order: order) 
+            (sorterD:Guid<sorterId>)
+            (order: int<order>) 
             (wPfx: switch seq) 
-            (switchCount: switchCount) 
+            (switchCount: int<switchCount>) 
         =
         let switches =
             TwoCycle.makeAltEvenOdd order (Permutation.identity order)
@@ -177,34 +165,34 @@ module Sorter =
     //***********  IRando dependent  *********************************
 
     //cross two sorters, and pad with random switches, if necessary
-    let crossOver (pfxLength:switchCount)
-                  (finalLength:switchCount)
+    let crossOver (pfxLength:int<switchCount>)
+                  (finalLength:int<switchCount>)
                   (sortrPfx:sorter) 
                   (sortrSfx:sorter)
-                  (finalId: sorterId)
+                  (finalId: Guid<sorterId>)
                   (rnd: IRando) =
 
             let switchesPfx = (Switch.rndNonDegenSwitchesOfOrder (sortrPfx |> getOrder) rnd) 
                               |> Seq.append sortrPfx.switches
-                              |> Seq.take (pfxLength |> SwitchCount.value)
+                              |> Seq.take (pfxLength |> UMX.untag)
 
             let switchesSfx = (Switch.rndNonDegenSwitchesOfOrder (sortrSfx |> getOrder) rnd) 
                               |> Seq.append sortrSfx.switches
-                              |> Seq.skip (pfxLength |> SwitchCount.value)
+                              |> Seq.skip (pfxLength |> UMX.untag)
 
             let finalSwitches = switchesSfx 
                                 |> Seq.append switchesPfx
-                                |> Seq.take (finalLength |> SwitchCount.value)
+                                |> Seq.take (finalLength |> UMX.untag)
             
             fromSwitches finalId (sortrPfx |> getOrder) finalSwitches
 
 
     let randomSwitches
-            (order: order)
+            (order: int<order>)
             (wPfx: switch seq)
-            (switchCount: switchCount) 
+            (switchCount: int<switchCount>) 
             (rnGen: unit -> rngGen)
-            (sorterD:sorterId)
+            (sorterD:Guid<sorterId>)
             =
         let randy = (rnGen()) |> Rando.fromRngGen
         let switches = Switch.rndNonDegenSwitchesOfOrder order randy
@@ -212,12 +200,12 @@ module Sorter =
 
 
     let randomStages
-        (order: order)
-        (switchFreq: switchFrequency)
+        (order: int<order>)
+        (switchFreq: float<switchFrequency>)
         (wPfx: switch seq)
-        (switchCount: switchCount) 
+        (switchCount: int<switchCount>) 
         (rnGen: unit -> rngGen)
-        (sorterD:sorterId)
+        (sorterD:Guid<sorterId>)
         =
         let randy = (rnGen()) |> Rando.fromRngGen
         let _switches =
@@ -228,11 +216,11 @@ module Sorter =
 
 
     let randomStages2
-        (order: order)
+        (order: int<order>)
         (wPfx: switch seq)
-        (switchCount: switchCount)
+        (switchCount: int<switchCount>)
         (rnGen: unit -> rngGen)
-        (sorterD:sorterId)
+        (sorterD:Guid<sorterId>)
         =
         let randy = (rnGen()) |> Rando.fromRngGen
         let coreTc = TwoCycle.evenMode order
@@ -244,11 +232,11 @@ module Sorter =
 
 
     let randomStagesCoConj
-        (order: order)
+        (order: int<order>)
         (wPfx: switch seq)
-        (switchCount: switchCount)
+        (switchCount: int<switchCount>)
         (rnGen: unit -> rngGen) 
-        (sorterD:sorterId)
+        (sorterD:Guid<sorterId>)
         =
         let randy = (rnGen()) |> Rando.fromRngGen
         let _switches =
@@ -263,11 +251,11 @@ module Sorter =
     let randomStagesSeparated
         (minSeparation: int)
         (maxSeparation: int)
-        (order: order)
+        (order: int<order>)
         (wPfx: switch seq)
-        (switchCount: switchCount)
+        (switchCount: int<switchCount>)
         (rnGen: unit -> rngGen)
-        (sorterD:sorterId)
+        (sorterD:Guid<sorterId>)
         =
         let randy = (rnGen()) |> Rando.fromRngGen
         let _switches =
@@ -282,11 +270,11 @@ module Sorter =
     let randomPermutaionChoice
         (coreTc:twoCycle)
         (perms: permutation[])
-        (order: order)
+        (order: int<order>)
         (wPfx: switch seq)
-        (switchCount: switchCount)
+        (switchCount: int<switchCount>)
         (rnGen: unit -> rngGen)
-        (sorterD:sorterId)
+        (sorterD:Guid<sorterId>)
         =
         let randy = (rnGen()) |> Rando.fromRngGen
         let _switches =
@@ -298,11 +286,11 @@ module Sorter =
 
 
     let randomSymmetric
-            (order: order)
+            (order: int<order>)
             (wPfx: switch seq)
-            (switchCount: switchCount)
+            (switchCount: int<switchCount>)
             (rnGen: unit -> rngGen)
-            (sorterD:sorterId)
+            (sorterD:Guid<sorterId>)
             =
         let randy = (rnGen()) |> Rando.fromRngGen
         let switches =
@@ -314,12 +302,12 @@ module Sorter =
 
 
     let randomBuddies
-        (stageWindowSz: stageWindowSize)
-        (order: order)
+        (stageWindowSz: int<stageWindowSize>)
+        (order: int<order>)
         (wPfx: switch seq)
-        (switchCount: switchCount)
+        (switchCount: int<switchCount>)
         (rnGen: unit -> rngGen)
-        (sorterD:sorterId)
+        (sorterD:Guid<sorterId>)
         =
         let randy = (rnGen()) |> Rando.fromRngGen
         let switches =

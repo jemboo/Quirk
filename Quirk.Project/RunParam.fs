@@ -34,6 +34,26 @@ type runParamSet =
     | Report of reportParamSet
 
 
+module RunParamSet =
+
+    let toSimParamSet 
+            (runParamSet:runParamSet)
+        =
+        match runParamSet with
+        | Sim sps -> sps |> Ok
+        | Report rps -> "runParamSet.Report given, Sim expected" |> Error
+
+    let toReportParamSet 
+            (runParamSet:runParamSet)
+        =
+        match runParamSet with
+        | Sim sps -> "runParamSet.Sim given, Sim Report" |> Error
+        | Report rps -> rps |> Ok
+
+
+
+
+    
 
 type runParamSetType =
     | Sim

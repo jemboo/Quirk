@@ -1,4 +1,5 @@
 ﻿namespace Quirk.Core
+open FSharp.UMX
 
 
 type bitSet = private { values: bool[] }
@@ -26,23 +27,23 @@ module BitSet =
 
     let isZero (ibs: bitSet) = ibs.values |> Array.forall ((=) false)
 
-    let fromInteger (ord: order) (intVers: int) =
+    let fromInteger (ord: int<order>) (intVers: int) =
         { bitSet.values = (intVers |> uint64) |> ByteUtils.uint64ToBoolArray ord }
 
     let toInteger (arrayVers: bitSet) =
         ByteUtils.boolArrayToInt arrayVers.values
 
-    let fromUint64 (ord: order) (intVers: uint64) =
+    let fromUint64 (ord: int<order>) (intVers: uint64) =
         { bitSet.values = intVers |> ByteUtils.uint64ToBoolArray ord }
 
     let toUint64 (bitSet: bitSet) =
         ByteUtils.boolArrayToUint64 bitSet.values
 
-    let allBitsAsSeq (ord: order) =
-        { 0 .. (1 <<< (Order.value ord)) - 1 } |> Seq.map (fun i -> fromInteger ord i)
+    let allBitsAsSeq (ord: int<order>) =
+        { 0 .. (1 <<< (ord |> UMX.untag)) - 1 } |> Seq.map (fun i -> fromInteger ord i)
 
-    let allBitsAsArray (ord: order) =
-        Array.init (1 <<< (Order.value ord)) (fromInteger ord)
+    let allBitsAsArray (ord: int<order>) =
+        Array.init (1 <<< (ord |> UMX.untag)) (fromInteger ord)
 
 
     //*************************************************************
@@ -63,15 +64,15 @@ module BitSet =
     //***************    IRando dependent   ***********************
     //*************************************************************
 
-    let createRandom (order: order) (rando: IRando) =
+    let createRandom (order: int<order>) (rando: IRando) =
         let perm =
-            Array.init (Order.value order) (fun _ ->
+            Array.init (order |> UMX.untag) (fun _ ->
                 let q = rando.NextFloat ()
                 if (q > 0.5) then true else false)
 
         { bitSet.values = perm }
 
-    let createRandoms (order: order) (rnd: IRando) =
+    let createRandoms (order: int<order>) (rnd: IRando) =
         seq {
             while true do
                 yield createRandom order rnd
@@ -106,23 +107,23 @@ module IntSet =
 
     let isZero (ibs: intSet) = ibs.values |> Array.forall ((=) 0)
 
-    let fromInteger (ord: order) (intVers: int) =
+    let fromInteger (ord: int<order>) (intVers: int) =
         { intSet.values = (intVers |> uint64) |> ByteUtils.uint64To2ValArray ord 0 1 }
 
     let toInteger (arrayVers: intSet) (oneThresh: int) =
         ByteUtils.thresholdArrayToInt arrayVers.values oneThresh
 
-    let fromUint64 (ord: order) (intVers: uint64) =
+    let fromUint64 (ord: int<order>) (intVers: uint64) =
         { intSet.values = intVers |> ByteUtils.uint64To2ValArray ord 0 1 }
 
     let toUint64 (intSt: intSet) (oneThresh: int) =
         ByteUtils.thresholdArrayToUint64 intSt.values oneThresh
 
-    let allBitsAsSeq (ord: order) =
-        { 0 .. (1 <<< (Order.value ord)) - 1 } |> Seq.map (fun i -> fromInteger ord i)
+    let allBitsAsSeq (ord: int<order>) =
+        { 0 .. (1 <<< (ord |> UMX.untag)) - 1 } |> Seq.map (fun i -> fromInteger ord i)
 
-    let allBitsAsArray (ord: order) =
-        Array.init (1 <<< (Order.value ord)) (fromInteger ord)
+    let allBitsAsArray (ord: int<order>) =
+        Array.init (1 <<< (ord |> UMX.untag)) (fromInteger ord)
 
 
 //*************************************************************
@@ -184,23 +185,23 @@ module IntSet16 =
     let isTwoCycle (is16: intSet16) =
         CollectionProps.isTwoCycle is16.values
 
-    let sorted_O_1_Sequence (order: order) (onesCount: int) =
-        let totalSize = (Order.value order)
+    let sorted_O_1_Sequence (order: int<order>) (onesCount: int) =
+        let totalSize = order |> UMX.untag
         let numZeroes = totalSize - onesCount
         { intSet16.values = Array.init totalSize (fun i -> if i < numZeroes then 0us else 1us) }
 
     //Returns a bloclLen + 1 length array of IntBits
     // of all possible sorted 0-1 sequences of length order
-    let sorted_0_1_Sequences (order: order) =
+    let sorted_0_1_Sequences (order: int<order>) =
         seq {
-            for i = 0 to (Order.value order) do
+            for i = 0 to (order |> UMX.untag) do
                 yield (sorted_O_1_Sequence order i)
         }
 
-    let fromInteger (ord: order) (intVers: int) =
+    let fromInteger (ord: int<order>) (intVers: int) =
         { intSet16.values = (intVers |> uint64) |> ByteUtils.uint64To2ValArray ord 0us 1us }
 
-    let fromUint64 (ord: order) (intVers: uint64) =
+    let fromUint64 (ord: int<order>) (intVers: uint64) =
         { intSet16.values = intVers |> ByteUtils.uint64To2ValArray ord 0us 1us }
 
     let toInteger (arrayVers: intSet16) (oneThresh: int) =
@@ -209,12 +210,12 @@ module IntSet16 =
     let toUint64 (intSt: intSet16) (oneThresh: uint16) =
         ByteUtils.thresholdArrayToUint64 intSt.values oneThresh
 
-    let allBitsAsSeq (order: order) =
-        let dv = Order.value order
+    let allBitsAsSeq (order: int<order>) =
+        let dv = order |> UMX.untag
         { 0 .. (1 <<< dv) - 1 } |> Seq.map (fromInteger order)
 
-    let allBitsAsArray (ord: order) =
-        Array.init (1 <<< (Order.value ord)) (fromInteger ord)
+    let allBitsAsArray (ord: int<order>) =
+        Array.init (1 <<< (ord |> UMX.untag)) (fromInteger ord)
 
 
 
@@ -277,23 +278,23 @@ module IntSet8 =
 
     let isTwoCycle (is8: intSet8) = CollectionProps.isTwoCycle is8.values
 
-    let sorted_O_1_Sequence (order: order) (onesCount: int) =
-        let totalSize = (Order.value order)
+    let sorted_O_1_Sequence (order: int<order>) (onesCount: int) =
+        let totalSize = (order |> UMX.untag)
         let numZeroes = totalSize - onesCount
         { intSet8.values = Array.init totalSize (fun i -> if i < numZeroes then 0uy else 1uy) }
 
     //Returns a bloclLen + 1 length array of IntBits
     // of all possible sorted 0-1 sequences of length order
-    let sorted_0_1_Sequences (order: order) =
+    let sorted_0_1_Sequences (order: int<order>) =
         seq {
-            for i = 0 to (Order.value order) do
+            for i = 0 to (order |> UMX.untag) do
                 yield (sorted_O_1_Sequence order i)
         }
 
-    let fromInteger (ord: order) (intVers: int) =
+    let fromInteger (ord: int<order>) (intVers: int) =
         { intSet8.values = (intVers |> uint64) |> ByteUtils.uint64To2ValArray ord 0uy 1uy }
 
-    let fromUint64 (ord: order) (intVers: uint64) =
+    let fromUint64 (ord: int<order>) (intVers: uint64) =
         { intSet8.values = intVers |> ByteUtils.uint64To2ValArray ord 0uy 1uy }
 
     let toInteger (arrayVers: intSet8) (oneThresh: int) =
@@ -302,12 +303,12 @@ module IntSet8 =
     let toUint64 (intSt: intSet8) (oneThresh: uint8) =
         ByteUtils.thresholdArrayToUint64 intSt.values oneThresh
 
-    let allBitsAsSeq (order: order) =
-        let dv = Order.value order
+    let allBitsAsSeq (order: int<order>) =
+        let dv = order |> UMX.untag
         { 0 .. (1 <<< dv) - 1 } |> Seq.map (fromInteger order)
 
-    let allBitsAsArray (ord: order) =
-        Array.init (1 <<< (Order.value ord)) (fromInteger ord)
+    let allBitsAsArray (ord: int<order>) =
+        Array.init (1 <<< (ord |> UMX.untag)) (fromInteger ord)
 
 
 
