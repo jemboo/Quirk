@@ -1,10 +1,15 @@
 ﻿namespace Quirk.Sorting
 
 open System
+open FSharp.UMX
+open Quirk.Core
 
 module SortersFromData =
 
-    let ParseToStages (order: order) (stagesStr: string) =
+    let ParseToStages 
+            (order: int<order>) 
+            (stagesStr: string) 
+        =
         let MakeSwitch (s: string) =
             let pcs = s.Split([| ',' |]) |> Seq.map (fun i -> i |> int) |> Seq.toArray
             { switch.low = pcs.[0]; hi = pcs.[1] }
@@ -18,14 +23,21 @@ module SortersFromData =
         |> Seq.map (fun sws -> { stage.switches = sws; order = order })
 
 
-    let ParseToSwitches (stagesStr: string) (order: order) =
+    let ParseToSwitches 
+            (stagesStr: string) 
+            (order: int<order>) 
+        =
         result {
             let! stages = Result.ErrorOnException (ParseToStages order) stagesStr
             return stages |> Seq.map (fun s -> s.switches |> List.toSeq) |> Seq.concat
         }
 
 
-    let ParseToSorter (sorterD:sorterId) (sorterString: string) (order: order) =
+    let ParseToSorter 
+            (sorterD:Guid<sorterId>) 
+            (sorterString: string) 
+            (order: int<order>) 
+        =
         result {
             let! switchSeq = ParseToSwitches sorterString order
             let switches = switchSeq |> Seq.toArray
@@ -45,7 +57,10 @@ module SorterWriter =
         st.switches |> List.iter (formatSwitch)
         myPrint "]\n"
 
-    let private _formatSwitches (order: order) (switches: seq<switch>) =
+    let private _formatSwitches 
+            (order: int<order>) 
+            (switches: seq<switch>) 
+        =
         let stages = Stage.fromSwitches order switches
         stages |> Seq.iter (_formatStage)
         myPrint "\n"
@@ -58,7 +73,10 @@ module SorterWriter =
 
     let formatStage (st: stage) = _runWriter (_formatStage st)
 
-    let formatSwitches (order: order) (switches: seq<switch>) =
+    let formatSwitches 
+            (order: int<order>) 
+            (switches: seq<switch>) 
+        =
         _runWriter (_formatSwitches order switches)
 
 
@@ -129,8 +147,7 @@ module RefSorter =
 
     let getStringAndDegree (refSorter: RefSorter) =
         let d (v: int) =
-            let qua = (Order.create v) |> Result.toOption
-            qua.Value
+            v |> UMX.tag<order>
 
         match refSorter with
         | Degree3 -> (SorterData.Degree3Str, d 3) |> Ok
@@ -166,15 +183,20 @@ module RefSorter =
         | _ -> "no match found in GetStringAndDegree" |> Error
 
 
-    let createRefSorter (sorterD:sorterId) (refSorter: RefSorter) =
+    let createRefSorter 
+            (sorterD:Guid<sorterId>) 
+            (refSorter: RefSorter) 
+        =
         result {
             let! (sorterString, order) = (getStringAndDegree refSorter)
             return! SortersFromData.ParseToSorter sorterD sorterString order
         }
 
 
-    let private _goodRefSorterForDegree (order: order) =
-        let d = (Order.value order)
+    let private _goodRefSorterForDegree 
+            (order: int<order>) 
+        =
+        let d = order |> UMX.untag
 
         match d with
         | 3 -> RefSorter.Degree3 |> Ok
@@ -210,7 +232,10 @@ module RefSorter =
         | _ -> "no match found in RefSorterForDegree" |> Error
 
 
-    let goodRefSorterForOrder (sorterD:sorterId) (order: order) =
+    let goodRefSorterForOrder 
+            (sorterD:Guid<sorterId>) 
+            (order: int<order>) 
+        =
         result {
             let! refSorter = _goodRefSorterForDegree order
             return! createRefSorter sorterD refSorter

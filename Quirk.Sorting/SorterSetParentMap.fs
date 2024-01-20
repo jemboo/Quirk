@@ -1,14 +1,16 @@
 ﻿namespace Quirk.Sorting
 
 open System
+open FSharp.UMX
+open Quirk.Core
 
 
 type sorterSetParentMap = 
         private {
-        id: sorterSetParentMapId;
-        childSetId:sorterSetId;
-        parentSetId:sorterSetId;
-        parentMap:Map<sorterId, sorterParentId> }
+        id: Guid<sorterSetParentMapId>;
+        childSetId:Guid<sorterSetId>;
+        parentSetId:Guid<sorterSetId>;
+        parentMap:Map<Guid<sorterId>, Guid<sorterParentId>> }
 
 module SorterSetParentMap =
 
@@ -35,11 +37,12 @@ module SorterSetParentMap =
          =
          sorterParentMap.parentSetId
 
+
     let load
-            (id:sorterSetParentMapId)
-            (childSetId:sorterSetId)
-            (parentSetId:sorterSetId)
-            (parentMap:Map<sorterId, sorterParentId>)
+            (id:Guid<sorterSetParentMapId>)
+            (childSetId:Guid<sorterSetId>)
+            (parentSetId:Guid<sorterSetId>)
+            (parentMap:Map<Guid<sorterId>, Guid<sorterParentId>>)
         =
         {   
             id=id
@@ -49,30 +52,30 @@ module SorterSetParentMap =
         }
 
     let makeId
-            (parentSetId:sorterSetId)
-            (childSetId:sorterSetId)
+            (parentSetId:Guid<sorterSetId>)
+            (childSetId:Guid<sorterSetId>)
         =
         [|
             "sorterSetParentMap" :> obj
-            parentSetId |> SorterSetId.value :> obj; 
-            childSetId |> SorterSetId.value :> obj
+            parentSetId |> UMX.untag :> obj; 
+            childSetId |> UMX.untag :> obj
         |] 
         |> GuidUtils.guidFromObjs
-        |> SorterSetParentMapId.create
+        |> UMX.tag<sorterSetParentMapId>
 
 
     let create
-            (childSetId:sorterSetId)
-            (parentSetId:sorterSetId)
-            (childSetCount:sorterCount)
-            (parentSorterIds:sorterId[])
+            (childSetId:Guid<sorterSetId>)
+            (parentSetId:Guid<sorterSetId>)
+            (childSetCount:int<sorterCount>)
+            (parentSorterIds:Guid<sorterId>[])
         =
         let parentMap =
             parentSorterIds
-            |> Seq.map(SorterParentId.toSorterParentId)
+            |> Seq.map(UMX.cast<sorterId,sorterParentId>)
             |> CollectionOps.infinteLoop
             |> Seq.zip (childSetId |> SorterSet.generateSorterIds)
-            |> Seq.take (childSetCount |> SorterCount.value)
+            |> Seq.take (childSetCount |> UMX.untag)
             |> Map.ofSeq
 
         let sorterParentMapId = 
@@ -90,11 +93,11 @@ module SorterSetParentMap =
     let extendToParents
             (sspm:sorterSetParentMap)
         =
-            sspm 
-            |> getParentMap
-            |> Map.values
-            |> Seq.distinct
-            |> Seq.map(fun v -> (v |> SorterParentId.toSorterId, v))
-            |> Seq.append
-                (sspm |> getParentMap |> Map.toSeq)
-            |> Map.ofSeq
+        sspm 
+        |> getParentMap
+        |> Map.values
+        |> Seq.distinct
+        |> Seq.map(fun v -> (v |> UMX.cast<sorterParentId,sorterId> , v))
+        |> Seq.append
+            (sspm |> getParentMap |> Map.toSeq)
+        |> Map.ofSeq

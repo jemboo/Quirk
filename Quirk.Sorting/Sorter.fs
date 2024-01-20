@@ -20,7 +20,7 @@ module Sorter =
     let getSwitches (sorter: sorter) = sorter.switches
 
     let getSwitchCount (sorter: sorter) =
-        sorter.switches.Length |> UMX.tag<sorterCount>
+        sorter.switches.Length |> UMX.tag<switchCount>
 
     let toByteArray (sorter: sorter) =
         sorter |> getSwitches 

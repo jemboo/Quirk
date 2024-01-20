@@ -15,14 +15,14 @@ module BooleanRoll =
 
     let create 
             (arrayCount: int<arrayCount>) 
-            (arrayLength: int<arrayLength>) =
-
-        let dataLength =
-            (arrayCount |> UMX.untag) * (arrayLength |> UMX.untag)
-
-        { arrayCount = arrayCount
+            (arrayLength: int<arrayLength>)
+        =
+        let dataLength = (arrayCount |> UMX.untag) * (arrayLength |> UMX.untag)
+        { 
+          arrayCount = arrayCount
           arrayLength = arrayLength
-          data = Array.zeroCreate<bool> dataLength }
+          data = Array.zeroCreate<bool> dataLength 
+        }
 
     let createEmpty =
         { arrayCount = (0 |> UMX.tag<arrayCount>)

@@ -1,6 +1,9 @@
 ﻿namespace Quirk.Sorting
 
 open System
+open FSharp.UMX
+open Quirk.Core
+
 type sorterSetMutatorId = private SorterSetMutatorId of Guid
 module SorterSetMutatorId =
     let value (SorterSetMutatorId v) = v
@@ -10,7 +13,7 @@ type sorterSetMutator =
     private { 
             id: sorterSetMutatorId
             sorterMutator: sorterMutator
-            sorterCountFinal: sorterCount Option
+            sorterCountFinal: int<sorterCount> Option
         }
 
 module SorterSetMutator =
@@ -18,7 +21,7 @@ module SorterSetMutator =
     let load
             (id:sorterSetMutatorId)
             (sorterMutator:sorterMutator) 
-            (sorterCountFinal:sorterCount option) 
+            (sorterCountFinal:int<sorterCount> option) 
         =
         { 
           id = id
@@ -36,7 +39,7 @@ module SorterSetMutator =
     let getMutantSorterSetId
             (sorterSetMutator:sorterSetMutator)
             (rngGen:rngGen) 
-            (parentSetId:sorterSetId)
+            (parentSetId:Guid<sorterSetId>)
         =
         [|  
             parentSetId :> obj;
@@ -46,7 +49,7 @@ module SorterSetMutator =
                     |> SorterMutator.getMutatorId):> obj
         |] 
         |> GuidUtils.guidFromObjs
-        |> SorterSetId.create
+        |> UMX.tag<sorterSetId>
 
 
     let createMutantSorterSetFromParentMap

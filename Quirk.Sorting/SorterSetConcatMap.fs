@@ -1,20 +1,23 @@
 ﻿namespace Quirk.Sorting
+open System
+open FSharp.UMX
+open Quirk.Core
 
 
 type sorterSetConcatMap = 
         private {
-        id: sorterSetConcatMapId;
-        sorterSetBaseId:sorterSetId;
-        sorterSetConcatId:sorterSetId;
-        concatMap:Map<sorterId, sorterId[]> }
+        id: Guid<sorterSetConcatMapId>;
+        sorterSetBaseId:Guid<sorterSetId>;
+        sorterSetConcatId:Guid<sorterSetId>;
+        concatMap:Map<Guid<sorterId>, Guid<sorterId>[]> }
 
 
 module SorterSetConcatMap 
         =
-    let load (id:sorterSetConcatMapId)
-             (sorterSetBaseId:sorterSetId)
-             (sorterSetConcatId:sorterSetId)
-             (concatMap:Map<sorterId, sorterId[]>)
+    let load (id:Guid<sorterSetConcatMapId>)
+             (sorterSetBaseId:Guid<sorterSetId>)
+             (sorterSetConcatId:Guid<sorterSetId>)
+             (concatMap:Map<Guid<sorterId>, Guid<sorterId>[]>)
         =
         { 
           id = id
@@ -24,18 +27,18 @@ module SorterSetConcatMap
         }
 
 
-    let make (concats:sorterId[] seq)
-             (sorterSetBaseId:sorterSetId)
-             (sorterSetConcatId:sorterSetId)
+    let make (concats:Guid<sorterId>[] seq)
+             (sorterSetBaseId:Guid<sorterSetId>)
+             (sorterSetConcatId:Guid<sorterSetId>)
         =
         let concatMapId = 
             [| 
-                (sorterSetBaseId |> SorterSetId.value);
-                (sorterSetConcatId |> SorterSetId.value);
+                (sorterSetBaseId |> UMX.untag);
+                (sorterSetConcatId |> UMX.untag);
             |] 
             |> Array.map(fun tup -> tup:> obj) 
             |> GuidUtils.guidFromObjs 
-            |> SorterSetConcatMapId.create
+            |> UMX.tag<sorterSetConcatMapId>
 
         let memberIds = sorterSetConcatId |> SorterSet.generateSorterIds
         let concatMap = 
@@ -89,14 +92,14 @@ module SorterSetConcatMap
 
 
     let createForAppendSet
-            (sorterSetbaseId: sorterSetId)
-            (sorterSetBaseCount:sorterCount)
-            (sorterSetIdAppendSet:sorterSetId)
+            (sorterSetbaseId: Guid<sorterSetId>)
+            (sorterSetBaseCount: int<sorterCount>)
+            (sorterSetIdAppendSet: Guid<sorterSetId>)
         =
         let baseSorterIds = 
             sorterSetbaseId 
                 |> SorterSet.generateSorterIds
-                |> Seq.take(SorterCount.value sorterSetBaseCount)
+                |> Seq.take(sorterSetBaseCount |> UMX.untag)
                 |> Seq.toArray
 
         let idCCts = 
@@ -111,7 +114,7 @@ module SorterSetConcatMap
 
     let createSorterSetAppend
             (sorterSetbase: sorterSet)
-            (sorterSetIdAppendSet:sorterSetId)
+            (sorterSetIdAppendSet: Guid<sorterSetId>)
         =
         let sscm = 
             createForAppendSet 

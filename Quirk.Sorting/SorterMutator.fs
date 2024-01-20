@@ -1,15 +1,17 @@
 ﻿namespace Quirk.Sorting
 
 open System
+open FSharp.UMX
+open Quirk.Core
 
 type sorterUniformMutator =
     private
-        { 
+        {
           switchGenMode: switchGenMode
-          mutationRate: mutationRate
-          switchCountPfx: switchCount Option
-          switchCountFinal: switchCount Option
-          mutatorFunc: sorter -> sorterId -> IRando -> Result<sorter, string> 
+          mutationRate: float<mutationRate>
+          switchCountPfx: int<switchCount> Option
+          switchCountFinal: int<switchCount> Option
+          mutatorFunc: sorter -> Guid<sorterId> -> IRando -> Result<sorter, string> 
         }
 
 module SorterUniformMutator =
@@ -34,8 +36,7 @@ module SorterUniformMutator =
     
     let getSwitchCountFinal (sum: sorterUniformMutator) = sum.switchCountFinal
 
-    let getMutatorId 
-                (sum: sorterUniformMutator) 
+    let getMutatorId (sum: sorterUniformMutator) 
         = 
         [| (sum.GetType()) :> obj;
            (sum.switchGenMode) :> obj;
@@ -44,13 +45,13 @@ module SorterUniformMutator =
            (sum.switchCountFinal) :> obj;
         |] 
             |> GuidUtils.guidFromObjs
-            |> SortableSetId.create
+            |> UMX.tag<sortableSetId>
 
 
     let _switchMutator
-            (mutRate:mutationRate) 
+            (mutRate:float<mutationRate>) 
             (sorter: sorter)
-            (sorterD:sorterId)
+            (sorterD:Guid<sorterId>)
             (randy: IRando)  
         =
         result {
@@ -62,9 +63,9 @@ module SorterUniformMutator =
         }
 
     let _stageMutator
-            (mutRate:mutationRate)
+            (mutRate:float<mutationRate>)
             (sorter: sorter)
-            (sorterD:sorterId)
+            (sorterD:Guid<sorterId>)
             (randy: IRando)
         =
         result {
@@ -83,9 +84,9 @@ module SorterUniformMutator =
         }
 
     let _stageRflMutator            
-            (mutRate:mutationRate) 
+            (mutRate:float<mutationRate>) 
             (sorter: sorter)          
-            (sorterD:sorterId)  
+            (sorterD:Guid<sorterId>)  
             (randy: IRando)  
         =
         result {
@@ -105,11 +106,11 @@ module SorterUniformMutator =
 
 
     let _makeMutant
-            (mFunc: sorter -> sorterId -> IRando -> Result<sorter, string>)
-            (switchCtPrefix: switchCount Option)
-            (switchCtTarget: switchCount Option)
+            (mFunc: sorter -> Guid<sorterId> -> IRando -> Result<sorter, string>)
+            (switchCtPrefix: int<switchCount> Option)
+            (switchCtTarget: int<switchCount> Option)
             (sorter: sorter)          
-            (sorterD:sorterId)  
+            (sorterD:Guid<sorterId>)  
             (randy: IRando)  
         =
         result {
@@ -118,22 +119,22 @@ module SorterUniformMutator =
             match switchCtTarget with
             | Some swct -> swct
             | None -> sorter |> Sorter.getSwitches 
-                      |> Array.length |> SwitchCount.create
+                      |> Array.length |> UMX.tag<switchCount>
 
           let prefixSwitchCt = 
             match switchCtPrefix with
             | Some swct -> swct
-            | None -> 0 |> SwitchCount.create
+            | None -> 0 |> UMX.tag<switchCount>
 
           return Sorter.crossOver prefixSwitchCt targetSwitchCt sorter mutantSortr sorterD randy
         }
 
 
     let create 
-            (switchCtPrefix: switchCount Option)
-            (switchCountFinal: switchCount Option)
+            (switchCtPrefix: int<switchCount> Option)
+            (switchCountFinal: int<switchCount> Option)
             (switchGenMode:switchGenMode)  
-            (mutRate: mutationRate) 
+            (mutRate: float<mutationRate>) 
         =
         match switchGenMode with
         | switchGenMode.switch ->
@@ -181,20 +182,20 @@ module SorterMutator =
     let makeMutants
             (sorterMutator:sorterMutator) 
             (randy:IRando)
-            (parentIdMap:Map<sorterId, sorterParentId>)
+            (parentIdMap:Map<Guid<sorterId>, Guid<sorterParentId>>)
             (sortersToMutate:sorter seq)
         =
-        let sortersToMutateLookup = 
+        let _sortersToMutateLookup = 
             sortersToMutate 
             |> Seq.map(fun s -> 
-                (s |> Sorter.getSorterId |> SorterParentId.toSorterParentId, s))
+                (s |> Sorter.getSorterId |> UMX.cast<sorterId, sorterParentId>, s))
             |> Map.ofSeq
 
-        let _pid_mutant (childId:sorterId) =
+        let _pid_mutant (childId:Guid<sorterId>) =
             result {
                 
                 let parentSorterId = parentIdMap.Item childId
-                let parentSorter = sortersToMutateLookup.Item parentSorterId
+                let parentSorter = _sortersToMutateLookup.Item parentSorterId
                 let! mutant =
                     (sorterMutator |> getMutatorFunc)
                             parentSorter

@@ -20,16 +20,6 @@ open FSharp.UMX
 [<Measure>] type switchFrequency
 
 
-module SorterId =
-    let toSorterParentId (v: Guid<sorterId>) = 
-        (UMX.untag v) |> UMX.tag<sorterParentId>
-
-
-module SorterParentId =
-    let toSorterId (v: Guid<sorterParentId>) = 
-        (UMX.untag v) |> UMX.tag<sorterId>
-
-
 type orderToSwitchCount = 
     | Record
     | For900

@@ -1,11 +1,22 @@
-﻿namespace Quirk.Core
+﻿namespace Quirk.SortingResults
+
+open System
 open FSharp.UMX
+open Quirk.Core
+open Quirk.Sorting
 open System.Text.RegularExpressions
 
 [<Measure>] type noiseFraction
 [<Measure>] type sorterPhenotypeCount
+// 1.0 is neutral, higher numbers emphasize stageCount
 [<Measure>] type stageWeight
 [<Measure>] type sorterSetPrunerId
+[<Measure>] type sorterPhenotypeId
+[<Measure>] type switchUseCount
+[<Measure>] type sorterSetEvalId
+[<Measure>] type switchesUsed
+[<Measure>] type sorterFitness
+[<Measure>] type selectionFraction
 
 
 type sorterEvalMode = 
@@ -72,5 +83,27 @@ module SorterSetPruneMethod =
                 | _ ->
                     $"{repVal} not valid in SorterSetPruneMethod.fromReport" |> Error
 
+
+module SorterPhenotypeId =
+
+    let createFromSwitches (switches: seq<switch>) =
+        switches
+        |> Seq.map (fun sw -> sw :> obj)
+        |> GuidUtils.guidFromObjs
+        |> UMX.tag<sorterPhenotypeId>
+
+
+
+module SorterFitness =
+    let fromSpeed 
+            (stageWght:stageWeight) 
+            (sorterSpd:sorterSpeed) 
+        = 
+        (stageWght |> StageWeight.value) /
+        (sorterSpd |> SorterSpeed.getStageCount |> StageCount.value |> float)
+        +
+        1.0 /
+        (sorterSpd |> SorterSpeed.getSwitchCount |> SwitchCount.value |> float)
+        |> create
 
 
