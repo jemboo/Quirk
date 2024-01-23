@@ -2,6 +2,7 @@
 
 open Argu
 
+
 type quirkProgramMode =
     | CfgPlex
     | GenSimScript
@@ -27,7 +28,6 @@ module quirkProgramMode =
         | [| "GenReportScript" |] -> quirkProgramMode.GenReportScript |> Ok
         | [| "RunScript" |] -> quirkProgramMode.RunScript |> Ok
         | _ -> Error $"{qrm} not handled in QuirkScriptMode.fromString"
-
 
 
     

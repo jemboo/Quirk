@@ -4,6 +4,7 @@ open System
 open Microsoft.FSharp.Core
 open FSharp.UMX
 open Quirk.Core
+open Quirk.SortingResults
 
 
 type sorterSetPruneMethodDto = {duType:string; cereal:string}

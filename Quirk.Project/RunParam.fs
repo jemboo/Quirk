@@ -4,31 +4,6 @@ open FSharp.UMX
 open Quirk.Core
 
 
-//type scriptModelType =
-//    | Ga
-//    | Shc
-
-
-//module ScriptModelType =
-
-//    let toString 
-//            (scriptModelType:scriptModelType)
-//        =
-//        match scriptModelType with
-//        | Ga -> "Ga"
-//        | Shc -> $"Shc"
-
-//    let fromString 
-//            (qrm: string) 
-//        =
-//        match qrm.Split() with
-//        | [| "Ga" |] -> scriptModelType.Ga |> Ok 
-//        | [| "Shc" |] -> scriptModelType.Shc |> Ok
-//        | _ -> Error $"{qrm} not handled in ScriptModelType.fromString"
-
-
-
-
 type runParamSet =
     | Sim of simParamSet
     | Report of reportParamSet
@@ -51,9 +26,6 @@ module RunParamSet =
         | Report rps -> rps |> Ok
 
 
-
-
-    
 
 type runParamSetType =
     | Sim

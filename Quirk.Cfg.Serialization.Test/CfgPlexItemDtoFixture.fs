@@ -7,6 +7,7 @@ open Quirk.Core
 open Quirk.Project
 open Quirk.Cfg.Core
 open Quirk.Cfg.Serialization
+open Quirk.SortingResults
 
 module CfgPlexItemDtoFixture =
 

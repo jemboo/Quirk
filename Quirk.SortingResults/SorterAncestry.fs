@@ -10,7 +10,7 @@ type genInfo =
         generation:int<generation>
         sorterId: Guid<sorterId>
         sorterPhenotypeId:Guid<sorterPhenotypeId>
-        sorterFitness:sorterFitness
+        sorterFitness:float<sorterFitness>
         }
 
 
@@ -20,7 +20,7 @@ module GenInfo =
         (gen:int<generation>)
         (sorterId:Guid<sorterId>)
         (sorterPhenotypeId:Guid<sorterPhenotypeId>)
-        (sorterFitness:sorterFitness)
+        (sorterFitness:float<sorterFitness>)
         =
         {
             generation = gen
@@ -69,7 +69,7 @@ module SorterAncestry =
             (sorterId:Guid<sorterId>) 
             (generation:int<generation>) 
             (sorterPhenotypeId:Guid<sorterPhenotypeId>) 
-            (sorterFitness:sorterFitness) 
+            (sorterFitness:float<sorterFitness>) 
         =
         {
             sorterAncestry.sorterId = sorterId;
@@ -88,7 +88,7 @@ module SorterAncestry =
             (sorterId:Guid<sorterId>) 
             (generation:int<generation>) 
             (sorterPhenotypeId:Guid<sorterPhenotypeId>) 
-            (sorterFitness:sorterFitness) 
+            (sorterFitness:float<sorterFitness>) 
             (parentSorterAncestry:sorterAncestry) 
         =
         let _replace newInfo last history =
@@ -179,7 +179,7 @@ module SorterSetAncestry =
 
 
     let create (sorterSetEval:sorterSetEval)
-               (stageWeight:stageWeight)
+               (stageWeight:float<stageWeight>)
                (generation:int<generation>)
                (tag:Guid)
         =
@@ -189,7 +189,7 @@ module SorterSetAncestry =
         let _makeSorterAncestry 
                 (sev:sorterEval)
                 (gen:int<generation>)
-                (sw:stageWeight)
+                (sw:float<stageWeight>)
             =
             SorterAncestry.create
                 sev.sortrId
@@ -211,7 +211,7 @@ module SorterSetAncestry =
 
     let update
             (generation:int<generation>)
-            (stageWeight:stageWeight)
+            (stageWeight:float<stageWeight>)
             (sorterSetEval:sorterSetEval)
             (parentMap:Map<Guid<sorterId>, Guid<sorterParentId>>)
             (sorterSetAncestry:sorterSetAncestry)
@@ -222,7 +222,7 @@ module SorterSetAncestry =
                 (parentSorterAncestry:sorterAncestry)
                 (sev:sorterEval)
                 (gen:int<generation>)
-                (stageWeight:stageWeight)
+                (stageWeight:float<stageWeight>)
             =
             parentSorterAncestry
                 |> SorterAncestry.update

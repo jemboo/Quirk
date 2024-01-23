@@ -32,6 +32,10 @@ module SortableCount =
 
 
 module SwitchCount =
+
+    let add (scA:int<switchCount>) (scB:int<switchCount>) =
+        ((UMX.untag scA) + (UMX.untag scB)) |> UMX.tag<switchCount>
+
     let orderToRecordSwitchCount (ord: int<order>) =
         let d = ord |> UMX.untag
         let ct =
@@ -69,7 +73,6 @@ module SwitchCount =
             | _ -> 0
         ct |> UMX.tag<switchCount>
 
-
     let orderTo900SwitchCount (ord: int<order>) =
         let d = ord |> UMX.untag
 
@@ -97,7 +100,6 @@ module SwitchCount =
             | 25 -> 1900
             | _ -> 0
         ct |> UMX.tag<switchCount>
-
 
     let orderTo999SwitchCount (ord: int<order>) =
         let d = ord |> UMX.untag
@@ -129,7 +131,6 @@ module SwitchCount =
             | _ -> 0
         ct  |> UMX.tag<switchCount>
 
-
     let fromOrder 
             (m:orderToSwitchCount) 
             (order:int<order>) =
@@ -142,6 +143,10 @@ module SwitchFrequency =
     let max = 1.0 |> UMX.tag<switchFrequency>
 
 module StageCount =
+
+    let add (scA:int<stageCount>) (scB:int<stageCount>) =
+        ((UMX.untag scA) + (UMX.untag scB)) |> UMX.tag<stageCount>
+
 
     let toSwitchCount 
             (ord: int<order>) 
@@ -256,6 +261,15 @@ module StageCount =
         | Record -> orderToRecordStageCount order
         | For900 -> orderTo900StageCount order
         | For999 -> orderTo999StageCount order
+
+
+module SorterCount =
+
+    let add (scA:int<sorterCount>) (scB:int<sorterCount>) =
+        ((UMX.untag scA) + (UMX.untag scB)) |> UMX.tag<sorterCount>
+
+
+
 
 module StageWindowSize =
 

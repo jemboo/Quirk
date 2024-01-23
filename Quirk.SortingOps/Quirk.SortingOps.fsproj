@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="SwitchOpTypes.fs" />
+    <Compile Include="SortingOpTypes.fs" />
     <Compile Include="SwitchUseTracker.fs" />
     <Compile Include="SortableBySwitchTracker.fs" />
     <Compile Include="SorterOpTracker.fs" />

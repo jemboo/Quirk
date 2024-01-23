@@ -3,18 +3,7 @@
 open FSharp.UMX
 open Quirk.Core
 open Quirk.Sorting
-
-
-type modelParamType =
-    | MutationRate
-    | NoiseFraction
-    | Order
-    | ParentCount
-    | ReproductionRate
-    | SorterSetPruneMethod
-    | StageWeight
-    | SwitchGenMode
-
+open Quirk.SortingResults
 
 type modelParamValue =
     | MutationRate of string<modelParamName> * float<mutationRate>
@@ -25,64 +14,6 @@ type modelParamValue =
     | SorterSetPruneMethod of string<modelParamName> * sorterSetPruneMethod
     | StageWeight of string<modelParamName> * float<stageWeight>
     | SwitchGenMode of string<modelParamName> * switchGenMode
-
-
-
-module ModelParamType =
-    
-    let toModelParamValue 
-            (quirkModelParamName: string<modelParamName>) 
-            (cfgModelParamType:modelParamType)
-            (strVal:string)
-        =
-        match cfgModelParamType with
-        | modelParamType.MutationRate -> 
-            result {
-               let! value = StringUtil.parseFloat strVal
-               return  (quirkModelParamName, value |> UMX.tag<mutationRate>) |> modelParamValue.MutationRate
-            }
-
-        | modelParamType.NoiseFraction ->
-            result {
-               let! value = StringUtil.parseFloat strVal
-               return  (quirkModelParamName, value |> UMX.tag<noiseFraction>) |> modelParamValue.NoiseFraction
-            }
-
-        | modelParamType.Order ->
-            result {
-               let! value = StringUtil.parseInt strVal
-               return  (quirkModelParamName, value |> UMX.tag<order>) |> modelParamValue.Order
-            }
-
-        | modelParamType.ParentCount ->
-            result {
-               let! value = StringUtil.parseInt strVal
-               return  (quirkModelParamName, value |> UMX.tag<sorterCount>) |> modelParamValue.ParentCount
-            }
-
-        | modelParamType.ReproductionRate ->
-            result {
-               let! value = StringUtil.parseFloat strVal
-               return  (quirkModelParamName, value |> UMX.tag<reproductionRate>) |> modelParamValue.ReproductionRate
-            }
-
-        | modelParamType.SorterSetPruneMethod ->
-            result {
-               let! value = SorterSetPruneMethod.fromReport strVal
-               return  (quirkModelParamName, value) |> modelParamValue.SorterSetPruneMethod
-            }
-
-        | modelParamType.StageWeight ->
-            result {
-               let! value = StringUtil.parseFloat strVal
-               return  (quirkModelParamName, value |> UMX.tag<stageWeight>) |> modelParamValue.StageWeight
-            }
-
-        | modelParamType.SwitchGenMode ->
-            result {
-               let! value = strVal |> SwitchGenMode.fromString
-               return  (quirkModelParamName, value) |> modelParamValue.SwitchGenMode
-            }
 
 
 module ModelParamValue =
@@ -130,7 +61,6 @@ module ModelParamValue =
         | SorterSetPruneMethod (n, ssp) -> n
         | StageWeight (n, sw) -> n
         | SwitchGenMode (n, sgm) -> n
-
 
 
     let toArrayOfStrings (modelParamValue: modelParamValue) =
@@ -332,4 +262,109 @@ module ModelParamSet =
         |> Seq.filter(Option.isSome)
         |> Seq.map(Option.get)
         |> Seq.toArray
+
+
+    let getMutationRate 
+            (modelParamName:string<modelParamName>)  
+            (modelParamSet:modelParamSet) 
+            =
+        let modelParamValue = modelParamSet |> getModelParamValue modelParamName
+        match modelParamValue with
+        | Some v -> 
+            match v with
+            | modelParamValue.MutationRate (a,b) -> (a,b) |> Ok
+            | _ -> "not a mutationRate" |> Error
+        | _ -> $"modelParamName {modelParamName |> UMX.untag}" |> Error  
+
+
+    let getNoiseFraction 
+            (modelParamName:string<modelParamName>)  
+            (modelParamSet:modelParamSet) 
+            =
+        let modelParamValue = modelParamSet |> getModelParamValue modelParamName
+        match modelParamValue with
+        | Some v -> 
+            match v with
+            | modelParamValue.NoiseFraction (a,b) -> (a,b) |> Ok
+            | _ -> "not a NoiseFraction" |> Error
+        | _ -> $"modelParamName {modelParamName |> UMX.untag}" |> Error  
+
+
+    let getOrder 
+            (modelParamName:string<modelParamName>)  
+            (modelParamSet:modelParamSet) 
+            =
+        let modelParamValue = modelParamSet |> getModelParamValue modelParamName
+        match modelParamValue with
+        | Some v -> 
+            match v with
+            | modelParamValue.Order (a,b) -> (a,b) |> Ok
+            | _ -> "not an Order" |> Error
+        | _ -> $"modelParamName {modelParamName |> UMX.untag}" |> Error  
+
+
+    let getParentCount 
+            (modelParamName:string<modelParamName>)  
+            (modelParamSet:modelParamSet) 
+            =
+        let modelParamValue = modelParamSet |> getModelParamValue modelParamName
+        match modelParamValue with
+        | Some v -> 
+            match v with
+            | modelParamValue.ParentCount (a,b) -> (a,b) |> Ok
+            | _ -> "not a ParentCount" |> Error
+        | _ -> $"modelParamName {modelParamName |> UMX.untag}" |> Error  
+
+
+    let getReproductionRate 
+            (modelParamName:string<modelParamName>)  
+            (modelParamSet:modelParamSet) 
+            =
+        let modelParamValue = modelParamSet |> getModelParamValue modelParamName
+        match modelParamValue with
+        | Some v -> 
+            match v with
+            | modelParamValue.ReproductionRate (a,b) -> (a,b) |> Ok
+            | _ -> "not a ReproductionRate" |> Error
+        | _ -> $"modelParamName {modelParamName |> UMX.untag}" |> Error  
+
+
+    let getSorterSetPruneMethod 
+            (modelParamName:string<modelParamName>)  
+            (modelParamSet:modelParamSet) 
+            =
+        let modelParamValue = modelParamSet |> getModelParamValue modelParamName
+        match modelParamValue with
+        | Some v -> 
+            match v with
+            | modelParamValue.SorterSetPruneMethod (a,b) -> (a,b) |> Ok
+            | _ -> "not a SorterSetPruneMethod" |> Error
+        | _ -> $"modelParamName {modelParamName |> UMX.untag}" |> Error  
+
+
+    let getStageWeight 
+            (modelParamName:string<modelParamName>)  
+            (modelParamSet:modelParamSet) 
+            =
+        let modelParamValue = modelParamSet |> getModelParamValue modelParamName
+        match modelParamValue with
+        | Some v -> 
+            match v with
+            | modelParamValue.StageWeight (a,b) -> (a,b) |> Ok
+            | _ -> "not a StageWeight" |> Error
+        | _ -> $"modelParamName {modelParamName |> UMX.untag}" |> Error  
+
+
+    let getSwitchGenMode 
+            (modelParamName:string<modelParamName>)  
+            (modelParamSet:modelParamSet) 
+            =
+        let modelParamValue = modelParamSet |> getModelParamValue modelParamName
+        match modelParamValue with
+        | Some v -> 
+            match v with
+            | modelParamValue.SwitchGenMode (a,b) -> (a,b) |> Ok
+            | _ -> "not a SwitchGenMode" |> Error
+        | _ -> $"modelParamName {modelParamName |> UMX.untag}" |> Error  
+
 

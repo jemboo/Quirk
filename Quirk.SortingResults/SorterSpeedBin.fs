@@ -43,7 +43,7 @@ module SorterSpeedBin =
         sorterSpeedBin.sorterPhenotypeId
 
     let fromSorterEval 
-            (order:order)
+            (order: int<order>)
             (binType:sorterSpeedBinType) 
             (sorterEval:sorterEval)
         =
@@ -102,16 +102,16 @@ type sorterSpeedBinSet =
     private
         {
             id: sorterSpeedBinSetId;
-            binMap : Map<sorterSpeedBinKey, Map<Guid<sorterPhenotypeId>,sorterCount>>
-            generation:generation
+            binMap : Map<sorterSpeedBinKey, Map<Guid<sorterPhenotypeId>, int<sorterCount>>>
+            generation: int<generation>
             tag:Guid
         }
 
 module SorterSpeedBinSet 
     = 
-    let load (binMap : Map<sorterSpeedBinKey, Map<Guid<sorterPhenotypeId>,sorterCount>>) 
+    let load (binMap : Map<sorterSpeedBinKey, Map<Guid<sorterPhenotypeId>, int<sorterCount>>>) 
              (id:sorterSpeedBinSetId)
-             (generation:generation)
+             (generation: int<generation>)
              (tag:Guid) 
         =
         {
@@ -121,19 +121,19 @@ module SorterSpeedBinSet
             tag = tag
         }
 
-    let create (binMap : Map<sorterSpeedBinKey, Map<Guid<sorterPhenotypeId>,sorterCount>>)
-               (generation:generation)
+    let create (binMap : Map<sorterSpeedBinKey, Map<Guid<sorterPhenotypeId>, int<sorterCount>>>)
+               (generation: int<generation>)
                (tag:Guid)    
         =
         let sorterSpeedBinSetId  = 
                 [|
                   tag:> obj;
-                  generation |> Generation.value :> obj;
+                  generation |> UMX.untag :> obj;
                   "sorterSpeedBinSet" :> obj;
                 |] |> GuidUtils.guidFromObjs  
                    |> SorterSpeedBinSetId.create
 
-        load binMap sorterSpeedBinSetId (0 |> Generation.create) tag
+        load binMap sorterSpeedBinSetId (0 |> UMX.tag<generation>) tag
 
 
     let getBinMap (ssbss:sorterSpeedBinSet) =
@@ -151,11 +151,11 @@ module SorterSpeedBinSet
 
     let private _addBin
             (bin:sorterSpeedBin) 
-            (binMap:Map<sorterSpeedBinKey, Map<Guid<sorterPhenotypeId>,sorterCount>>)
+            (binMap:Map<sorterSpeedBinKey, Map<Guid<sorterPhenotypeId>, int<sorterCount>>>)
         =
         let key = bin |> SorterSpeedBinKey.fromSorterSpeedBin
         let phId = bin |> SorterSpeedBin.getSorterPhenotypeId
-        let oneSc = 1 |> SorterCount.create
+        let oneSc = 1 |> UMX.tag<sorterCount>
         if  binMap.ContainsKey(key) then
             let pMap = binMap[key]
             let nuMap = 
@@ -171,7 +171,7 @@ module SorterSpeedBinSet
 
     let addBins
             (sorterSpeedBinSet:sorterSpeedBinSet)
-            (generation:generation)
+            (generation:int<generation>)
             (bins:sorterSpeedBin option seq)
         =
         let _folder 

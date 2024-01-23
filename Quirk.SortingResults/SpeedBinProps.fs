@@ -39,7 +39,8 @@ module SpeedBinProps
        =
     let getMapForSpeedBinType 
             (ssbs:sorterSpeedBinSet) 
-            (ssbt:sorterSpeedBinType) = 
+            (ssbt:sorterSpeedBinType) 
+        = 
         ssbs |> SorterSpeedBinSet.getBinMap
              |> Map.toSeq
              |> Seq.filter(fun (k, v) -> k.sorterSpeedBinType = ssbt)
@@ -47,25 +48,25 @@ module SpeedBinProps
 
     let getKvpWithMinStages
             (binMap:Map<sorterSpeedBinKey, Map<Guid<sorterPhenotypeId>, int<sorterCount>>>) =
-        binMap |> Map.toSeq |> Seq.minBy(fun (k,v) -> k.sorterSpeed.stageCt |> StageCount.value) 
+        binMap |> Map.toSeq |> Seq.minBy(fun (k,v) -> k.sorterSpeed.stageCt |> UMX.untag) 
 
 
     let getKvpWithMinSwitches
             (binMap:Map<sorterSpeedBinKey, Map<Guid<sorterPhenotypeId>,int<sorterCount>>>) =
-        binMap |> Map.toSeq |> Seq.minBy(fun (k,v) -> k.sorterSpeed.switchCt |> SwitchCount.value)
+        binMap |> Map.toSeq |> Seq.minBy(fun (k,v) -> k.sorterSpeed.switchCt |> UMX.untag)
 
 
     let orderByFitnessDesc
-            (stageWeight:stageWeight)
+            (stageWeight: float<stageWeight>)
             (binMap:Map<sorterSpeedBinKey, Map<Guid<sorterPhenotypeId>,int<sorterCount>>>) 
         =
         binMap |> Map.toArray
                |> Array.map(
                fun (k,v) -> ((k,v), k.sorterSpeed |> SorterFitness.fromSpeed stageWeight))
-               |> Array.sortByDescending(snd >> SorterFitness.value)
+               |> Array.sortByDescending(snd >> UMX.untag)
 
     let getBestSorterSpeed
-            (stageWeight:stageWeight)
+            (stageWeight: float<stageWeight>)
             (binMap:Map<sorterSpeedBinKey, Map<Guid<sorterPhenotypeId>,int<sorterCount>>>)
         =
         orderByFitnessDesc stageWeight binMap  
@@ -73,18 +74,18 @@ module SpeedBinProps
 
 
     let getBestFitness
-            (stageWeight:stageWeight)
+            (stageWeight: float<stageWeight>)
             (binMap:Map<sorterSpeedBinKey, Map<Guid<sorterPhenotypeId>,int<sorterCount>>>)
         =
         let yab = orderByFitnessDesc stageWeight binMap
         if yab.Length = 0 then
             0.0
         else
-            yab |> Seq.head |> snd |> SorterFitness.value
+            yab |> Seq.head |> snd |> UMX.untag
 
 
     let getBestStageCount
-            (stageWeight:stageWeight)
+            (stageWeight: float<stageWeight>)
             (binMap:Map<sorterSpeedBinKey, Map<Guid<sorterPhenotypeId>,int<sorterCount>>>)
         =
         let yab = orderByFitnessDesc stageWeight binMap
@@ -92,11 +93,11 @@ module SpeedBinProps
             0
         else
             yab |> Seq.head |> fst |> fst |> SorterSpeedBinKey.getSorterSpeed 
-                |> SorterSpeed.getStageCount |> StageCount.value
+                |> SorterSpeed.getStageCount |> UMX.untag
 
 
     let getBestSwitchCount
-            (stageWeight:stageWeight)
+            (stageWeight: float<stageWeight>)
             (binMap:Map<sorterSpeedBinKey, Map<Guid<sorterPhenotypeId>,int<sorterCount>>>)
         =
         let yab = orderByFitnessDesc stageWeight binMap
@@ -104,19 +105,19 @@ module SpeedBinProps
             0
         else
             yab |> Seq.head |> fst |> fst |> SorterSpeedBinKey.getSorterSpeed 
-                |> SorterSpeed.getSwitchCount |> SwitchCount.value
+                |> SorterSpeed.getSwitchCount |> UMX.untag
 
 
 
     let getBestSpeedBinEntropy
-            (stageWeight:stageWeight)
+            (stageWeight: float<stageWeight>)
             (binMap:Map<sorterSpeedBinKey, Map<Guid<sorterPhenotypeId>,int<sorterCount>>>)
         =
         let yab = orderByFitnessDesc stageWeight binMap
         if yab.Length = 0 then
             0.0
         else
-            yab |> Seq.head |> fst |> snd |> Map.toArray |> Array.map(snd >> SorterCount.value)
+            yab |> Seq.head |> fst |> snd |> Map.toArray |> Array.map(snd >> UMX.untag)
                 |> Combinatorics.entropyOfInts
 
 
@@ -126,18 +127,18 @@ module SpeedBinProps
         =
         binMap |> Map.toArray
                |> Array.map(
-               fun (k,v) -> ((k, v |> Map.toSeq |> Seq.sumBy(snd >> SorterCount.value))))
+               fun (k,v) -> ((k, v |> Map.toSeq |> Seq.sumBy(snd >> UMX.untag))))
 
 
     let getAveFitness
-            (stageWeight:stageWeight)
+            (stageWeight:float<stageWeight>)
             (binMap:Map<sorterSpeedBinKey, Map<Guid<sorterPhenotypeId>,int<sorterCount>>>)
         =
         getAllSorterSpeedBinKeysWithCounts binMap 
         |> Array.map(fun (sbk, ct) -> 
             (sbk |> SorterSpeedBinKey.getSorterSpeed 
                  |> SorterFitness.fromSpeed stageWeight 
-                 |> SorterFitness.value,
+                 |> UMX.untag,
                 ct))
             |> CollectionProps.weightedAverage
 
@@ -149,7 +150,7 @@ module SpeedBinProps
         |> Array.map(fun (sbk, ct) -> 
             (sbk |> SorterSpeedBinKey.getSorterSpeed 
                  |> SorterSpeed.getSwitchCount 
-                 |> SwitchCount.value, ct))
+                 |> UMX.untag, ct))
         |> CollectionProps.weightedAverage
 
 
@@ -160,7 +161,7 @@ module SpeedBinProps
         |> Array.map(fun (sbk, ct) -> 
             (sbk |> SorterSpeedBinKey.getSorterSpeed 
                  |> SorterSpeed.getStageCount 
-                 |> StageCount.value, ct))
+                 |> UMX.untag, ct))
         |> CollectionProps.weightedAverage
 
 
@@ -171,7 +172,7 @@ module SpeedBinProps
         |> Array.map(fun (sbk, ct) -> 
             (sbk |> SorterSpeedBinKey.getSorterSpeed 
                  |> SorterSpeed.getSwitchCount 
-                 |> SwitchCount.value, ct))
+                 |> UMX.untag, ct))
         |> CollectionProps.weightedStdDeviationS
 
 
@@ -182,35 +183,31 @@ module SpeedBinProps
         |> Array.map(fun (sbk, ct) -> 
             (sbk |> SorterSpeedBinKey.getSorterSpeed 
                  |> SorterSpeed.getStageCount 
-                 |> StageCount.value, ct))
+                 |> UMX.untag, ct))
         |> CollectionProps.weightedStdDeviationS
 
 
-
     let getStDevFitness
-            (stageWeight:stageWeight)
+            (stageWeight: float<stageWeight>)
             (binMap:Map<sorterSpeedBinKey, Map<Guid<sorterPhenotypeId>,int<sorterCount>>>)
         =
         getAllSorterSpeedBinKeysWithCounts binMap 
         |> Array.map(fun (sbk, ct) -> 
             (sbk |> SorterSpeedBinKey.getSorterSpeed 
                  |> SorterFitness.fromSpeed stageWeight 
-                 |> SorterFitness.value,
+                 |> UMX.untag,
                 ct))
             |> CollectionProps.weightedStdDeviationS
 
 
     let getPhenotypeEntropy
-            (stageWeight:stageWeight)
-            (binMap:Map<sorterSpeedBinKey, Map<Guid<sorterPhenotypeId>,Guid<int<sorterCount>>>>)
+            (stageWeight:float<stageWeight>)
+            (binMap:Map<sorterSpeedBinKey, Map<Guid<sorterPhenotypeId>,int<sorterCount>>>)
         =
         let yab = orderByFitnessDesc stageWeight binMap
-                    |> Seq.map(fst >> snd >> Map.toArray >> Array.map(snd >> SorterCount.value))
+                    |> Seq.map(fst >> snd >> Map.toArray >> Array.map(snd >> UMX.untag))
                     |> Seq.concat |> Seq.toArray
         yab |> Combinatorics.entropyOfInts
-
-
-
 
 
 
@@ -248,7 +245,7 @@ module SpeedBinProps
 
 
     let getAllProperties
-            (stageWeight:stageWeight)
+            (stageWeight:float<stageWeight>)
             (ssbs:sorterSpeedBinSet) 
         =
         let parentType = "sorterSetParent" |> SorterSpeedBinType.create

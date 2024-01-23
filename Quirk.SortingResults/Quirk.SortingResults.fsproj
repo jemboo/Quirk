@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="SortingResultTypes.fs" />
     <Compile Include="Generation.fs" />
+    <Compile Include="SortingResultTypes.fs" />
     <Compile Include="SorterEval.fs" />
     <Compile Include="SorterSetEval.fs" />
     <Compile Include="SorterSpeedBin.fs" />
@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Quirk.Core\Quirk.Core.fsproj" />
+    <ProjectReference Include="..\Quirk.SortingOps\Quirk.SortingOps.fsproj" />
     <ProjectReference Include="..\Quirk.Sorting\Quirk.Sorting.fsproj" />
   </ItemGroup>
 

@@ -6,6 +6,7 @@ open Quirk.Cfg.Core
 open Quirk.Project
 open Quirk.Sorting
 open Quirk.Script
+open Quirk.SortingResults
 
 module O_64 =
 
@@ -104,7 +105,7 @@ module O_64 =
                     (0 |> UMX.tag<generation> |> ReportParamValue.makeGenerationStart)
                     (500 |> UMX.tag<generation> |> ReportParamValue.makeGenerationEnd)
                     (5 |> UMX.tag<generation> |> ReportParamValue.makeReportInterval)
-                    ("bins" |> UMX.tag<reportType> |> ReportParamValue.makeReportName)
+                    ("bins" |> UMX.tag<reportType> |> ReportParamValue.makeReportType)
                 |]
                 |> runParamSet.Report
 

@@ -7,6 +7,28 @@ open Quirk.Core
 
 [<Measure>] type workspaceParamsKey
 
+type runType =
+    | Sim
+    | Report
+
+
+module RunType =
+
+    let toString 
+            (runType:runType)
+        =
+        match runType with
+        | Sim -> "Sim"
+        | Report -> "Report"
+
+    let fromString 
+            (qrm: string) 
+        =
+        match qrm.Split() with
+        | [| "Sim" |] -> runType.Sim |> Ok 
+        | [| "Report" |] -> runType.Report |> Ok
+        | _ -> Error $"{qrm} not handled in RunType.fromString"
+
 
 type workspaceParams =
     private 
@@ -53,8 +75,16 @@ module WorkspaceParams =
 
     let addItems
             (kvps:(string<workspaceParamsKey>*string) seq) 
-            (jsonDataMap:workspaceParams) =
-        Seq.fold (fun wp tup -> addItem (fst tup) (snd tup) wp) jsonDataMap kvps
+            (workspaceParams:workspaceParams) =
+        Seq.fold (fun wp tup -> addItem (fst tup) (snd tup) wp) workspaceParams kvps
+
+
+    let merge 
+            (workspaceParamsA:workspaceParams)
+            (workspaceParamsB:workspaceParams)
+        =
+        workspaceParamsA
+        |> addItems  (workspaceParamsB |> getMap |> Map.toSeq)
 
 
     let getItem 

@@ -4,112 +4,7 @@ open System
 open FSharp.UMX
 open Quirk.Core
 open Quirk.Sorting
-
-
-type sorterSpeed = private { switchCt:int<switchCount>; stageCt:int<stageCount> }
-
-module SorterSpeed =
-    let create 
-            (switchCt: int<switchCount>) 
-            (stageCt: int<stageCount>) 
-        =
-        { switchCt = switchCt
-          stageCt = stageCt }
-
-    let getSwitchCount (sorterSpeedBn: sorterSpeed) = sorterSpeedBn.switchCt
-
-    let getStageCount (sorterSpeedBn: sorterSpeed) = sorterSpeedBn.stageCt
-
-    let toIndex (sorterSpeedBn: sorterSpeed) =
-        let switchCtV = sorterSpeedBn.switchCt |> UMX.untag
-        let stageCtV = sorterSpeedBn.stageCt |> UMX.untag
-        ((switchCtV * (switchCtV + 1)) / 2) + stageCtV
-
-    let fromIndex (index: int) =
-        let indexFlt = (index |> float) + 1.0
-        let p = (sqrt (1.0 + 8.0 * indexFlt) - 1.0) / 2.0
-        let pfloor = Math.Floor(p)
-
-        if (p = pfloor) then
-            let stageCt = 1 |> (-) (int pfloor) |> UMX.tag<stageCount>
-            let switchCt = 1 |> (-) (int pfloor) |> UMX.tag<switchCount>
-            { 
-              sorterSpeed.switchCt = switchCt
-              stageCt = stageCt 
-            }
-        else
-            let stageCt =
-                (float index) - (pfloor * (pfloor + 1.0)) / 2.0 |> int |> UMX.tag<stageCount>
-            let switchCt = 
-                (int pfloor) |> UMX.tag<switchCount>
-            { 
-                sorterSpeed.switchCt = switchCt
-                stageCt = stageCt 
-            }
-
-
-    let fromSorterOpOutput (sorterOpOutpt: sorterOpOutput) =
-        let sortr = sorterOpOutpt |> SorterOpOutput.getSorter
-        try
-            let switchUseCts = 
-                   sorterOpOutpt
-                   |> SorterOpOutput.getSorterOpTracker
-                   |> SorterOpTracker.getSwitchUseCounts
-
-            let switchesUsd =
-                    switchUseCts
-                    |> SwitchUseCounts.getUsedSwitchesFromSorter sortr
-                
-            let usedSwitchCt = switchesUsd.Length |> UMX.tag<switchCount>
-            let usedStageCt = (switchesUsd |> StageCover.getStageCount)
-            let sortrPhenotypId = switchesUsd |> SorterPhenotypeId.createFromSwitches
-            (create usedSwitchCt usedStageCt, sortrPhenotypId, switchUseCts) |> Ok
-        with ex ->
-            (sprintf "error in SorterSpeed.fromSorterOpOutput: %s" ex.Message)
-            |> Result.Error
-
-
-    let modifyForPrefix
-            (ordr:int<order>)
-            (tcAdded:int<stageCount>)
-            (ss:sorterSpeed) 
-        =
-        let wcNew = 
-            tcAdded 
-            |> StageCount.toSwitchCount ordr
-            |> SwitchCount.add (getSwitchCount ss)
-
-        let tcNew = 
-            tcAdded
-            |> StageCount.add (getStageCount ss)
-
-        create wcNew tcNew
-
-
-    let report (sorterSpd : sorterSpeed option) =
-        match sorterSpd with
-        | Some ss -> sprintf "%d\t%d"
-                         (ss |> getStageCount |> UMX.untag)
-                         (ss |> getSwitchCount |> UMX.untag)
-        | None -> "-\t-"
-
-    let getProps (sorterSpd : sorterSpeed option) =
-        match sorterSpd with
-        | Some ss -> ((ss |> getStageCount |> UMX.untag |> string),
-                      (ss |> getSwitchCount |> UMX.untag |> string))
-        | None -> ("", "")
-
-    let getStageCount0 (sorterSpd : sorterSpeed option) =
-        match sorterSpd with
-        | Some ss -> (ss |> getStageCount |> UMX.untag)
-        | None -> 0
-
-
-    let getSwitchCount0 (sorterSpd : sorterSpeed option) =
-        match sorterSpd with
-        | Some ss -> (ss |> getSwitchCount |> UMX.untag)
-        | None -> 0
-
+open Quirk.SortingOps
 
 type sorterPerf = 
     | IsSuccessful of bool 
@@ -178,7 +73,7 @@ module SorterEvalMode =
 type sorterEval =
     private
         { errorMessage: string option
-          switchUseCts: int<switchUseCount> option
+          switchUseCts: switchUseCounts option
           sorterSpeed: sorterSpeed option
           sorterPrf: sorterPerf option
           sortrPhenotypeId: Guid<sorterPhenotypeId> option
@@ -188,7 +83,7 @@ type sorterEval =
 
 module SorterEval =
     let make (errorMsg:string option)
-             (switchUseCts: int<switchUseCount> option) 
+             (switchUseCts: switchUseCounts option) 
              (sorterSpeed: sorterSpeed option) 
              (sorterPrf: sorterPerf option) 
              (sortrPhenotypeId: Guid<sorterPhenotypeId> option)

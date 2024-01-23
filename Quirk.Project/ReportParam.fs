@@ -6,97 +6,63 @@ open Quirk.Core
 
 
 type reportParamValue =
-    | GenerationStart of string<reportParamName> * int<generation>
-    | GenerationEnd of string<reportParamName> * int<generation>
-    | ReportInterval of string<reportParamName> * int<generation>
-    | ReportName of string<reportParamName> * string<reportType>
+    | Generation of string<reportParamName> * int<generation>
+    | ReportType of string<reportParamName> * string<reportType>
 
 
 module ReportParamValue =
 
     let makeGenerationStart (genStart: int<generation>) =
-        ("generationStart" |> UMX.tag<reportParamName>, genStart) |> reportParamValue.GenerationStart
+        ("generationStart" |> UMX.tag<reportParamName>, genStart) |> reportParamValue.Generation
 
     let makeGenerationEnd (genEnd: int<generation>) =
-        ("generationEnd" |> UMX.tag<reportParamName>, genEnd) |> reportParamValue.GenerationEnd
+        ("generationEnd" |> UMX.tag<reportParamName>, genEnd) |> reportParamValue.Generation
 
     let makeReportInterval (genShort: int<generation>) =
-        ("reportInterval" |> UMX.tag<reportParamName>, genShort) |> reportParamValue.ReportInterval
+        ("reportInterval" |> UMX.tag<reportParamName>, genShort) |> reportParamValue.Generation
 
-    let makeReportName (genLong: string<reportType>) =
-        ("reportName" |> UMX.tag<reportParamName>, genLong) |> reportParamValue.ReportName
+    let makeReportType (genLong: string<reportType>) =
+        ("reportType" |> UMX.tag<reportParamName>, genLong) |> reportParamValue.ReportType
 
 
     let reportParamName (reportParamValue: reportParamValue) =
         match reportParamValue with
-        | GenerationStart (n, o) -> n
-        | GenerationEnd (n, nf) -> n
-        | ReportInterval (n, o) -> n
-        | ReportName (n, rn) -> n
+        | Generation (n, o) -> n
+        | ReportType (n, rt) -> n
 
 
     let toArrayOfStrings (reportParamValue: reportParamValue) =
         match reportParamValue with
-        | GenerationStart (n, o) ->
+        | Generation (n, o) ->
                 [|
-                    "GenerationStart";
+                    "Generation";
                     n |> UMX.untag
                     o |> UMX.untag |> string
                 |]
-
-        | GenerationEnd (n, nf) ->
+        | ReportType (n, o) ->
                 [|
-                    "GenerationEnd";
-                    n |> UMX.untag
-                    nf |> UMX.untag |> string
-                |]
-
-        | ReportInterval (n, o) ->
-                [|
-                    "ReportInterval";
+                    "ReportType";
                     n |> UMX.untag
                     o |> UMX.untag |> string
-                |]
-
-        | ReportName (n, pc) ->
-                [|
-                     "ReportName";
-                     n |> UMX.untag
-                     pc |> UMX.untag |> string
                 |]
 
 
     let fromArrayOfStrings (lst: string array) : Result<reportParamValue, string> =
         match lst with
 
-        | [|"GenerationStart"; n; o|] ->
+        | [|"Generation"; n; o|] ->
             result {
                 let! ov = StringUtil.parseInt o
                 let rpName = n |> UMX.tag<reportParamName>
                 return (rpName, ov |> UMX.tag<generation>)
-                        |> reportParamValue.GenerationStart
+                        |> reportParamValue.Generation
             }
 
-        | [|"GenerationEnd"; n; nf|] ->
-            result {
-                let! nfValue = StringUtil.parseInt nf
-                let rpName = n |> UMX.tag<reportParamName>
-                return (rpName, nfValue |> UMX.tag<generation>)
-                        |> reportParamValue.GenerationEnd
-            }
-
-        | [|"ReportInterval"; n; o|] ->
-            result {
-                let! ov = StringUtil.parseInt o
-                let rpName = n |> UMX.tag<reportParamName>
-                return (rpName, ov |> UMX.tag<generation>) |> reportParamValue.ReportInterval
-            }
-
-        | [|"ReportName"; n; pc;|] ->
+        | [|"ReportType"; n; pc;|] ->
             result {
                 let rpName = n |> UMX.tag<reportParamName>
                 return (rpName, pc |> UMX.tag<reportType> )
-                        |> reportParamValue.ReportName
+                        |> reportParamValue.ReportType
             }
 
         | uhv -> $"not handled in reportParamValue.fromArrayOfStrings %A{uhv}" |> Error
@@ -107,7 +73,7 @@ type reportParamSet =
     private 
         { 
             id: Guid<reportParamSetName>
-            reportParamValueMap: Map<string<reportParamName>, reportParamValue>
+            valueMap: Map<string<reportParamName>, reportParamValue>
         }
 
 
@@ -126,12 +92,44 @@ module ReportParamSet =
             |> UMX.tag<reportParamSetName>
         {
             reportParamSet.id = id;
-            reportParamSet.reportParamValueMap = reportParamValueMap;
+            reportParamSet.valueMap = reportParamValueMap;
         }
         
     let getId (reportParamSet:reportParamSet) =
         reportParamSet.id
         
     let getValueMap (reportParamSet:reportParamSet) =
-        reportParamSet.reportParamValueMap
-  
+        reportParamSet.valueMap
+
+
+    let getParamValue 
+            (reportParamName:string<reportParamName>) 
+            (reportParamSet:reportParamSet) 
+        =
+        reportParamSet.valueMap.TryFind reportParamName
+
+
+    let getGeneration
+            (reportParamName:string<reportParamName>)  
+            (reportParamSet:reportParamSet) 
+            =
+        let paramValue = reportParamSet |> getParamValue reportParamName
+        match paramValue with
+        | Some v -> 
+            match v with
+            | reportParamValue.Generation (a,b) -> (a,b) |> Ok
+            | _ -> "not a Generation" |> Error
+        | _ -> $"reportParamName {reportParamName |> UMX.untag} not found" |> Error  
+
+
+    let getReportType
+            (reportParamName:string<reportParamName>)  
+            (reportParamSet:reportParamSet) 
+            =
+        let paramValue = reportParamSet |> getParamValue reportParamName
+        match paramValue with
+        | Some v -> 
+            match v with
+            | reportParamValue.ReportType (a,b) -> (a,b) |> Ok
+            | _ -> "not a ReportType" |> Error
+        | _ -> $"reportParamName {reportParamName |> UMX.untag} not found" |> Error  

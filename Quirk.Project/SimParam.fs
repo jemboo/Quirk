@@ -8,99 +8,47 @@ open Quirk.Core
 [<Measure>] type simParamSetName
 
 type simParamValue =
-    | GenerationStart of string<simParamName> * int<generation>
-    | GenerationEnd of string<simParamName> * int<generation>
-    | ReportIntervalShort of string<simParamName> * int<generation>
-    | ReportIntervalLong of string<simParamName> * int<generation>
+    | Generation of string<simParamName> * int<generation>
 
 
 module SimParamValue =
 
     let makeGenerationStart (genStart: int<generation>) =
-        ("generationStart" |> UMX.tag<simParamName>, genStart) |> simParamValue.GenerationStart
+        ("generationStart" |> UMX.tag<simParamName>, genStart) |> simParamValue.Generation
 
     let makeGenerationEnd (genEnd: int<generation>) =
-        ("generationEnd" |> UMX.tag<simParamName>, genEnd) |> simParamValue.GenerationEnd
+        ("generationEnd" |> UMX.tag<simParamName>, genEnd) |> simParamValue.Generation
 
     let makeReportIntervalShort (genShort: int<generation>) =
-        ("reportIntervalShort" |> UMX.tag<simParamName>, genShort) |> simParamValue.ReportIntervalShort
+        ("reportIntervalShort" |> UMX.tag<simParamName>, genShort) |> simParamValue.Generation
 
     let makeReportIntervalLong (genLong: int<generation>) =
-        ("reportIntervalLong" |> UMX.tag<simParamName>, genLong) |> simParamValue.ReportIntervalLong
+        ("reportIntervalLong" |> UMX.tag<simParamName>, genLong) |> simParamValue.Generation
 
 
     let getSimParamName (simParamValue: simParamValue) =
         match simParamValue with
-        | GenerationStart (n, o) -> n
-        | GenerationEnd (n, nf) -> n
-        | ReportIntervalShort (n, o) -> n
-        | ReportIntervalLong (n, pc) -> n
+        | Generation (n, o) -> n
 
 
     let toArrayOfStrings (simParamValue: simParamValue) =
         match simParamValue with
-        | GenerationStart (n, o) ->
+        | Generation (n, o) ->
                 [|
-                    "GenerationStart";
+                    "Generation";
                     n |> UMX.untag
                     o |> UMX.untag |> string
                 |]
-
-        | GenerationEnd (n, nf) ->
-                [|
-                    "GenerationEnd";
-                    n |> UMX.untag
-                    nf |> UMX.untag |> string
-                |]
-
-        | ReportIntervalShort (n, o) ->
-                [|
-                    "ReportIntervalShort";
-                    n |> UMX.untag
-                    o |> UMX.untag |> string
-                |]
-
-        | ReportIntervalLong (n, pc) ->
-                [|
-                     "ReportIntervalLong";
-                     n |> UMX.untag
-                     pc |> UMX.untag |> string
-                |]
-
 
 
     let fromArrayOfStrings (lst: string array) : Result<simParamValue, string> =
         match lst with
-
-        | [|"GenerationStart"; n; o|] ->
+        | [|"Generation"; n; o|] ->
             result {
                 let! ov = StringUtil.parseInt o
                 let rpName = n |> UMX.tag<simParamName>
                 return (rpName, ov |> UMX.tag<generation>)
-                        |> simParamValue.GenerationStart
-            }
-
-        | [|"GenerationEnd"; n; nf|] ->
-            result {
-                let! nfValue = StringUtil.parseInt nf
-                let rpName = n |> UMX.tag<simParamName>
-                return (rpName, nfValue |> UMX.tag<generation>)
-                        |> simParamValue.GenerationEnd
-            }
-
-        | [|"ReportIntervalShort"; n; o|] ->
-            result {
-                let! ov = StringUtil.parseInt o
-                let rpName = n |> UMX.tag<simParamName>
-                return (rpName, ov |> UMX.tag<generation>) |> simParamValue.ReportIntervalShort
-            }
-
-        | [|"ReportIntervalLong"; n; pc;|] ->
-            result {
-                let! pcValue = StringUtil.parseInt pc
-                let rpName = n |> UMX.tag<simParamName>
-                return (rpName, pcValue |> UMX.tag<generation> )
-                        |> simParamValue.ReportIntervalLong
+                        |> simParamValue.Generation
             }
 
         | uhv -> $"not handled in SimParamValue.fromArrayOfStrings %A{uhv}" |> Error
@@ -137,4 +85,22 @@ module SimParamSet =
         
     let getValueMap (simParamSet:simParamSet) =
         simParamSet.valueMap
-  
+
+
+    let getSimParamValue 
+            (simParamName:string<simParamName>) 
+            (simParamSet:simParamSet) 
+        =
+        simParamSet.valueMap.TryFind simParamName
+
+    let getGeneration
+            (simParamName:string<simParamName>)  
+            (simParamSet:simParamSet) 
+            =
+        let simParamValue = simParamSet |> getSimParamValue simParamName
+        match simParamValue with
+        | Some v -> 
+            match v with
+            | simParamValue.Generation (a,b) -> (a,b) |> Ok
+            | _ -> "not a GenerationStart" |> Error
+        | _ -> $"simParamName {simParamName |> UMX.untag} not found" |> Error  

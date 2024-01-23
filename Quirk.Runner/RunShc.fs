@@ -12,16 +12,20 @@ open Quirk.Workspace
 
 module ShcWsParamKeys =
     let quirkWorldLineId = "quirkWorldLineId" |> UMX.tag<workspaceParamsKey>
-    let generation_current = "generation_current" |> UMX.tag<workspaceParamsKey>
+    let runType = "runType" |> UMX.tag<workspaceParamsKey>
+    let reportType = "reportType" |> UMX.tag<workspaceParamsKey>
+    let generationStart = "generationStart" |> UMX.tag<workspaceParamsKey>
+    let generationEnd = "generationEnd" |> UMX.tag<workspaceParamsKey>
     let generation_filter_short = "generation_filter_short" |> UMX.tag<workspaceParamsKey>
     let generation_filter_long = "generation_filter_long" |> UMX.tag<workspaceParamsKey>
-    let generation_max = "generation_max" |> UMX.tag<workspaceParamsKey>
+    let reportInterval = "reportInterval" |> UMX.tag<workspaceParamsKey>
     let rngGenCreate = "rngGenCreate" |> UMX.tag<workspaceParamsKey>
     let rngGenMutate = "rngGenMutate" |> UMX.tag<workspaceParamsKey>
     let rngGenPrune = "rngGenPrune" |> UMX.tag<workspaceParamsKey>
     let mutationRate = "mutationRate" |> UMX.tag<workspaceParamsKey>
     let noiseFraction = "noiseFraction" |> UMX.tag<workspaceParamsKey>
     let order = "order" |> UMX.tag<workspaceParamsKey>
+    let reproductionRate = "reproductionRate" |> UMX.tag<workspaceParamsKey>
     let sortableSetCfgType = "sortableSetCfgType" |> UMX.tag<workspaceParamsKey>
     let sorterCount = "sorterCount" |> UMX.tag<workspaceParamsKey>
     let sorterCountMutated = "sorterCountMutated" |> UMX.tag<workspaceParamsKey>
@@ -37,59 +41,140 @@ module ShcWsParamKeys =
 
 module RunShc =
 
+    let getWorkspaceParamsFromSimParamSet
+            (simParamSet:simParamSet) =
+        result {
+
+            let! (_, generationStart) = 
+                    simParamSet 
+                    |> SimParamSet.getGeneration ("generationStart" |> UMX.tag<simParamName>)
+
+            let! (_, generationEnd) = 
+                    simParamSet 
+                    |> SimParamSet.getGeneration ("generationEnd" |> UMX.tag<simParamName>)
+
+            let! (_, reportIntervalShort) = 
+                    simParamSet 
+                    |> SimParamSet.getGeneration ("reportIntervalShort" |> UMX.tag<simParamName>)
+
+            let! (_, reportIntervalLong) = 
+                    simParamSet 
+                    |> SimParamSet.getGeneration ("reportIntervalLong" |> UMX.tag<simParamName>)
+
+            let workspaceParams =
+                WorkspaceParams.make Map.empty
+                |> WorkspaceParamsAttrs.setRunType ShcWsParamKeys.runType runType.Sim
+                |> WorkspaceParamsAttrs.setGeneration ShcWsParamKeys.generationStart generationStart
+                |> WorkspaceParamsAttrs.setGeneration ShcWsParamKeys.generationEnd generationEnd
+                |> WorkspaceParamsAttrs.setGeneration ShcWsParamKeys.generation_filter_short reportIntervalShort
+                |> WorkspaceParamsAttrs.setGeneration ShcWsParamKeys.generation_filter_long reportIntervalLong
+
+            return workspaceParams
+        }
+
+
+    let getWorkspaceParamsFromReportParamSet
+            (reportParamSet:reportParamSet) =
+        result {
+        
+            let! (_, generationStart) = 
+                    reportParamSet 
+                    |> ReportParamSet.getGeneration ("generationStart" |> UMX.tag<reportParamName>)
+
+            let! (_, generationEnd) = 
+                    reportParamSet 
+                    |> ReportParamSet.getGeneration ("generationEnd" |> UMX.tag<reportParamName>)
+
+            let! (_, reportInterval) = 
+                    reportParamSet 
+                    |> ReportParamSet.getGeneration ("reportInterval" |> UMX.tag<reportParamName>)
+
+            let! (_, reportType) = 
+                    reportParamSet 
+                    |> ReportParamSet.getReportType ("reportType" |> UMX.tag<reportParamName>)
+
+            let workspaceParams =
+                WorkspaceParams.make Map.empty
+                |> WorkspaceParamsAttrs.setRunType ShcWsParamKeys.runType runType.Report
+                |> WorkspaceParamsAttrs.setGeneration ShcWsParamKeys.generationStart generationStart
+                |> WorkspaceParamsAttrs.setGeneration ShcWsParamKeys.generationEnd generationEnd
+                |> WorkspaceParamsAttrs.setGeneration ShcWsParamKeys.reportInterval reportInterval
+                |> WorkspaceParamsAttrs.setReportType ShcWsParamKeys.reportType reportType
+
+            return workspaceParams
+        }
+
+    
 
     let toWorkspaceParams 
             (quirkRun:quirkRun)
         =
         result {
-            let modelParamSet = quirkRun |> QuirkRun.getModelParamSet
-            let! simParamSet = quirkRun 
-                              |> QuirkRun.getRunParamSet
-                              |> RunParamSet.toSimParamSet
 
+            let modelParamSet = quirkRun |> QuirkRun.getModelParamSet
 
             let quirkWorldLineId = QuirkRun.makeQuirkWorldLineId modelParamSet quirkModelType.Shc
 
-            return 
+            let! (_, mutationRate) = 
+                 modelParamSet 
+                 |> ModelParamSet.getMutationRate ("mutationRate" |> UMX.tag<modelParamName>)
+
+            let! (_, noiseFraction) = 
+                 modelParamSet 
+                 |> ModelParamSet.getNoiseFraction ("noiseFraction" |> UMX.tag<modelParamName>)
+
+            let! (_, order) = 
+                 modelParamSet 
+                 |> ModelParamSet.getOrder ("order" |> UMX.tag<modelParamName>)
+
+            let! (_, parentCount) = 
+                 modelParamSet 
+                 |> ModelParamSet.getParentCount ("parentCount" |> UMX.tag<modelParamName>)
+
+            let! (_, reproductionRate) = 
+                 modelParamSet 
+                 |> ModelParamSet.getReproductionRate ("reproductionRate" |> UMX.tag<modelParamName>)
+
+            let! (_, sorterSetPruneMethod) = 
+                 modelParamSet 
+                 |> ModelParamSet.getSorterSetPruneMethod ("sorterSetPruneMethod" |> UMX.tag<modelParamName>)
+
+            let! (_, stageWeight) = 
+                 modelParamSet 
+                 |> ModelParamSet.getStageWeight ("stageWeight" |> UMX.tag<modelParamName>)
+
+            let! (_, switchGenMode) = 
+                 modelParamSet 
+                 |> ModelParamSet.getSwitchGenMode ("switchGenMode" |> UMX.tag<modelParamName>)
+
+
+            let wasParamsBase = 
                 WorkspaceParams.make Map.empty
                 |> WorkspaceParamsAttrs.setQuirkWorldLineId ShcWsParamKeys.quirkWorldLineId quirkWorldLineId
-                //|> WorkspaceParamsAttrs.setSortableSetCfgType ShcWsParamKeys.sortableSetCfgType (shcInitRunCfg.sortableSetCfgType)
+                |> WorkspaceParamsAttrs.setMutationRate ShcWsParamKeys.mutationRate mutationRate
+                |> WorkspaceParamsAttrs.setNoiseFraction ShcWsParamKeys.noiseFraction noiseFraction
+                |> WorkspaceParamsAttrs.setOrder ShcWsParamKeys.order order
+                |> WorkspaceParamsAttrs.setSorterCount ShcWsParamKeys.sorterCount parentCount
+                |> WorkspaceParamsAttrs.setReproductionRate ShcWsParamKeys.reproductionRate reproductionRate
+                |> WorkspaceParamsAttrs.setSorterSetPruneMethod ShcWsParamKeys.sorterSetPruneMethod sorterSetPruneMethod
+                |> WorkspaceParamsAttrs.setStageWeight ShcWsParamKeys.stageWeight stageWeight
+                |> WorkspaceParamsAttrs.setSwitchGenMode ShcWsParamKeys.switchGenMode switchGenMode
 
+
+            let runParamSet = quirkRun |> QuirkRun.getRunParamSet
+
+            let! runWorkspaceParams =
+                match runParamSet with
+                | runParamSet.Sim simParamSet ->
+                    getWorkspaceParamsFromSimParamSet simParamSet
+                | runParamSet.Report reportParamSet -> 
+                    getWorkspaceParamsFromReportParamSet reportParamSet
+
+
+            let wasParams = wasParamsBase |> WorkspaceParams.merge runWorkspaceParams
+
+            return wasParams
         }
-
-
-        //let _nextRngGen rng =
-        //    rng
-        //    |> Rando.fromRngGen
-        //    |> Rando.toRngGen
-
-        //let rngGenCreate = (_nextRngGen shcInitRunCfg.rngGen)
-        //let rngGenMutate = (_nextRngGen rngGenCreate)
-        //let rngGenPrune = (_nextRngGen rngGenMutate)
-
-        //|> WorkspaceParamsAttrs.setRunId ShcWsParamKeys.runId (shcInitRunCfg |> getRunId)
-        //|> WorkspaceParamsAttrs.setSortableSetCfgType ShcWsParamKeys.sortableSetCfgType (shcInitRunCfg.sortableSetCfgType)
-        //|> WorkspaceParamsAttrs.setGeneration ShcWsParamKeys.generation_current (0 |> Generation.create)
-        //|> WorkspaceParamsAttrs.setGeneration ShcWsParamKeys.generation_max (shcInitRunCfg.newGenerations)
-        //|> WorkspaceParamsAttrs.setRngGen ShcWsParamKeys.rngGenCreate rngGenCreate
-        //|> WorkspaceParamsAttrs.setRngGen ShcWsParamKeys.rngGenMutate rngGenMutate
-        //|> WorkspaceParamsAttrs.setRngGen ShcWsParamKeys.rngGenPrune rngGenPrune
-        //|> WorkspaceParamsAttrs.setMutationRate ShcWsParamKeys.mutationRate shcInitRunCfg.mutationRate
-        //|> WorkspaceParamsAttrs.setNoiseFraction ShcWsParamKeys.noiseFraction (Some shcInitRunCfg.noiseFraction)
-        //|> WorkspaceParamsAttrs.setOrder ShcWsParamKeys.order shcInitRunCfg.order
-        //|> WorkspaceParamsAttrs.setSorterCount ShcWsParamKeys.sorterCount shcInitRunCfg.sorterCount
-        //|> WorkspaceParamsAttrs.setSorterCount ShcWsParamKeys.sorterCountMutated shcInitRunCfg.sorterCountMutated
-        //|> WorkspaceParamsAttrs.setSorterEvalMode ShcWsParamKeys.sorterEvalMode shcInitRunCfg.sorterEvalMode
-        //|> WorkspaceParamsAttrs.setStageCount ShcWsParamKeys.stagesSkipped shcInitRunCfg.stagesSkipped
-        //|> WorkspaceParamsAttrs.setStageWeight ShcWsParamKeys.stageWeight shcInitRunCfg.stageWeight
-        //|> WorkspaceParamsAttrs.setSwitchCount ShcWsParamKeys.sorterLength shcInitRunCfg.switchCount
-        //|> WorkspaceParamsAttrs.setSwitchGenMode ShcWsParamKeys.switchGenMode shcInitRunCfg.switchGenMode
-        //|> WorkspaceParamsAttrs.setSorterSetPruneMethod ShcWsParamKeys.sorterSetPruneMethod shcInitRunCfg.sorterSetPruneMethod
-        //|> WorkspaceParamsAttrs.setGenerationFilter ShcWsParamKeys.generation_filter_short shcInitRunCfg.reportFilter
-        //|> WorkspaceParamsAttrs.setGenerationFilter ShcWsParamKeys.generation_filter_long shcInitRunCfg.fullReportFilter
-        //|> WorkspaceParamsAttrs.setUseParallel ShcWsParamKeys.useParallel useParallel
-
-
 
 
 
@@ -99,6 +184,6 @@ module RunShc =
             (quirkRun:quirkRun)
         =
         result {
-            
+            let wsParams = toWorkspaceParams quirkRun
             return ()
         }
