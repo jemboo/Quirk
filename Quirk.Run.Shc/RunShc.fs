@@ -1,4 +1,4 @@
-﻿namespace Quirk.Runner
+﻿namespace Quirk.Run.Shc
 open System.Threading.Tasks
 open FSharp.UMX
 open Quirk.Core
@@ -53,21 +53,21 @@ module RunShc =
                     simParamSet 
                     |> SimParamSet.getGeneration ("generationEnd" |> UMX.tag<simParamName>)
 
-            let! (_, reportIntervalShort) = 
+            let! (_, reportInterval) = 
                     simParamSet 
-                    |> SimParamSet.getGeneration ("reportIntervalShort" |> UMX.tag<simParamName>)
+                    |> SimParamSet.getGeneration ("reportInterval" |> UMX.tag<simParamName>)
 
-            let! (_, reportIntervalLong) = 
+            let! (_, snapshotInterval) = 
                     simParamSet 
-                    |> SimParamSet.getGeneration ("reportIntervalLong" |> UMX.tag<simParamName>)
+                    |> SimParamSet.getGeneration ("snapshotInterval" |> UMX.tag<simParamName>)
 
             let workspaceParams =
                 WorkspaceParams.make Map.empty
                 |> WorkspaceParamsAttrs.setRunType ShcWsParamKeys.runType runType.Sim
                 |> WorkspaceParamsAttrs.setGeneration ShcWsParamKeys.generationStart generationStart
                 |> WorkspaceParamsAttrs.setGeneration ShcWsParamKeys.generationEnd generationEnd
-                |> WorkspaceParamsAttrs.setGeneration ShcWsParamKeys.generation_filter_short reportIntervalShort
-                |> WorkspaceParamsAttrs.setGeneration ShcWsParamKeys.generation_filter_long reportIntervalLong
+                |> WorkspaceParamsAttrs.setGeneration ShcWsParamKeys.generation_filter_short reportInterval
+                |> WorkspaceParamsAttrs.setGeneration ShcWsParamKeys.generation_filter_long snapshotInterval
 
             return workspaceParams
         }
@@ -107,6 +107,7 @@ module RunShc =
     
 
     let toWorkspaceParams 
+            (useParallel:bool<useParallel>)
             (quirkRun:quirkRun)
         =
         result {
@@ -150,6 +151,7 @@ module RunShc =
 
             let wasParamsBase = 
                 WorkspaceParams.make Map.empty
+                |> WorkspaceParamsAttrs.setUseParallel ShcWsParamKeys.useParallel useParallel
                 |> WorkspaceParamsAttrs.setQuirkWorldLineId ShcWsParamKeys.quirkWorldLineId quirkWorldLineId
                 |> WorkspaceParamsAttrs.setMutationRate ShcWsParamKeys.mutationRate mutationRate
                 |> WorkspaceParamsAttrs.setNoiseFraction ShcWsParamKeys.noiseFraction noiseFraction
@@ -181,9 +183,15 @@ module RunShc =
     let doRun
             (rootDir:string<folderPath>)
             (projectDataStore:IProjectDataStore)
+            (useParallel:bool<useParallel>)
             (quirkRun:quirkRun)
         =
         result {
-            let wsParams = toWorkspaceParams quirkRun
+            let wsParams = 
+                quirkRun 
+                |> toWorkspaceParams
+                    useParallel
+
+
             return ()
         }

@@ -19,11 +19,11 @@ module SimParamValue =
     let makeGenerationEnd (genEnd: int<generation>) =
         ("generationEnd" |> UMX.tag<simParamName>, genEnd) |> simParamValue.Generation
 
-    let makeReportIntervalShort (genShort: int<generation>) =
-        ("reportIntervalShort" |> UMX.tag<simParamName>, genShort) |> simParamValue.Generation
+    let makeReportInterval (genShort: int<generation>) =
+        ("reportInterval" |> UMX.tag<simParamName>, genShort) |> simParamValue.Generation
 
-    let makeReportIntervalLong (genLong: int<generation>) =
-        ("reportIntervalLong" |> UMX.tag<simParamName>, genLong) |> simParamValue.Generation
+    let makeSnapshotInterval (genLong: int<generation>) =
+        ("snapshotInterval" |> UMX.tag<simParamName>, genLong) |> simParamValue.Generation
 
 
     let getSimParamName (simParamValue: simParamValue) =

@@ -37,6 +37,10 @@ type CliArguments =
     | CfgPlex_Name of string
     | MaxRunSetSize of int
     | Project_Name of string
+    | Gen_Start of int
+    | Gen_End of int
+    | Report_Interval of int
+    | Snapshot_Interval of int
     | Report_Type of string
     | Program_Mode of quirkProgramMode
     | Run_Count of string
@@ -51,6 +55,10 @@ type CliArguments =
             | CfgPlex_Name _  -> "CfgPlex file name"
             | MaxRunSetSize _  -> "Max runs per script"
             | Project_Name _ -> "a subfolder of the working directory"
+            | Gen_Start _ -> "the first generation of the sim or report"
+            | Gen_End _ -> "the last generation"
+            | Report_Interval _ -> "the interval in generations for summary reports"
+            | Snapshot_Interval _ -> "the interval in generations between full snapshots"
             | Program_Mode _ -> "specify cfgPlex, genSimScript, genReportScript or runScript"
             | Report_Type _ -> "the report file name"
             | Run_Count _ -> "the number of scripts to generate after the first index"
@@ -59,7 +67,7 @@ type CliArguments =
 
 
 module ArguUtils =
-    let wak<'a> (qua: 'a list) 
+    let firstOption<'a> (qua: 'a list) 
         = 
         match qua with
         | a::b -> Some a

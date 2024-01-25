@@ -6,9 +6,10 @@ open Quirk.Core
 open Quirk.Project
 open Quirk.Run.Core
 
-[<Measure>] type gaComponentId
 
-module WorkspaceComponentTypeGa =
+[<Measure>] type shcComponentId
+
+module WorkspaceComponentTypeShc =
 
     let getShcComponentID 
             (quirkWorldLineId:Guid<quirkWorldLineId>)
@@ -21,11 +22,11 @@ module WorkspaceComponentTypeGa =
             workspaceComponentTypeShc :> obj
         ] 
         |> GuidUtils.guidFromObjs
-        |> UMX.tag<gaComponentId>
+        |> UMX.tag<shcComponentId>
 
 
 
-type rndGenTypeGa =
+type rndGenTypeShc =
     | Create
     | Mutate
     | Prune
@@ -36,7 +37,7 @@ module RndGenProvider =
 
     let getRngGen 
             (rngType:rngType)
-            (rndGenTypeShc:rndGenTypeGa)
+            (rndGenTypeShc:rndGenTypeShc)
             (generation:int<generation>) 
         =
         let gu = 
@@ -61,3 +62,4 @@ module RndGenProvider =
         ] 
         |> GuidUtils.guidFromObjs
         |> UMX.tag<workspaceComponentId>
+

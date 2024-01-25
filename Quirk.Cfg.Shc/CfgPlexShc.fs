@@ -93,8 +93,8 @@ module O_64 =
                 [|
                     (0 |> UMX.tag<generation> |> SimParamValue.makeGenerationStart)
                     (500 |> UMX.tag<generation> |> SimParamValue.makeGenerationEnd)
-                    (5 |> UMX.tag<generation> |> SimParamValue.makeReportIntervalShort)
-                    (50 |> UMX.tag<generation> |> SimParamValue.makeReportIntervalLong)
+                    (5 |> UMX.tag<generation> |> SimParamValue.makeReportInterval)
+                    (50 |> UMX.tag<generation> |> SimParamValue.makeSnapshotInterval)
                 |]
                 |> runParamSet.Sim
 
@@ -110,40 +110,64 @@ module O_64 =
                 |> runParamSet.Report
 
 
+
     let quirkSimScripts
-            (projectName:string<projectName>) 
-            (cfgPlexName:string<cfgPlexName>) 
+            (cfgPlex:cfgPlex) 
             (indexStart:int)
             (runCount:int)
             (maxRunSetSize:int)
+            (genStart:int<generation>)
+            (genEnd:int<generation>)
+            (reportInterval:int<generation>)
+            (snapShotInterval:int<generation>)
         =
+        let simParamSet = 
+                SimParamSet.create
+                    [|
+                        (genStart |> SimParamValue.makeGenerationStart)
+                        (genEnd |> SimParamValue.makeGenerationEnd)
+                        (reportInterval |> SimParamValue.makeReportInterval)
+                        (snapShotInterval |> SimParamValue.makeSnapshotInterval)
+                    |]
+                |> runParamSet.Sim
+
         let rs = CfgPlex.createSelectedQuirkRunSets
                     quirkModelType.Shc
-                    simParamSet1
+                    simParamSet
                     [| indexStart .. (indexStart + runCount - 1)|]
                     maxRunSetSize
-                    (plex64 projectName cfgPlexName)
+                    cfgPlex
                  |> Seq.toArray
         let scripts = rs |> Array.map(QuirkScript.createFromRunSet)
-
         scripts
 
 
-
     let quirkReportScripts
-            (projectName:string<projectName>) 
-            (cfgPlexName:string<cfgPlexName>) 
+            (cfgPlex:cfgPlex)
             (indexStart:int) 
             (runCount:int)
             (maxRunSetSize:int)
+            (reportTypeArg:string<reportType>)
+            (genStart:int<generation>)
+            (genEnd:int<generation>)
+            (reportInterval:int<generation>)
         =
+        let reportParamSet = 
+             ReportParamSet.create
+                [|
+                    (genStart |> ReportParamValue.makeGenerationStart)
+                    (genEnd |> ReportParamValue.makeGenerationEnd)
+                    (reportInterval |> ReportParamValue.makeReportInterval)
+                    (reportTypeArg |> ReportParamValue.makeReportType)
+                |]
+                |> runParamSet.Report
+
         let rs = CfgPlex.createSelectedQuirkRunSets
                     quirkModelType.Shc
-                    reportParamSet1
+                    reportParamSet
                     [| indexStart .. (indexStart + runCount - 1)|]
                     maxRunSetSize
-                    (plex64 projectName cfgPlexName)
+                    cfgPlex
                  |> Seq.toArray
         let scripts = rs |> Array.map(QuirkScript.createFromRunSet)
-
         scripts

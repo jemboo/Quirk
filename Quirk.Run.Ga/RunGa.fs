@@ -14,6 +14,9 @@ module RunGa =
     let doRun
             (rootDir:string<folderPath>)
             (projectDataStore:IProjectDataStore)
+            (useParallel:bool<useParallel>)
+            (genStart:int<generation>)
+            (genEnd:int<generation>)
             (quirkRun:quirkRun)
         =
         result {

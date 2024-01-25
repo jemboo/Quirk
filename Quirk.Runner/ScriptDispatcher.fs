@@ -38,15 +38,26 @@ module ScriptDispatcher =
             (firstScriptIndex:int)
             (runCount:int)
             (maxRunSetSize:int)
+            (genStart:int<generation>)
+            (genMax:int<generation>)
+            (reportInterval:int<generation>)
+            (snapShotInterval:int<generation>)
         =
         let nA  = (projectName |> UMX.untag).Split() 
         match nA with
         | [| "Shc_064" |] -> 
             result {
-                let cfgPlex = cCfgPlexDataStore.GetCfgPlex rootDir projectName cfgPlexName
-
-                let lsO64 = (O_64.quirkSimScripts projectName cfgPlexName firstScriptIndex runCount maxRunSetSize)
-                             |> Array.toList
+                let! cfgPlex = cCfgPlexDataStore.GetCfgPlex rootDir projectName cfgPlexName
+                let lsO64 = O_64.quirkSimScripts 
+                                cfgPlex 
+                                firstScriptIndex 
+                                runCount 
+                                maxRunSetSize 
+                                genStart 
+                                genMax 
+                                reportInterval 
+                                snapShotInterval
+                            |> Array.toList
                 let! saveRes = lsO64 |> List.map(fun qs -> (cCfgPlexDataStore.SaveScriptAsync rootDir qs).Result)
                               |> Result.sequence
                 return ()
@@ -66,12 +77,25 @@ module ScriptDispatcher =
             (runCount:int)
             (maxRunSetSize:int)
             (reportTypeArg:string<reportType>)
+            (genStart:int<generation>)
+            (genEnd:int<generation>)
+            (reportInterval:int<generation>)
         =
         let nA  = (projectName |> UMX.untag).Split() 
         match nA with
         | [| "Shc_064" |] -> 
             result {
-                let lsO64 = (O_64.quirkReportScripts projectName cfgPlexName firstScriptIndex runCount maxRunSetSize)
+                let! cfgPlex = cCfgPlexDataStore.GetCfgPlex rootDir projectName cfgPlexName
+
+                let lsO64 = O_64.quirkReportScripts 
+                                cfgPlex 
+                                firstScriptIndex 
+                                runCount 
+                                maxRunSetSize
+                                reportTypeArg
+                                genStart
+                                genEnd
+                                reportInterval
                              |> Array.toList
                 let! saveRes = lsO64 |> List.map(fun qs -> (cCfgPlexDataStore.SaveScriptAsync rootDir qs).Result)
                               |> Result.sequence
@@ -87,14 +111,25 @@ module ScriptDispatcher =
             (rootDir:string<folderPath>)
             (cCfgPlexDataStore:IProjectDataStore)
             (projectName:string<projectName>)
-            (useParallel:bool)
+            (useParallel:bool<useParallel>)
+            (genStart:int<generation>)
+            (genEnd:int<generation>)
         =
         let nA  = (projectName |> UMX.untag).Split() 
         match nA with
         | [| "Shc_064" |] -> 
             result {
                 let! (scriptName, script) = (cCfgPlexDataStore.GetNextScriptAsync rootDir projectName).Result
-                let ul = script |> ScriptRun.runQuirkScript rootDir cCfgPlexDataStore projectName
+                let ul = 
+                    script 
+                    |> ScriptRun.runQuirkScript 
+                            rootDir 
+                            cCfgPlexDataStore 
+                            projectName
+                            useParallel
+                            genStart
+                            genEnd
+
                 let qua = cCfgPlexDataStore.FinishScript rootDir projectName scriptName
 
                 return ()
@@ -113,13 +148,21 @@ module ScriptDispatcher =
             (firstScriptIndexOpt:int option)
             (runCountOpt:int option)
             (maxRunSetSizeOpt:int option)
+            (genStartOpt:int<generation> option)
+            (genEndOpt:int<generation> option)
+            (reportIntervalOpt:int<generation> option)
+            (snapshotIntervalOpt:int<generation> option)
             (reportTypeArgOpt:string<reportType> option)
-            (useParallelOpt:bool option)
+            (useParallelOpt:bool<useParallel> option)
             (quirkProgramModeOpt:quirkProgramMode option) = 
 
         let projectName = projectNameOpt |> Option.get
         let cfgPlexName = cfgPlexNameOpt |> Option.get
         let quirkProgramMode = quirkProgramModeOpt |> Option.get
+        let genStart = genStartOpt |> Option.get
+        let genEnd = genEndOpt |> Option.get
+        let reportInterval = reportIntervalOpt |> Option.get
+        let snapshotInterval = snapshotIntervalOpt |> Option.get
 
         let res =
             match quirkProgramMode with
@@ -129,16 +172,44 @@ module ScriptDispatcher =
                     let firstScriptIndex = firstScriptIndexOpt |> Option.get
                     let runCount = runCountOpt |> Option.get
                     let maxRunSetSize = maxRunSetSizeOpt |> Option.get
-                    dispatchGenSimScript rootDir cCfgPlexDataStore projectName cfgPlexName firstScriptIndex runCount maxRunSetSize
+                    dispatchGenSimScript 
+                        rootDir 
+                        cCfgPlexDataStore 
+                        projectName 
+                        cfgPlexName 
+                        firstScriptIndex 
+                        runCount 
+                        maxRunSetSize 
+                        genStart 
+                        genEnd 
+                        reportInterval 
+                        snapshotInterval
             | GenReportScript -> 
                     let firstScriptIndex = firstScriptIndexOpt |> Option.get
                     let runCount = runCountOpt |> Option.get
                     let maxRunSetSize = maxRunSetSizeOpt |> Option.get
                     let reportTypeArg = reportTypeArgOpt |> Option.get
-                    dispatchGenReportScript rootDir cCfgPlexDataStore projectName cfgPlexName firstScriptIndex runCount maxRunSetSize reportTypeArg
+                    dispatchGenReportScript 
+                        rootDir 
+                        cCfgPlexDataStore 
+                        projectName 
+                        cfgPlexName 
+                        firstScriptIndex 
+                        runCount 
+                        maxRunSetSize 
+                        reportTypeArg 
+                        genStart 
+                        genEnd 
+                        reportInterval
             | RunScript  -> 
                     let useParallel = useParallelOpt |> Option.get
-                    dispatchRunScript rootDir cCfgPlexDataStore projectName useParallel
+                    dispatchRunScript 
+                        rootDir 
+                        cCfgPlexDataStore 
+                        projectName 
+                        useParallel 
+                        genStart 
+                        genEnd
 
         res
 
