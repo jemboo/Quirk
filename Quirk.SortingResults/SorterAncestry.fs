@@ -4,6 +4,7 @@ open System
 open FSharp.UMX
 open Quirk.Core
 open Quirk.Sorting
+open Quirk.Iter
 
 type genInfo =
         private {
@@ -122,25 +123,9 @@ module SorterAncestry =
 
 
 
-type sorterSetAncestryId = private SorterSetAncestryId of Guid
-module SorterSetAncestryId =
-    let value (SorterSetAncestryId v) = v
-    let create (v: Guid) = SorterSetAncestryId v
-    let fromTag 
-            (tag:Guid) 
-            (generation:int<generation>)
-        =
-        [|
-            tag:> obj;
-            generation |> UMX.untag :> obj;
-            "sorterSetAncestry" :> obj;
-        |] |> GuidUtils.guidFromObjs  
-            |> create
-
-
 type sorterSetAncestry =
         private {
-            id: sorterSetAncestryId;
+            id: Guid<sorterSetAncestryId>;
             generation:int<generation>;
             ancestorMap:Map<Guid<sorterId>, sorterAncestry>
             tag:Guid
@@ -161,7 +146,7 @@ module SorterSetAncestry =
     let getTag (sa:sorterSetAncestry) =
         sa.tag
 
-    let load (id:sorterSetAncestryId) 
+    let load (id:Guid<sorterSetAncestryId>) 
              (generation:int<generation>)
              (ancestors:sorterAncestry[])
              (tag:Guid) 
@@ -184,7 +169,7 @@ module SorterSetAncestry =
                (tag:Guid)
         =
         let sorterSetAncestryId = 
-              SorterSetAncestryId.fromTag tag generation
+              Guid.NewGuid() |> UMX.tag<sorterSetAncestryId>
 
         let _makeSorterAncestry 
                 (sev:sorterEval)
@@ -216,7 +201,8 @@ module SorterSetAncestry =
             (parentMap:Map<Guid<sorterId>, Guid<sorterParentId>>)
             (sorterSetAncestry:sorterSetAncestry)
         =
-        let newId = SorterSetAncestryId.fromTag sorterSetAncestry.tag generation
+        let newId = 
+              Guid.NewGuid() |> UMX.tag<sorterSetAncestryId>
 
         let _updateSorterAncestry 
                 (parentSorterAncestry:sorterAncestry)

@@ -8,7 +8,6 @@
   <ItemGroup>
     <Compile Include="WorkspaceComponentType.fs" />
     <Compile Include="RunGa.fs" />
-    <Compile Include="Library.fs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,6 +23,7 @@
     <ProjectReference Include="..\Quirk.Serialziation\Quirk.Serialziation.fsproj" />
     <ProjectReference Include="..\Quirk.SortingResults\Quirk.SortingResults.fsproj" />
     <ProjectReference Include="..\Quirk.Sorting\Quirk.Sorting.fsproj" />
+    <ProjectReference Include="..\Quirk.Storage\Quirk.Storage.fsproj" />
     <ProjectReference Include="..\Quirk.Workspace\Quirk.Workspace.fsproj" />
   </ItemGroup>
 

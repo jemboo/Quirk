@@ -3,6 +3,7 @@ open System.Threading.Tasks
 open FSharp.UMX
 open Quirk.Core
 open Quirk.Cfg.Core
+open Quirk.Iter
 open Quirk.Project
 open Quirk.Script
 open Quirk.Storage

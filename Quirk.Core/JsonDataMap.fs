@@ -1,19 +1,18 @@
 ﻿namespace Quirk.Core
 open System
+open FSharp.UMX
 
-type jsonDataMapId = private JsonDataMapId of Guid
-module JsonDataMapId =
-    let value (JsonDataMapId v) = v
-    let create vl = JsonDataMapId vl
+
+[<Measure>] type jsonDataMapId
 
 type jsonDataMap =
     private 
-        { id: jsonDataMapId; 
+        { id: Guid<jsonDataMapId>; 
           data: Map<string,string> }
 
 module JsonDataMap =
     let load 
-            (id:jsonDataMapId) 
+            (id: Guid<jsonDataMapId>) 
             (data: Map<string,string>)
         =
         {
@@ -25,7 +24,7 @@ module JsonDataMap =
         let nextId = 
             data |> Map.toArray |> Array.map(fun tup -> tup :> obj)
             |> GuidUtils.guidFromObjs 
-            |> JsonDataMapId.create
+            |> UMX.tag<jsonDataMapId>
 
         load nextId data
 

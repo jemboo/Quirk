@@ -2,6 +2,7 @@
 
 open FSharp.UMX
 open Quirk.Core
+open Quirk.Iter
 
 
 [<Measure>] type simParamName

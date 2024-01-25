@@ -6,9 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="WorkspaceTypes.fs" />
     <Compile Include="WorkspaceParams.fs" />
     <Compile Include="WorkspaceParamAttrs.fs" />
-    <Compile Include="Library.fs" />
+    <Compile Include="WorkspaceComponent.fs" />
+    <Compile Include="Workspace.fs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,7 +23,6 @@
     <ProjectReference Include="..\Quirk.Serialziation\Quirk.Serialziation.fsproj" />
     <ProjectReference Include="..\Quirk.SortingResults\Quirk.SortingResults.fsproj" />
     <ProjectReference Include="..\Quirk.Sorting\Quirk.Sorting.fsproj" />
-    <ProjectReference Include="..\Quirk.Storage\Quirk.Storage.fsproj" />
   </ItemGroup>
 
 </Project>

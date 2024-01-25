@@ -3,6 +3,7 @@
 open FSharp.UMX
 open Quirk.Core
 open Quirk.Cfg.Core
+open Quirk.Iter
 open Quirk.Project
 open Quirk.Sorting
 open Quirk.Script

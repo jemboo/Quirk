@@ -37,7 +37,7 @@ type generationFilter =
 module GenerationFilter =
     let passing 
             (gen:int<generation>) 
-            (filt:generationFilter) 
+            (filt:generationFilter)
         =
         match filt with
         | ModF mgf -> ((gen |> UMX.untag) % mgf.modulus) = 0

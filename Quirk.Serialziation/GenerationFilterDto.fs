@@ -4,6 +4,7 @@ open System
 open Microsoft.FSharp.Core
 open FSharp.UMX
 open Quirk.Core
+open Quirk.Iter
 
 
 type generationFilterDto = {duType:string; cereal:string}

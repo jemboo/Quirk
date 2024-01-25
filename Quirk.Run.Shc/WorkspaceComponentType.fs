@@ -3,6 +3,7 @@
 open System
 open FSharp.UMX
 open Quirk.Core
+open Quirk.Iter
 open Quirk.Project
 open Quirk.Run.Core
 

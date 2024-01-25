@@ -5,6 +5,7 @@ open Quirk.Cfg.Core
 open Quirk.Project
 open Quirk.Cfg.Shc
 open Quirk.Storage
+open Quirk.Iter
 
 
 module ScriptDispatcher =

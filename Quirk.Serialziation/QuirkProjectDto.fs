@@ -6,7 +6,7 @@ open FSharp.UMX
 open Quirk.Core
 open Quirk.Project
 open Quirk.Serialization
-   
+open Quirk.Sorting
 
 type quirkWorldLineDto =
         { 

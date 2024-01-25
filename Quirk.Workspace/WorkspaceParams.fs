@@ -3,33 +3,6 @@ open System
 open FSharp.UMX
 open Quirk.Core
 
-[<Measure>] type workspaceParamsId
-
-[<Measure>] type workspaceParamsKey
-
-type runType =
-    | Sim
-    | Report
-
-
-module RunType =
-
-    let toString 
-            (runType:runType)
-        =
-        match runType with
-        | Sim -> "Sim"
-        | Report -> "Report"
-
-    let fromString 
-            (qrm: string) 
-        =
-        match qrm.Split() with
-        | [| "Sim" |] -> runType.Sim |> Ok 
-        | [| "Report" |] -> runType.Report |> Ok
-        | _ -> Error $"{qrm} not handled in RunType.fromString"
-
-
 type workspaceParams =
     private 
         { id: Guid<workspaceParamsId>; 

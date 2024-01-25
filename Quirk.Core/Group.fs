@@ -1,9 +1,7 @@
-﻿namespace global
+﻿namespace Quirk.Core
 
 open SysExt
 open Microsoft.FSharp.Core
-
-
 
 
 type bitPair = private BitPair of int

@@ -1,5 +1,6 @@
-﻿namespace Quirk.Core
+﻿namespace Quirk.Iter
 open FSharp.UMX
+open Quirk.Core
 
 [<Measure>] type generation
 [<Measure>] type reproductionRate

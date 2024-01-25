@@ -63,7 +63,6 @@ module RunShc =
 
             let workspaceParams =
                 WorkspaceParams.make Map.empty
-                |> WorkspaceParamsAttrs.setRunType ShcWsParamKeys.runType runType.Sim
                 |> WorkspaceParamsAttrs.setGeneration ShcWsParamKeys.generationStart generationStart
                 |> WorkspaceParamsAttrs.setGeneration ShcWsParamKeys.generationEnd generationEnd
                 |> WorkspaceParamsAttrs.setGeneration ShcWsParamKeys.generation_filter_short reportInterval
@@ -95,7 +94,6 @@ module RunShc =
 
             let workspaceParams =
                 WorkspaceParams.make Map.empty
-                |> WorkspaceParamsAttrs.setRunType ShcWsParamKeys.runType runType.Report
                 |> WorkspaceParamsAttrs.setGeneration ShcWsParamKeys.generationStart generationStart
                 |> WorkspaceParamsAttrs.setGeneration ShcWsParamKeys.generationEnd generationEnd
                 |> WorkspaceParamsAttrs.setGeneration ShcWsParamKeys.reportInterval reportInterval

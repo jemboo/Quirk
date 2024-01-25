@@ -13,6 +13,8 @@ open FSharp.UMX
 [<Measure>] type setOfSortableSetId
 [<Measure>] type sorterSetConcatMapId
 [<Measure>] type sorterSetParentMapId
+[<Measure>] type sorterSetMutatorId
+[<Measure>] type sorterSpeedBinSetId
 [<Measure>] type sorterSetId
 [<Measure>] type stageCount
 [<Measure>] type stageWindowSize

@@ -6,10 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="WsBasicStuff.fs" />
+    <Compile Include="RunTypes.fs" />
     <Compile Include="SortingCfg\SortableSetCfg.fs" />
     <Compile Include="SortingCfg\SorterSetRndCfg.fs" />
-    <Compile Include="Library.fs" />
   </ItemGroup>
 
   <ItemGroup>

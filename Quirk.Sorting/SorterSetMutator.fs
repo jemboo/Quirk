@@ -4,14 +4,9 @@ open System
 open FSharp.UMX
 open Quirk.Core
 
-type sorterSetMutatorId = private SorterSetMutatorId of Guid
-module SorterSetMutatorId =
-    let value (SorterSetMutatorId v) = v
-    let create (v: Guid) = SorterSetMutatorId v
-
 type sorterSetMutator = 
     private { 
-            id: sorterSetMutatorId
+            id: Guid<sorterSetMutatorId>
             sorterMutator: sorterMutator
             sorterCountFinal: int<sorterCount> Option
         }
@@ -19,7 +14,7 @@ type sorterSetMutator =
 module SorterSetMutator =
 
     let load
-            (id:sorterSetMutatorId)
+            (id:Guid<sorterSetMutatorId>)
             (sorterMutator:sorterMutator) 
             (sorterCountFinal:int<sorterCount> option) 
         =
@@ -29,7 +24,7 @@ module SorterSetMutator =
           sorterCountFinal = sorterCountFinal
         }
 
-    let getId (sum: sorterSetMutator) = sum.id
+    let getId (sorterSetMutator: sorterSetMutator) = sorterSetMutator.id
 
     let getSorterMutator (sum: sorterSetMutator) = sum.sorterMutator
 

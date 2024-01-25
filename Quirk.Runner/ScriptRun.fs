@@ -9,6 +9,7 @@ open Quirk.Script
 open Quirk.Storage
 open System.Threading
 open Quirk.Run.Shc
+open Quirk.Iter
 
 
 module ScriptRun =

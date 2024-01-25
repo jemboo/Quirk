@@ -7,25 +7,10 @@ open Quirk.Project
 open Quirk.Sorting
 open Quirk.SortingResults
 open Quirk.Run.Core
+open Quirk.Iter
 
 
 module WorkspaceParamsAttrs =
-
-    let getRunType
-            (key:string<workspaceParamsKey>) 
-            (workspaceParams:workspaceParams) 
-        =
-        result {
-          let! cereal = WorkspaceParams.getItem key workspaceParams
-          return! cereal |> RunType.fromString
-        }
-    let setRunType
-            (key:string<workspaceParamsKey>) 
-            (value:runType)
-            (workspaceParams:workspaceParams) 
-        =
-        workspaceParams |> WorkspaceParams.addItem key (value |> RunType.toString)
-
 
     let getReportType
             (key:string<workspaceParamsKey>) 

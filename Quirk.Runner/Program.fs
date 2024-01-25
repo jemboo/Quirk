@@ -7,6 +7,7 @@ open Quirk.Cfg.Core
 open Quirk.Project
 open Quirk.Script
 open Quirk.Storage
+open Quirk.Iter
 
 module Program =
 

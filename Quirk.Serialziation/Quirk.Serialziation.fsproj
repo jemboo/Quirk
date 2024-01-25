@@ -6,16 +6,24 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="RngGenDto.fs" />
     <Compile Include="RolloutDto.fs" />
+    <Compile Include="SortableSetDto.fs" />
     <Compile Include="SparseIntArrayDto.fs" />
+    <Compile Include="SorterSetEvalDto.fs" />
+    <Compile Include="SorterSpeedBinDto.fs" />
+    <Compile Include="SorterSetAncestryDto.fs" />
+    <Compile Include="SorterSetConcatMapDto.fs" />
+    <Compile Include="SorterSetDto.fs" />
+    <Compile Include="SorterMutatorDto.fs" />
+    <Compile Include="SorterSetMutatorDto.fs" />
+    <Compile Include="SorterSetParentMapDto.fs" />
+    <Compile Include="SorterSetPrunerDto.fs" />
+    <Compile Include="RngGenDto.fs" />
     <Compile Include="GenerationFilterDto.fs" />
     <Compile Include="SorterSetPruneMethodDto.fs" />
-    <Compile Include="SorterMutatorDto.fs" />
     <Compile Include="ParamSetDtos.fs" />
     <Compile Include="QuirkProjectDto.fs" />
-    <Compile Include="ScriptDtos.fs" />
-    <Compile Include="Library.fs" />
+    <Compile Include="QuirkScriptDto.fs" />
   </ItemGroup>
 
   <ItemGroup>

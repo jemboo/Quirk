@@ -4,6 +4,7 @@ open FSharp.UMX
 open Quirk.Core
 open Quirk.Sorting
 open Quirk.SortingResults
+open Quirk.Iter
 
 type modelParamValue =
     | MutationRate of string<modelParamName> * float<mutationRate>

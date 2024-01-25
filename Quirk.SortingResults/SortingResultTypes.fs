@@ -11,6 +11,7 @@ open System.Text.RegularExpressions
 [<Measure>] type sorterPhenotypeCount
 // 1.0 is neutral, higher numbers emphasize stageCount
 [<Measure>] type stageWeight
+[<Measure>] type sorterSetAncestryId
 [<Measure>] type sorterSetPrunerId
 [<Measure>] type sorterPhenotypeId
 [<Measure>] type sorterSetEvalId

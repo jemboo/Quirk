@@ -27,7 +27,6 @@
     <ProjectReference Include="..\Quirk.Run.Core\Quirk.Run.Core.fsproj" />
     <ProjectReference Include="..\Quirk.Run.Ga\Quirk.Run.Ga.fsproj" />
     <ProjectReference Include="..\Quirk.Run.Shc\Quirk.Run.Shc.fsproj" />
-    <ProjectReference Include="..\Quirk.RunIter\Quirk.RunIter.fsproj" />
     <ProjectReference Include="..\Quirk.Script\Quirk.Script.fsproj" />
     <ProjectReference Include="..\Quirk.Serialziation\Quirk.Serialziation.fsproj" />
     <ProjectReference Include="..\Quirk.SortingResults\Quirk.SortingResults.fsproj" />
