@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="WorkspaceParamsDto.fs" />
     <Compile Include="WorkspaceComponentDto.fs" />
     <Compile Include="CfgPlexDto.fs" />
   </ItemGroup>
@@ -21,7 +22,6 @@
     <ProjectReference Include="..\Quirk.Iter\Quirk.Iter.fsproj" />
     <ProjectReference Include="..\Quirk.Project\Quirk.Project.fsproj" />
     <ProjectReference Include="..\Quirk.Run.Core\Quirk.Run.Core.fsproj" />
-    <ProjectReference Include="..\Quirk.RunIter\Quirk.RunIter.fsproj" />
     <ProjectReference Include="..\Quirk.Serialziation\Quirk.Serialziation.fsproj" />
     <ProjectReference Include="..\Quirk.SortingResults\Quirk.SortingResults.fsproj" />
     <ProjectReference Include="..\Quirk.Sorting\Quirk.Sorting.fsproj" />
