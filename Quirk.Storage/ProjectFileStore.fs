@@ -9,6 +9,8 @@ open Quirk.Cfg.Core
 open Quirk.Cfg.Serialization
 open Quirk.Script
 open Quirk.Serialization
+open Quirk.Workspace
+open Quirk.Iter
 
 
 type projectFileStore () =
@@ -21,7 +23,7 @@ type projectFileStore () =
     member this.fileExt = "txt"
     //member this.wsRootDir = wsRootDir
 
-    member this.getComponentFolderName (wsCompType:workspaceComponentType) =
+    member this.getComponentFolderName (wsCompType:wsComponentType) =
         wsCompType |> string
 
     member this.getProjectPathToFolder 
@@ -112,7 +114,7 @@ type projectFileStore () =
     member this.getComponentPathToFolder
                 (wsRootDir:string<folderPath>)
                 (projectName:string<projectName>)
-                (wsCompType:workspaceComponentType) 
+                (wsCompType:wsComponentType) 
            = 
         Path.Combine(projectName |> (this.getProjectPathToFolder wsRootDir) |> UMX.untag, this.scriptCompletedFolder)
 
@@ -231,6 +233,27 @@ type projectFileStore () =
                 return projects |> List.toArray
             }
 
+    member this.getWsComponent 
+                (wsComponentName:string<wsComponentName>) 
+                (quirkWorldLineId:string<quirkWorldLineId>) 
+                (generation:int<generation>) 
+                : Result<wsComponentData, string>
+            =
+            result {
+                let yab = "woops" |> Error
+                return! yab
+            }
+
+    member this.saveWsComponent 
+                (wsComponentName:string<wsComponentName>) 
+                (quirkWorldLineId:string<quirkWorldLineId>) 
+                (generation:int<generation>) 
+            =
+            result {
+
+                return ()
+            }
+
 
     interface IProjectDataStore with
         member this.GetProject (wsRootDir:string<folderPath>) (projectName:string<projectName>) 
@@ -249,6 +272,13 @@ type projectFileStore () =
                     = this.getCfgPlex wsRootDir projectName cfgPlexName
         member this.SaveCfgPlex (wsRootDir:string<folderPath>) cfgPlex 
                     = this.saveCfgPlex wsRootDir cfgPlex
+        member this.GetWsComponent (wsComponentName:string<wsComponentName>) (quirkWorldLineId:string<quirkWorldLineId>) (generation:int<generation>) 
+                    =  this.getWsComponent wsComponentName quirkWorldLineId generation   //-> Result<wsComponentData, string>
+        member this.SaveWsComponent (wsComponentName:string<wsComponentName>) (quirkWorldLineId:string<quirkWorldLineId>) (generation:int<generation>)
+                    = this.saveWsComponent wsComponentName quirkWorldLineId generation  //Result<unit, string>
+
+
+
         member this.GetProjectAsync (wsRootDir:string<folderPath>) (projectName:string<projectName>) 
                     = Task.Run(fun () -> this.getProject wsRootDir projectName)
         member this.GetAllProjectsAsync (wsRootDir:string<folderPath>)
@@ -265,3 +295,7 @@ type projectFileStore () =
                     = Task.Run(fun () -> this.getCfgPlex wsRootDir projectName cfgPlexName)
         member this.SaveCfgPlexAsync (wsRootDir:string<folderPath>) cfgPlex 
                     = Task.Run(fun () -> this.saveCfgPlex wsRootDir cfgPlex)
+        member this.GetWsComponentAsync (wsComponentName:string<wsComponentName>) (quirkWorldLineId:string<quirkWorldLineId>) (generation:int<generation>) 
+                    = Task.Run(fun () -> this.getWsComponent wsComponentName quirkWorldLineId generation)
+        member this.SaveWsComponentAsync (wsComponentName:string<wsComponentName>) (quirkWorldLineId:string<quirkWorldLineId>) (generation:int<generation>) 
+                    = Task.Run(fun () -> this.saveWsComponent wsComponentName quirkWorldLineId generation )

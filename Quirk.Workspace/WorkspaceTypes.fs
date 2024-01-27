@@ -3,17 +3,18 @@ open System
 open FSharp.UMX
 open Quirk.Core
 
-[<Measure>] type workspaceId
-
-[<Measure>] type workspaceParamsId
-
-[<Measure>] type workspaceParamsKey
+[<Measure>] type wsId
 
 [<Measure>] type wsComponentName
 
+[<Measure>] type wsComponentId
 
-type workspaceComponentType =
-    | WorkspaceDescription = 0
+[<Measure>] type wsParamsId
+
+[<Measure>] type wsParamsKey
+
+
+type wsComponentType =
     | SortableSet = 10
     | SorterSet = 20
     | SorterSetAncestry = 21
@@ -23,10 +24,26 @@ type workspaceComponentType =
     | SorterSetParentMap = 25
     | SorterSpeedBinSet = 30
     | SorterSetPruner = 40
-    | WorkspaceParams = 50
+    | WsParams = 50
 
 
+module WsComponentType =
 
-module WsConstants =
+    let toString (wsComponentType:wsComponentType)
+        =
+        wsComponentType |> string
 
-    let  workSpaceComponentNameForParams = "workspaceParams" |> UMX.tag<wsComponentName>
+    let fromString (cereal:string)
+        =
+       match cereal with
+       | "SortableSet" -> wsComponentType.SortableSet |> Ok
+       | "SorterSet" -> wsComponentType.SorterSet |> Ok
+       | "SorterSetAncestry" -> wsComponentType.SorterSetAncestry |> Ok
+       | "SorterSetConcatMap" -> wsComponentType.SorterSetConcatMap |> Ok
+       | "SorterSetEval" -> wsComponentType.SorterSetEval |> Ok
+       | "SorterSetMutator" -> wsComponentType.SorterSetMutator |> Ok
+       | "SorterSetParentMap" -> wsComponentType.SorterSetParentMap |> Ok
+       | "SorterSpeedBinSet" -> wsComponentType.SorterSpeedBinSet |> Ok
+       | "SorterSetPruner" -> wsComponentType.SorterSetPruner |> Ok
+       | "WsParams" -> wsComponentType.WsParams |> Ok
+       | a -> $"{a} is not handled in WsComponentType.fromString" |> Error

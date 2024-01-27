@@ -6,24 +6,39 @@ open Quirk.Core
 open Quirk.Iter
 open Quirk.Project
 open Quirk.Run.Core
+open Quirk.Workspace
 
 
-[<Measure>] type shcComponentId
+module WsComponentTypeShc =
 
-module WorkspaceComponentTypeShc =
-
-    let getShcComponentID 
+    let getWsComponentID 
             (quirkWorldLineId:Guid<quirkWorldLineId>)
             (generation:int<generation>)
-            (workspaceComponentTypeShc:workspaceComponentType)
+            (wsComponentName:string<wsComponentName>)
         =
         [
             quirkWorldLineId :> obj
             generation :> obj
-            workspaceComponentTypeShc :> obj
-        ] 
+            wsComponentName :> obj
+        ]
         |> GuidUtils.guidFromObjs
-        |> UMX.tag<shcComponentId>
+        |> UMX.tag<wsComponentId>
+
+
+
+    let shcWsComponentNames =
+        [|
+            "SortableSet" |> UMX.tag<wsComponentName>
+            "SorterSet" |> UMX.tag<wsComponentName>
+            "SorterSetAncestry" |> UMX.tag<wsComponentName>
+            "SorterSetConcatMap" |> UMX.tag<wsComponentName>
+            "SorterSetEval" |> UMX.tag<wsComponentName>
+            "SorterSetMutator" |> UMX.tag<wsComponentName>
+            "SorterSetParentMap" |> UMX.tag<wsComponentName>
+            "SorterSpeedBinSet" |> UMX.tag<wsComponentName>
+            "SorterSetPruner" |> UMX.tag<wsComponentName>
+            "WsParams" |> UMX.tag<wsComponentName>
+        |]
 
 
 
@@ -37,30 +52,17 @@ type rndGenTypeShc =
 module RndGenProvider =
 
     let getRngGen 
+            (quirkWorldLineId:Guid<quirkWorldLineId>)
+            (generation:int<generation>)
             (rngType:rngType)
-            (rndGenTypeShc:rndGenTypeShc)
-            (generation:int<generation>) 
         =
         let gu = 
             [
-                rndGenTypeShc :> obj;
-                generation :> obj
+                quirkWorldLineId :> obj;
+                generation :> obj;
+                rngType :> obj
             ] 
             |> GuidUtils.guidFromObjs
 
         RngGen.fromGuid rngType gu
-
-
-    let getShcWorkspaceComponentId
-            (quirkWorldLineId: Guid<quirkWorldLineId>)
-            (wsc:workspaceComponentType)
-            (generation:int<generation>) 
-        =
-        [
-            quirkWorldLineId :> obj;
-            wsc :> obj;
-            generation :> obj
-        ] 
-        |> GuidUtils.guidFromObjs
-        |> UMX.tag<workspaceComponentId>
 

@@ -7,8 +7,7 @@ open Quirk.Sorting
 open Quirk.SortingResults
 
 
-
-type workspaceComponent =
+type wsComponentData =
     | SortableSet of sortableSet
     | SorterSet of sorterSet
     | SorterSetAncestry of sorterSetAncestry
@@ -18,12 +17,12 @@ type workspaceComponent =
     | SorterSetParentMap of sorterSetParentMap
     | SorterSpeedBinSet of sorterSpeedBinSet
     | SorterSetPruner of sorterSetPruner
-    | WorkspaceParams of workspaceParams
+    | WsParams of wsParams
 
 
-module WorkspaceComponent =
+module WsComponentData =
 
-    let getId (comp:workspaceComponent) =
+    let getId (comp:wsComponentData) =
         match comp with
         | SortableSet sortableSet -> 
             sortableSet |> SortableSet.getSortableSetId |> UMX.untag
@@ -43,85 +42,127 @@ module WorkspaceComponent =
             sorterSpeedBinSet |> SorterSpeedBinSet.getId |> SorterSpeedBinSetId.value
         | SorterSetPruner sorterSetPruner ->
             sorterSetPruner |> SorterSetPruner.getId |> UMX.untag
-        | WorkspaceParams workspaceParams ->
-            workspaceParams |> WorkspaceParams.getId |> UMX.untag
+        | WsParams wsParams ->
+            wsParams |> WsParams.getId |> UMX.untag
 
-    let asSortableSet (comp:workspaceComponent) =
+    let asSortableSet (comp:wsComponentData) =
         match comp with
         | SortableSet sortableSet -> 
              sortableSet |> Ok
         | _  -> 
-             $"Workspace component type is {comp}, not SortableSet" |> Error
+             $"wsComponentData is {comp}, not SortableSet" |> Error
 
 
-    let asSorterSet (comp:workspaceComponent) =
+    let asSorterSet (comp:wsComponentData) =
         match comp with
         | SorterSet sorterSet -> 
              sorterSet |> Ok
         | _  -> 
-             $"Workspace component type is {comp}, not SorterSet" |> Error
+             $"wsComponentData is {comp}, not SorterSet" |> Error
 
 
-    let asSorterSetAncestry (comp:workspaceComponent) =
+    let asSorterSetAncestry (comp:wsComponentData) =
         match comp with
         | SorterSetAncestry sorterSetAncestry -> 
              sorterSetAncestry |> Ok
         | _  -> 
-             $"Workspace component type is {comp}, not SorterSetAncestry" |> Error
+             $"wsComponentData is {comp}, not SorterSetAncestry" |> Error
 
 
-    let asSorterSetMutator (comp:workspaceComponent) =
+    let asSorterSetMutator (comp:wsComponentData) =
         match comp with
         | SorterSetMutator sorterSetMutator -> 
              sorterSetMutator |> Ok
         | _ -> 
-             $"Workspace component type is {comp}, not SorterSetMutator" |> Error
+             $"wsComponentData is {comp}, not SorterSetMutator" |> Error
 
 
-    let asSorterSetParentMap (comp:workspaceComponent) =
+    let asSorterSetParentMap (comp:wsComponentData) =
         match comp with
         | SorterSetParentMap sorterSetParentMap -> 
              sorterSetParentMap |> Ok
         | _  -> 
-             $"Workspace component type is {comp}, not SorterSetParentMap" |> Error
+             $"wsComponentData is {comp}, not SorterSetParentMap" |> Error
 
 
-    let asSorterSetConcatMap (comp:workspaceComponent) =
+    let asSorterSetConcatMap (comp:wsComponentData) =
         match comp with
         | SorterSetConcatMap sorterSetConcatMap -> 
              sorterSetConcatMap |> Ok
         | _  -> 
-             $"Workspace component type is {comp}, not SorterSetConcatMap" |> Error
+             $"wsComponentData is {comp}, not SorterSetConcatMap" |> Error
 
 
-    let asSorterSetEval (comp:workspaceComponent) =
+    let asSorterSetEval (comp:wsComponentData) =
         match comp with
         | SorterSetEval sorterSetEval -> 
              sorterSetEval |> Ok
         | _  -> 
-             $"Workspace component type is {comp}, not SorterSetEval" |> Error
+             $"wsComponentData is {comp}, not SorterSetEval" |> Error
 
 
-    let asSorterSpeedBinSet (comp:workspaceComponent) =
+    let asSorterSpeedBinSet (comp:wsComponentData) =
         match comp with
         | SorterSpeedBinSet sorterSpeedBinSet -> 
              sorterSpeedBinSet |> Ok
         | _  -> 
-             $"Workspace component type is {comp}, not SorterSpeedBinSet" |> Error
+             $"wsComponentData is {comp}, not SorterSpeedBinSet" |> Error
 
 
-    let asSorterSetPruner (comp:workspaceComponent) =
+    let asSorterSetPruner (comp:wsComponentData) =
         match comp with
         | SorterSetPruner sorterSetPruner -> 
              sorterSetPruner |> Ok
         | _  -> 
-             $"Workspace component type is {comp}, not SorterSetPruner" |> Error
+             $"wsComponentData is {comp}, not SorterSetPruner" |> Error
 
 
-    let asWorkspaceParams (comp:workspaceComponent) =
+    let asWsParams (comp:wsComponentData) =
         match comp with
-        | WorkspaceParams workspaceParams -> 
-             workspaceParams |> Ok
+        | WsParams wsParams -> 
+             wsParams |> Ok
         | _  -> 
-             $"Workspace component type is {comp}, not WorkspaceParams" |> Error
+             $"wsComponentData is {comp}, not WorkspaceParams" |> Error
+
+
+type wsComponent =
+   private 
+     { 
+        id: Guid<wsComponentId>;
+        name: string<wsComponentName>
+        wsComponentType: wsComponentType
+        wsComponentData: wsComponentData
+     }
+
+
+module WsComponent =
+
+    let load 
+            (id: Guid<wsComponentId>) 
+            (name: string<wsComponentName>) 
+            (wsComponentType: wsComponentType) 
+            (wsComponentData:wsComponentData) =
+        {
+            id=id
+            name=name
+            wsComponentType=wsComponentType
+            wsComponentData=wsComponentData
+        }
+
+
+    let getId (wsComponent:wsComponent) =
+        wsComponent.id
+
+    let getName (wsComponent:wsComponent) =
+        wsComponent.name
+
+    let getWsComponentType (wsComponent:wsComponent) =
+        wsComponent.wsComponentType
+
+    let getWsComponentData (wsComponent:wsComponent) =
+        wsComponent.wsComponentData
+
+
+
+
 

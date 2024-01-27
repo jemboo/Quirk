@@ -5,6 +5,8 @@ open Quirk.Project
 open Quirk.Script
 open Quirk.Core
 open System.Threading.Tasks
+open Quirk.Workspace
+open Quirk.Iter
 
 
 type IProjectDataStore =
@@ -16,6 +18,9 @@ type IProjectDataStore =
     abstract member SaveScript : string<folderPath> -> quirkScript -> Result<unit, string>
     abstract member GetCfgPlex : string<folderPath> -> string<projectName> -> string<cfgPlexName> -> Result<cfgPlex, string>
     abstract member SaveCfgPlex : string<folderPath> -> cfgPlex -> Result<unit, string>
+    abstract member GetWsComponent : string<wsComponentName> -> string<quirkWorldLineId> -> int<generation> -> Result<wsComponentData, string>
+    abstract member SaveWsComponent : string<wsComponentName> -> string<quirkWorldLineId> -> int<generation> -> Result<unit, string>
+
     abstract member GetProjectAsync : string<folderPath> -> string<projectName> -> Task<Result<quirkProject, string>>
     abstract member GetAllProjectsAsync : string<folderPath> -> Task<Result<quirkProject[], string>>
     abstract member SaveProjectAsync : string<folderPath> -> quirkProject -> Task<Result<unit, string>>
@@ -24,7 +29,8 @@ type IProjectDataStore =
     abstract member SaveScriptAsync : string<folderPath> -> quirkScript -> Task<Result<unit, string>>
     abstract member GetCfgPlexAsync : string<folderPath> -> string<projectName> -> string<cfgPlexName> -> Task<Result<cfgPlex, string>>
     abstract member SaveCfgPlexAsync : string<folderPath> -> cfgPlex -> Task<Result<unit, string>>
-
+    abstract member GetWsComponentAsync : string<wsComponentName> -> string<quirkWorldLineId> -> int<generation> -> Task<Result<wsComponentData, string>>
+    abstract member SaveWsComponentAsync : string<wsComponentName> -> string<quirkWorldLineId> -> int<generation> -> Task<Result<unit, string>>
 
 
 type ITest =

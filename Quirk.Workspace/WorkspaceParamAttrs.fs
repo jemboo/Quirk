@@ -10,67 +10,67 @@ open Quirk.Run.Core
 open Quirk.Iter
 
 
-module WorkspaceParamsAttrs =
+module WsParamsAttrs =
 
     let getReportType
-            (key:string<workspaceParamsKey>) 
-            (workspaceParams:workspaceParams) 
+            (key:string<wsParamsKey>) 
+            (wsParams:wsParams) 
         =
         result {
-          let! cereal = WorkspaceParams.getItem key workspaceParams
+          let! cereal = WsParams.getItem key wsParams
           return cereal |> UMX.tag<reportType>
         }
     let setReportType
-            (key:string<workspaceParamsKey>) 
+            (key:string<wsParamsKey>) 
             (value:string<reportType>)
-            (workspaceParams:workspaceParams) 
+            (wsParams:wsParams) 
         =
-        workspaceParams |> WorkspaceParams.addItem key (value |> UMX.untag |> string)
+        wsParams |> WsParams.addItem key (value |> UMX.untag |> string)
 
 
     let getGeneration
-            (key:string<workspaceParamsKey>) 
-            (workspaceParams:workspaceParams) 
+            (key:string<wsParamsKey>) 
+            (wsParams:wsParams) 
         =
         result {
-          let! cereal = WorkspaceParams.getItem key workspaceParams
+          let! cereal = WsParams.getItem key wsParams
           return Convert.ToInt32(cereal) |> UMX.tag<generation>
         }
     let setGeneration
-            (key:string<workspaceParamsKey>) 
+            (key:string<wsParamsKey>) 
             (value:int<generation>)
-            (workspaceParams:workspaceParams) 
+            (wsParams:wsParams) 
         =
-        workspaceParams |> WorkspaceParams.addItem key (value |> UMX.untag |> string)
+        wsParams |> WsParams.addItem key (value |> UMX.untag |> string)
 
 
 
 
     let incrGeneration
-            (key:string<workspaceParamsKey>) 
-            (workspaceParams:workspaceParams) 
+            (key:string<wsParamsKey>) 
+            (wsParams:wsParams) 
         =
         result {
-          let! cereal = WorkspaceParams.getItem key workspaceParams
+          let! cereal = WsParams.getItem key wsParams
           let nextGen = Convert.ToInt32(cereal) + 1
           return         
-            workspaceParams |> WorkspaceParams.addItem key (nextGen |> string)
+            wsParams |> WsParams.addItem key (nextGen |> string)
         }
 
     let generationIsGte
-            (key:string<workspaceParamsKey>) 
+            (key:string<wsParamsKey>) 
             (genVal:int<generation>)
-            (workspaceParams:workspaceParams) 
+            (wsParams:wsParams) 
         =
 
         let _fg
-                (key:string<workspaceParamsKey>) 
+                (key:string<wsParamsKey>) 
                 (fF: int<generation> -> bool)
-                (workspaceParams:workspaceParams) 
+                (wsParams:wsParams) 
             =
-            workspaceParams |> getGeneration key |> Result.filterF fF
+            wsParams |> getGeneration key |> Result.filterF fF
 
-        workspaceParams 
+        wsParams 
             |> _fg
                     key
                     (fun gen -> 
@@ -78,309 +78,309 @@ module WorkspaceParamsAttrs =
 
 
     let getGenerationFilter
-            (key:string<workspaceParamsKey>) 
-            (workspaceParams:workspaceParams) 
+            (key:string<wsParamsKey>) 
+            (wsParams:wsParams) 
         =
         result {
-          let! cereal = WorkspaceParams.getItem key workspaceParams
+          let! cereal = WsParams.getItem key wsParams
           return! cereal |> GenerationFilterDto.fromJson
         }
     let setGenerationFilter
-            (key:string<workspaceParamsKey>) 
+            (key:string<wsParamsKey>) 
             (gf:generationFilter)
-            (workspaceParams:workspaceParams) 
+            (wsParams:wsParams) 
         =
-        workspaceParams |> WorkspaceParams.addItem key (gf |> GenerationFilterDto.toJson)
+        wsParams |> WsParams.addItem key (gf |> GenerationFilterDto.toJson)
 
 
 
     let getMutationRate
-            (key:string<workspaceParamsKey>) 
-            (workspaceParams:workspaceParams) 
+            (key:string<wsParamsKey>) 
+            (wsParams:wsParams) 
         =
         result {
-          let! cereal = WorkspaceParams.getItem key workspaceParams
+          let! cereal = WsParams.getItem key wsParams
           return Convert.ToDouble(cereal) |> UMX.tag<mutationRate>
         }
     let setMutationRate
-            (key:string<workspaceParamsKey>) 
+            (key:string<wsParamsKey>) 
             (value:float<mutationRate>)
-            (workspaceParams:workspaceParams) 
+            (wsParams:wsParams) 
         =
-        workspaceParams |> WorkspaceParams.addItem key (value |> UMX.untag |> string)
+        wsParams |> WsParams.addItem key (value |> UMX.untag |> string)
 
 
     let getNoiseFraction
-            (key:string<workspaceParamsKey>) 
-            (workspaceParams:workspaceParams) 
+            (key:string<wsParamsKey>) 
+            (wsParams:wsParams) 
         =
         result {
-          let! cereal = WorkspaceParams.getItem key workspaceParams
+          let! cereal = WsParams.getItem key wsParams
           return Convert.ToDouble(cereal) |> UMX.tag<noiseFraction>
         }
     let setNoiseFraction
-            (key:string<workspaceParamsKey>) 
+            (key:string<wsParamsKey>) 
             (value:float<noiseFraction>) 
-            (workspaceParams:workspaceParams) 
+            (wsParams:wsParams) 
         =
-        workspaceParams |> WorkspaceParams.addItem key (value |> UMX.untag |> string)
+        wsParams |> WsParams.addItem key (value |> UMX.untag |> string)
 
 
     let getOrder
-            (key:string<workspaceParamsKey>) 
-            (workspaceParams:workspaceParams) 
+            (key:string<wsParamsKey>) 
+            (wsParams:wsParams) 
         =
         result {
-          let! cereal = WorkspaceParams.getItem key workspaceParams
+          let! cereal = WsParams.getItem key wsParams
           return Convert.ToInt32(cereal) |> UMX.tag<order>
         }
     let setOrder
-            (key:string<workspaceParamsKey>) 
+            (key:string<wsParamsKey>) 
             (value:int<order>)
-            (workspaceParams:workspaceParams) 
+            (wsParams:wsParams) 
         =
-        workspaceParams |> WorkspaceParams.addItem key (value |> UMX.untag |> string)
+        wsParams |> WsParams.addItem key (value |> UMX.untag |> string)
 
 
     let getReproductionRage
-            (key:string<workspaceParamsKey>) 
-            (workspaceParams:workspaceParams) 
+            (key:string<wsParamsKey>) 
+            (wsParams:wsParams) 
         =
         result {
-          let! cereal = WorkspaceParams.getItem key workspaceParams
+          let! cereal = WsParams.getItem key wsParams
           return Convert.ToDouble (cereal) |> UMX.tag<reproductionRate>
         }
     let setReproductionRate
-            (key:string<workspaceParamsKey>) 
+            (key:string<wsParamsKey>) 
             (value:float<reproductionRate>) 
-            (workspaceParams:workspaceParams) 
+            (wsParams:wsParams) 
         =
         let cereal = value |> UMX.untag |> string
-        workspaceParams |> WorkspaceParams.addItem key cereal
+        wsParams |> WsParams.addItem key cereal
 
 
     let getRngGen
-            (key:string<workspaceParamsKey>) 
-            (workspaceParams:workspaceParams) 
+            (key:string<wsParamsKey>) 
+            (wsParams:wsParams) 
         =
         result {
-          let! cereal = WorkspaceParams.getItem key workspaceParams
+          let! cereal = WsParams.getItem key wsParams
           return! cereal |> RngGenDto.fromJson
         }
     let setRngGen
-            (key:string<workspaceParamsKey>) 
+            (key:string<wsParamsKey>) 
             (value:rngGen)
-            (workspaceParams:workspaceParams) 
+            (wsParams:wsParams) 
         =
-        workspaceParams |> WorkspaceParams.addItem key (value |> RngGenDto.toJson)
+        wsParams |> WsParams.addItem key (value |> RngGenDto.toJson)
 
     let updateRngGen
-            (key:string<workspaceParamsKey>) 
-            (workspaceParams:workspaceParams) 
+            (key:string<wsParamsKey>) 
+            (wsParams:wsParams) 
         =
         result {
-          let! curRngGen = workspaceParams |> getRngGen key
+          let! curRngGen = wsParams |> getRngGen key
           let nextRngGen = curRngGen |> Rando.nextRngGen
-          return setRngGen key nextRngGen workspaceParams
+          return setRngGen key nextRngGen wsParams
         }
 
 
     let getQuirkWorldLineId
-            (key:string<workspaceParamsKey>) 
-            (workspaceParams:workspaceParams) 
+            (key:string<wsParamsKey>) 
+            (wsParams:wsParams) 
         =
         result {
-          let! cereal = WorkspaceParams.getItem key workspaceParams
+          let! cereal = WsParams.getItem key wsParams
           return cereal |> Guid |> UMX.tag<quirkWorldLineId>
         }
     let setQuirkWorldLineId
-            (key:string<workspaceParamsKey>) 
+            (key:string<wsParamsKey>) 
             (value:Guid<quirkWorldLineId>)
-            (workspaceParams:workspaceParams) 
+            (wsParams:wsParams) 
         =
-        workspaceParams |> WorkspaceParams.addItem key (value |> UMX.untag |> string)
+        wsParams |> WsParams.addItem key (value |> UMX.untag |> string)
 
 
     let getSortableSetCfgType
-            (key:string<workspaceParamsKey>) 
-            (workspaceParams:workspaceParams) 
+            (key:string<wsParamsKey>) 
+            (wsParams:wsParams) 
         =
         result {
-          let! cereal = WorkspaceParams.getItem key workspaceParams
+          let! cereal = WsParams.getItem key wsParams
           return! cereal |> SortableSetCfgType.fromString
         }
     let setSortableSetCfgType
-            (key:string<workspaceParamsKey>) 
+            (key:string<wsParamsKey>) 
             (sortableSetCfgType:sortableSetCfgType)
-            (workspaceParams:workspaceParams) 
+            (wsParams:wsParams) 
         =
-        workspaceParams |> WorkspaceParams.addItem key (sortableSetCfgType |> string)
+        wsParams |> WsParams.addItem key (sortableSetCfgType |> string)
 
 
     let getSortableSetId
-            (key:string<workspaceParamsKey>) 
-            (workspaceParams:workspaceParams) 
+            (key:string<wsParamsKey>) 
+            (wsParams:wsParams) 
         =
         result {
-          let! cereal = WorkspaceParams.getItem key workspaceParams
+          let! cereal = WsParams.getItem key wsParams
           return cereal |> Guid |> UMX.tag<sortableSetId>
         }
     let setSortableSetId
-            (key:string<workspaceParamsKey>) 
+            (key:string<wsParamsKey>) 
             (value:Guid<sortableSetId>)
-            (workspaceParams:workspaceParams) 
+            (wsParams:wsParams) 
         =
-        workspaceParams |> WorkspaceParams.addItem key (value |> UMX.untag |> string)
+        wsParams |> WsParams.addItem key (value |> UMX.untag |> string)
 
 
     let getSorterCount
-            (key:string<workspaceParamsKey>) 
-            (workspaceParams:workspaceParams) 
+            (key:string<wsParamsKey>) 
+            (wsParams:wsParams) 
         =
         result {
-          let! cereal = WorkspaceParams.getItem key workspaceParams
+          let! cereal = WsParams.getItem key wsParams
           return Convert.ToInt32(cereal) |> UMX.tag<sorterCount>
         }
     let setSorterCount
-            (key:string<workspaceParamsKey>) 
+            (key:string<wsParamsKey>) 
             (value:int<sorterCount>)
-            (workspaceParams:workspaceParams) 
+            (wsParams:wsParams) 
         =
-        workspaceParams |> WorkspaceParams.addItem key (value |> UMX.untag |> string)
+        wsParams |> WsParams.addItem key (value |> UMX.untag |> string)
 
 
     let getSorterCountOption
-            (key:string<workspaceParamsKey>) 
-            (workspaceParams:workspaceParams) 
+            (key:string<wsParamsKey>) 
+            (wsParams:wsParams) 
         =
         result {
-          let! cereal = WorkspaceParams.getItem key workspaceParams
+          let! cereal = WsParams.getItem key wsParams
           if cereal = "None" then
              return None
           else return Convert.ToInt32(cereal) |> UMX.tag<sorterCount> |> Some
         }
     let setSorterCountOption
-            (key:string<workspaceParamsKey>) 
+            (key:string<wsParamsKey>) 
             (value:int<sorterCount> option)
-            (workspaceParams:workspaceParams) 
+            (wsParams:wsParams) 
         =
         match value with
         | Some sc ->
-            workspaceParams |> WorkspaceParams.addItem key (sc |> UMX.untag |> string)
+            wsParams |> WsParams.addItem key (sc |> UMX.untag |> string)
         | None -> 
-            workspaceParams |> WorkspaceParams.addItem key "None"
+            wsParams |> WsParams.addItem key "None"
 
 
     let getSorterEvalMode
-            (key:string<workspaceParamsKey>) 
-            (workspaceParams:workspaceParams) 
+            (key:string<wsParamsKey>) 
+            (wsParams:wsParams) 
         =
         result {
-          let! cereal = WorkspaceParams.getItem key workspaceParams
+          let! cereal = WsParams.getItem key wsParams
           return! Json.deserialize<sorterEvalMode>(cereal)
         }
     let setSorterEvalMode
-            (key:string<workspaceParamsKey>) 
+            (key:string<wsParamsKey>) 
             (value:sorterEvalMode)
-            (workspaceParams:workspaceParams) 
+            (wsParams:wsParams) 
         =
-        workspaceParams |> WorkspaceParams.addItem key (Json.serialize(value))
+        wsParams |> WsParams.addItem key (Json.serialize(value))
 
 
     let getSorterSetPruneMethod
-            (key:string<workspaceParamsKey>) 
-            (workspaceParams:workspaceParams) 
+            (key:string<wsParamsKey>) 
+            (wsParams:wsParams) 
         =
         result {
-          let! cereal = WorkspaceParams.getItem key workspaceParams
+          let! cereal = WsParams.getItem key wsParams
           return! cereal |> SorterSetPruneMethod.fromReport
         }
     let setSorterSetPruneMethod
-            (key:string<workspaceParamsKey>) 
+            (key:string<wsParamsKey>) 
             (value:sorterSetPruneMethod)
-            (workspaceParams:workspaceParams) 
+            (wsParams:wsParams) 
         =
-        workspaceParams |> WorkspaceParams.addItem key (value |> SorterSetPruneMethod.toReport )
+        wsParams |> WsParams.addItem key (value |> SorterSetPruneMethod.toReport )
 
 
     let getStageCount
-            (key:string<workspaceParamsKey>) 
-            (workspaceParams:workspaceParams) 
+            (key:string<wsParamsKey>) 
+            (wsParams:wsParams) 
         =
         result {
-          let! cereal = WorkspaceParams.getItem key workspaceParams
+          let! cereal = WsParams.getItem key wsParams
           return Convert.ToInt32(cereal) |> UMX.tag<stageCount>
         }
     let setStageCount
-            (key:string<workspaceParamsKey>) 
+            (key:string<wsParamsKey>) 
             (value:int<stageCount>)
-            (workspaceParams:workspaceParams) 
+            (wsParams:wsParams) 
         =
-        workspaceParams |> WorkspaceParams.addItem key (value |> UMX.untag |> string)
+        wsParams |> WsParams.addItem key (value |> UMX.untag |> string)
 
 
     let getStageWeight
-            (key:string<workspaceParamsKey>) 
-            (workspaceParams:workspaceParams) 
+            (key:string<wsParamsKey>) 
+            (wsParams:wsParams) 
         =
         result {
-          let! cereal = WorkspaceParams.getItem key workspaceParams
+          let! cereal = WsParams.getItem key wsParams
           return Convert.ToDouble(cereal) |> UMX.tag<stageWeight>
         }
     let setStageWeight
-            (key:string<workspaceParamsKey>) 
+            (key:string<wsParamsKey>) 
             (value:float<stageWeight>)
-            (workspaceParams:workspaceParams) 
+            (wsParams:wsParams) 
         =
-        workspaceParams |> WorkspaceParams.addItem key (value |> UMX.untag |> string)
+        wsParams |> WsParams.addItem key (value |> UMX.untag |> string)
 
 
     let getSwitchCount
-            (key:string<workspaceParamsKey>) 
-            (workspaceParams:workspaceParams) 
+            (key:string<wsParamsKey>) 
+            (wsParams:wsParams) 
         =
         result {
-          let! cereal = WorkspaceParams.getItem key workspaceParams
+          let! cereal = WsParams.getItem key wsParams
           return Convert.ToInt32(cereal) |> UMX.tag<switchCount>
         }
     let setSwitchCount
-            (key:string<workspaceParamsKey>) 
+            (key:string<wsParamsKey>) 
             (value:int<switchCount>)
-            (workspaceParams:workspaceParams) 
+            (wsParams:wsParams) 
         =
-        workspaceParams |> WorkspaceParams.addItem key (value |> UMX.untag |> string)
+        wsParams |> WsParams.addItem key (value |> UMX.untag |> string)
 
 
     let getSwitchGenMode
-            (key:string<workspaceParamsKey>) 
-            (workspaceParams:workspaceParams) 
+            (key:string<wsParamsKey>) 
+            (wsParams:wsParams) 
         =
         result {
-          let! cereal = WorkspaceParams.getItem key workspaceParams
+          let! cereal = WsParams.getItem key wsParams
           return! Json.deserialize<switchGenMode>(cereal)
         }
     let setSwitchGenMode
-            (key:string<workspaceParamsKey>) 
+            (key:string<wsParamsKey>) 
             (value:switchGenMode)
-            (workspaceParams:workspaceParams) 
+            (wsParams:wsParams) 
         =
-        workspaceParams |> WorkspaceParams.addItem key (Json.serialize(value))
+        wsParams |> WsParams.addItem key (Json.serialize(value))
 
 
     let getUseParallel
-            (key:string<workspaceParamsKey>) 
-            (workspaceParams:workspaceParams) 
+            (key:string<wsParamsKey>) 
+            (wsParams:wsParams) 
         =
         result {
-          let! cereal = WorkspaceParams.getItem key workspaceParams
+          let! cereal = WsParams.getItem key wsParams
           return Convert.ToBoolean (cereal) |> UMX.tag<useParallel>
         }
     let setUseParallel
-            (key:string<workspaceParamsKey>) 
+            (key:string<wsParamsKey>) 
             (value:bool<useParallel>)
-            (workspaceParams:workspaceParams) 
+            (wsParams:wsParams) 
         =
-        workspaceParams |> WorkspaceParams.addItem key (value |> UMX.untag |> string)
+        wsParams |> WsParams.addItem key (value |> UMX.untag |> string)
 
 
 

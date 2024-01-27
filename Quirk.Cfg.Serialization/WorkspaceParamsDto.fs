@@ -9,38 +9,38 @@ open Quirk.Serialization
 open Quirk.Cfg.Core
 open Quirk.Workspace
         
-type workspaceParamsDto = { 
+type wsParamsDto = { 
         id: Guid
         data: Map<string,string>
      }
 
-module WorkspaceParamsDto =
+module WsParamsDto =
 
-    let fromDto (dto:workspaceParamsDto) =
+    let fromDto (dto:wsParamsDto) =
         let rkm = dto.data 
                     |> Map.toSeq 
-                    |> Seq.map(fun (k,v) -> (k |> UMX.tag<workspaceParamsKey>,v))
+                    |> Seq.map(fun (k,v) -> (k |> UMX.tag<wsParamsKey>,v))
                     |> Map.ofSeq
 
-        WorkspaceParams.load
-            (dto.id |> UMX.tag<workspaceParamsId>)
+        WsParams.load
+            (dto.id |> UMX.tag<wsParamsId>)
             rkm
 
     let fromJson (jstr: string) =
         result {
-            let! dto = Json.deserialize<workspaceParamsDto> jstr
+            let! dto = Json.deserialize<wsParamsDto> jstr
             return fromDto dto
         }
 
-    let toDto (workspaceParams: workspaceParams) =
+    let toDto (wsParams: wsParams) =
         {
-            workspaceParamsDto.id = workspaceParams |> WorkspaceParams.getId |> UMX.untag
-            data = workspaceParams 
-                        |> WorkspaceParams.getMap
-                        |> Map.toSeq
-                        |> Seq.map(fun (k,v) -> (k |> UMX.untag,v))
-                        |> Map.ofSeq
+            wsParamsDto.id = wsParams |> WsParams.getId |> UMX.untag
+            data = wsParams 
+                    |> WsParams.getMap
+                    |> Map.toSeq
+                    |> Seq.map(fun (k,v) -> (k |> UMX.untag,v))
+                    |> Map.ofSeq
         }
 
-    let toJson (workspaceParams: workspaceParams) =
-        workspaceParams |> toDto |> Json.serialize
+    let toJson (wsParams: wsParams) =
+        wsParams |> toDto |> Json.serialize

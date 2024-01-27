@@ -3,68 +3,68 @@ open System
 open FSharp.UMX
 open Quirk.Core
 
-type workspaceParams =
+type wsParams =
     private 
-        { id: Guid<workspaceParamsId>; 
-          data: Map<string<workspaceParamsKey>,string> }
+        { id: Guid<wsParamsId>; 
+          data: Map<string<wsParamsKey>,string> }
 
-module WorkspaceParams =
+module WsParams =
 
     let load 
-            (id:Guid<workspaceParamsId>) 
-            (data: Map<string<workspaceParamsKey>,string>)
+            (id:Guid<wsParamsId>) 
+            (data: Map<string<wsParamsKey>,string>)
         =
         {
-            workspaceParams.id = id;
+            wsParams.id = id;
             data = data;
         }
 
-    let make (data: Map<string<workspaceParamsKey>,string>) =
+    let make (data: Map<string<wsParamsKey>,string>) =
         let nextId = 
             data |> Map.toArray |> Array.map(fun tup -> tup :> obj)
             |> GuidUtils.guidFromObjs 
-            |> UMX.tag<workspaceParamsId>
+            |> UMX.tag<wsParamsId>
         load nextId data
 
-    let getHeaders (workspaceParams:workspaceParams) =
-        workspaceParams.data.Keys |> Seq.fold (fun cur nv -> $"{cur}\t{nv |> UMX.untag}") ""
+    let getHeaders (wsParams:wsParams) =
+        wsParams.data.Keys |> Seq.fold (fun cur nv -> $"{cur}\t{nv |> UMX.untag}") ""
 
-    let getValues (workspaceParams:workspaceParams) =
-        workspaceParams.data.Values |> Seq.fold (fun cur nv -> $"{cur}\t{nv |> UMX.untag}") ""
+    let getValues (wsParams:wsParams) =
+        wsParams.data.Values |> Seq.fold (fun cur nv -> $"{cur}\t{nv |> UMX.untag}") ""
 
-    let getId (workspaceParams:workspaceParams) =
-        workspaceParams.id
+    let getId (wsParams:wsParams) =
+        wsParams.id
 
-    let getMap (workspaceParams:workspaceParams) =
-        workspaceParams.data
+    let getMap (wsParams:wsParams) =
+        wsParams.data
 
     let addItem 
-            (key:string<workspaceParamsKey>) 
+            (key:string<wsParamsKey>) 
             (cereal:string) 
-            (workspaceParams:workspaceParams) 
+            (wsParams:wsParams) 
         =
-        let newMap = workspaceParams.data |> Map.add key cereal
+        let newMap = wsParams.data |> Map.add key cereal
         make newMap
 
     let addItems
-            (kvps:(string<workspaceParamsKey>*string) seq) 
-            (workspaceParams:workspaceParams) =
-        Seq.fold (fun wp tup -> addItem (fst tup) (snd tup) wp) workspaceParams kvps
+            (kvps:(string<wsParamsKey>*string) seq) 
+            (wsParams:wsParams) =
+        Seq.fold (fun wp tup -> addItem (fst tup) (snd tup) wp) wsParams kvps
 
 
     let merge 
-            (workspaceParamsA:workspaceParams)
-            (workspaceParamsB:workspaceParams)
+            (wsParamsA:wsParams)
+            (wsParamsB:wsParams)
         =
-        workspaceParamsA
-        |> addItems  (workspaceParamsB |> getMap |> Map.toSeq)
+        wsParamsA
+        |> addItems  (wsParamsB |> getMap |> Map.toSeq)
 
 
     let getItem 
-            (key:string<workspaceParamsKey>) 
-            (workspaceParams:workspaceParams) 
+            (key:string<wsParamsKey>) 
+            (wsParams:wsParams) 
         =
-        if workspaceParams.data.ContainsKey(key) then
-           workspaceParams.data.[key] |> Ok
+        if wsParams.data.ContainsKey(key) then
+           wsParams.data.[key] |> Ok
         else
             $"the key: {key} was not found (405)" |> Error

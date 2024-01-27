@@ -14,12 +14,9 @@
 [<Measure>] type reportParamSetName
 
 
-[<Measure>] type workspaceId
-[<Measure>] type workspaceComponentId
 
-
-type workspaceComponentType =
-    | WorkspaceDescription = 0
+type wsComponentType =
+    | WsDescription = 0
     | SortableSet = 10
     | SorterSet = 20
     | SorterSetAncestry = 21
@@ -29,7 +26,7 @@ type workspaceComponentType =
     | SorterSetParentMap = 25
     | SorterSpeedBinSet = 30
     | SorterSetPruner = 40
-    | WorkspaceParams = 50
+    | WsParams = 50
 
 
 type quirkModelType =

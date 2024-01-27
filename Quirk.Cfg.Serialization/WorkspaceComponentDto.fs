@@ -9,9 +9,10 @@ open Quirk.Serialization
 open Quirk.Cfg.Core
 open Quirk.Workspace
 
-module WorkspaceComponentDto = 
 
-    let toJsonT (comp:workspaceComponent) =
+module WsComponentDataDto = 
+
+    let toJson (comp:wsComponentData) =
         match comp with
         | SortableSet sortableSet -> 
              sortableSet |> SortableSetDto.toJson
@@ -31,35 +32,94 @@ module WorkspaceComponentDto =
              sorterSpeedBinSet |> SorterSpeedBinSetDto.toJson
         | SorterSetPruner sorterSetPruner ->
              sorterSetPruner |> SorterSetPrunerWholeDto.toJson
-        | WorkspaceParams workspaceParams ->
-            workspaceParams |> WorkspaceParamsDto.toJson
-
-
+        | WsParams wsParams ->
+            wsParams |> WsParamsDto.toJson
 
     let fromJson 
-            (wct:workspaceComponentType) 
+            (wct:wsComponentType) 
             (cereal:string) 
         =
         match wct with
-        | workspaceComponentType.SortableSet ->
-            cereal |> SortableSetDto.fromJson |> Result.map(workspaceComponent.SortableSet)
-        | workspaceComponentType.SorterSet ->
-            cereal |> SorterSetDto.fromJson |> Result.map(workspaceComponent.SorterSet)
-        | workspaceComponentType.SorterSetAncestry ->
-            cereal |> SorterSetAncestryDto.fromJson |> Result.map(workspaceComponent.SorterSetAncestry)
-        | workspaceComponentType.SorterSetMutator ->
-            cereal |> SorterSetMutatorDto.fromJson |> Result.map(workspaceComponent.SorterSetMutator)
-        | workspaceComponentType.SorterSetConcatMap ->
-            cereal |> SorterSetConcatMapDto.fromJson |> Result.map(workspaceComponent.SorterSetConcatMap)
-        | workspaceComponentType.SorterSetParentMap ->
-            cereal |> SorterSetParentMapDto.fromJson |> Result.map(workspaceComponent.SorterSetParentMap)
-        | workspaceComponentType.SorterSetEval ->
-            cereal |> SorterSetEvalDto.fromJson |> Result.map(workspaceComponent.SorterSetEval)
-        | workspaceComponentType.SorterSpeedBinSet ->
-            cereal |> SorterSpeedBinSetDto.fromJson |> Result.map(workspaceComponent.SorterSpeedBinSet)
-        | workspaceComponentType.SorterSetPruner ->
-            cereal |> SorterSetPrunerWholeDto.fromJson |> Result.map(workspaceComponent.SorterSetPruner)
-        | workspaceComponentType.WorkspaceParams ->
-            cereal |> WorkspaceParamsDto.fromJson |> Result.map(workspaceComponent.WorkspaceParams)
-        | _ -> "unhandled workspaceComponentType" |> Error
+        | wsComponentType.SortableSet ->
+            cereal |> SortableSetDto.fromJson |> Result.map(wsComponentData.SortableSet)
+        | wsComponentType.SorterSet ->
+            cereal |> SorterSetDto.fromJson |> Result.map(wsComponentData.SorterSet)
+        | wsComponentType.SorterSetAncestry ->
+            cereal |> SorterSetAncestryDto.fromJson |> Result.map(wsComponentData.SorterSetAncestry)
+        | wsComponentType.SorterSetMutator ->
+            cereal |> SorterSetMutatorDto.fromJson |> Result.map(wsComponentData.SorterSetMutator)
+        | wsComponentType.SorterSetConcatMap ->
+            cereal |> SorterSetConcatMapDto.fromJson |> Result.map(wsComponentData.SorterSetConcatMap)
+        | wsComponentType.SorterSetParentMap ->
+            cereal |> SorterSetParentMapDto.fromJson |> Result.map(wsComponentData.SorterSetParentMap)
+        | wsComponentType.SorterSetEval ->
+            cereal |> SorterSetEvalDto.fromJson |> Result.map(wsComponentData.SorterSetEval)
+        | wsComponentType.SorterSpeedBinSet ->
+            cereal |> SorterSpeedBinSetDto.fromJson |> Result.map(wsComponentData.SorterSpeedBinSet)
+        | wsComponentType.SorterSetPruner ->
+            cereal |> SorterSetPrunerWholeDto.fromJson |> Result.map(wsComponentData.SorterSetPruner)
+        | wsComponentType.WsParams ->
+            cereal |> WsParamsDto.fromJson |> Result.map(wsComponentData.WsParams)
+        | _ -> "unhandled wsComponentType" |> Error
 
+
+
+
+type wsComponentDto =
+     { 
+        id: Guid; 
+        name: string
+        componentType:string
+        componentData:string
+     }
+
+module WsComponentDto =
+
+    let fromDto (dto:wsComponentDto) =
+        result {
+        
+            let id = dto.id |> UMX.tag<wsComponentId>
+            let name = dto.name |> UMX.tag<wsComponentName>
+            let! componentType = dto.componentType |> WsComponentType.fromString
+            let! componentData = 
+                    dto.componentData |> WsComponentDataDto.fromJson componentType
+
+            return 
+                WsComponent.load
+                    id
+                    name
+                    componentType
+                    componentData
+        }
+
+    let fromJson (jstr: string) =
+        result {
+            let! dto = Json.deserialize<wsComponentDto> jstr
+            return fromDto dto
+        }
+
+    let toDto (wsComponent: wsComponent) =
+        {
+            wsComponentDto.id = 
+                wsComponent 
+                |> WsComponent.getId |> UMX.untag
+
+            name = 
+                wsComponent 
+                |> WsComponent.getName
+                |> UMX.untag
+
+            componentType =
+                wsComponent
+                |> WsComponent.getWsComponentType
+                |> WsComponentType.toString
+
+            componentData =
+                wsComponent
+                |> WsComponent.getWsComponentData
+                |> WsComponentDataDto.toJson
+
+        }
+
+    let toJson (wsComponent: wsComponent) =
+        wsComponent |> toDto 

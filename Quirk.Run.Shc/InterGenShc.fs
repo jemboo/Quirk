@@ -13,6 +13,8 @@ open Quirk.Workspace
 
 module InterGenShc =
 
-    let getWorkspaceParamsFromSimParamSet
-            (simParamSet:simParamSet) =
+    let getWsParamsFromSimParamSet
+            (rootDir:string<folderPath>)
+            (projectDataStore:IProjectDataStore)
+            (wsParams:wsParams) =
         ()
