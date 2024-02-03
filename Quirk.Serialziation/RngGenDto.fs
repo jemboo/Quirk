@@ -18,7 +18,7 @@ module RngTypeDto =
         match str with
         | nameof rngType.Lcg -> rngType.Lcg |> Ok
         | nameof rngType.Net -> rngType.Net |> Ok
-        | _ -> Error(sprintf "no match for RngType: %s" str)
+        | _ -> Error(sprintf "no match for RngType: %s (*80)" str)
 
 
 

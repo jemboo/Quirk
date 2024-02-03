@@ -16,7 +16,7 @@ module TwoCycle =
         if CollectionProps.isTwoCycle vals then
             { twoCycle.values = vals } |> Ok
         else
-            "not a two cycle" |> Error
+            "not a two cycle (*48)" |> Error
 
     let createNr (vals: int[]) =
         { twoCycle.values = vals }

@@ -8,35 +8,7 @@ open Quirk.Script
 open Quirk.Storage
 open System.Threading
 open Quirk.Workspace
-
-
-module ShcWsParamKeys =
-    let quirkWorldLineId = "quirkWorldLineId" |> UMX.tag<wsParamsKey>
-    let runType = "runType" |> UMX.tag<wsParamsKey>
-    let reportType = "reportType" |> UMX.tag<wsParamsKey>
-    let generationStart = "generationStart" |> UMX.tag<wsParamsKey>
-    let generationEnd = "generationEnd" |> UMX.tag<wsParamsKey>
-    let generation_filter_short = "generation_filter_short" |> UMX.tag<wsParamsKey>
-    let generation_filter_long = "generation_filter_long" |> UMX.tag<wsParamsKey>
-    let reportInterval = "reportInterval" |> UMX.tag<wsParamsKey>
-    let rngGenCreate = "rngGenCreate" |> UMX.tag<wsParamsKey>
-    let rngGenMutate = "rngGenMutate" |> UMX.tag<wsParamsKey>
-    let rngGenPrune = "rngGenPrune" |> UMX.tag<wsParamsKey>
-    let mutationRate = "mutationRate" |> UMX.tag<wsParamsKey>
-    let noiseFraction = "noiseFraction" |> UMX.tag<wsParamsKey>
-    let order = "order" |> UMX.tag<wsParamsKey>
-    let reproductionRate = "reproductionRate" |> UMX.tag<wsParamsKey>
-    let sortableSetCfgType = "sortableSetCfgType" |> UMX.tag<wsParamsKey>
-    let sorterCount = "sorterCount" |> UMX.tag<wsParamsKey>
-    let sorterCountMutated = "sorterCountMutated" |> UMX.tag<wsParamsKey>
-    let sorterEvalMode = "sorterEvalMode" |> UMX.tag<wsParamsKey>
-    let stagesSkipped = "stagesSkipped" |> UMX.tag<wsParamsKey>
-    let sorterLength = "sorterLength" |> UMX.tag<wsParamsKey>
-    let stageWeight = "stageWeight" |> UMX.tag<wsParamsKey>
-    let switchGenMode = "switchGenMode" |> UMX.tag<wsParamsKey>
-    let sortableSetId = "sortableSetId" |> UMX.tag<wsParamsKey>
-    let sorterSetPruneMethod = "sorterSetPruneMethod" |> UMX.tag<wsParamsKey>
-    let useParallel = "useParallel" |> UMX.tag<wsParamsKey>
+open System
 
 
 module RunShc =
@@ -65,8 +37,8 @@ module RunShc =
                 WsParams.make Map.empty
                 |> WsParamsAttrs.setGeneration ShcWsParamKeys.generationStart generationStart
                 |> WsParamsAttrs.setGeneration ShcWsParamKeys.generationEnd generationEnd
-                |> WsParamsAttrs.setGeneration ShcWsParamKeys.generation_filter_short reportInterval
-                |> WsParamsAttrs.setGeneration ShcWsParamKeys.generation_filter_long snapshotInterval
+                |> WsParamsAttrs.setGeneration ShcWsParamKeys.reportInterval reportInterval
+                |> WsParamsAttrs.setGeneration ShcWsParamKeys.snapshotInterval snapshotInterval
 
             return wsParams
         }
@@ -122,9 +94,9 @@ module RunShc =
                  modelParamSet 
                  |> ModelParamSet.getNoiseFraction ("noiseFraction" |> UMX.tag<modelParamName>)
 
-            let! (_, order) = 
+            let! (_, modelAlpha) = 
                  modelParamSet 
-                 |> ModelParamSet.getOrder ("order" |> UMX.tag<modelParamName>)
+                 |> ModelParamSet.getModelAlpha ("modelAlpha" |> UMX.tag<modelParamName>)
 
             let! (_, parentCount) = 
                  modelParamSet 
@@ -153,7 +125,10 @@ module RunShc =
                 |> WsParamsAttrs.setQuirkWorldLineId ShcWsParamKeys.quirkWorldLineId quirkWorldLineId
                 |> WsParamsAttrs.setMutationRate ShcWsParamKeys.mutationRate mutationRate
                 |> WsParamsAttrs.setNoiseFraction ShcWsParamKeys.noiseFraction noiseFraction
-                |> WsParamsAttrs.setOrder ShcWsParamKeys.order order
+                |> WsParamsAttrs.setOrder ShcWsParamKeys.order (modelAlpha |> ModelAlpha.getOrder)
+                |> WsParamsAttrs.setSortableSetCfgType ShcWsParamKeys.sortableSetCfgType (modelAlpha |> ModelAlpha.getSortableSetCfgType)
+                |> WsParamsAttrs.setSwitchCount ShcWsParamKeys.switchCount (modelAlpha |> ModelAlpha.getSwitchCount)
+                |> WsParamsAttrs.setSorterEvalMode ShcWsParamKeys.order (modelAlpha |> ModelAlpha.getSorterEvalMode)
                 |> WsParamsAttrs.setSorterCount ShcWsParamKeys.sorterCount parentCount
                 |> WsParamsAttrs.setReproductionRate ShcWsParamKeys.reproductionRate reproductionRate
                 |> WsParamsAttrs.setSorterSetPruneMethod ShcWsParamKeys.sorterSetPruneMethod sorterSetPruneMethod
@@ -178,18 +153,34 @@ module RunShc =
 
 
 
-    let doRun
+    let doRunRun
             (rootDir:string<folderPath>)
+            (projectName: string<projectName>) 
             (projectDataStore:IProjectDataStore)
             (useParallel:bool<useParallel>)
             (quirkRun:quirkRun)
         =
         result {
-            let wsParams = 
+            let! wsParams = 
                 quirkRun 
                 |> toWsParams
                     useParallel
 
+            let! res = InterGenShc.procWl rootDir projectName projectDataStore wsParams
 
             return ()
         }
+
+
+    let doRun
+            (rootDir:string<folderPath>)
+            (projectName: string<projectName>) 
+            (projectDataStore:IProjectDataStore)
+            (useParallel:bool<useParallel>)
+            (quirkRun:quirkRun)
+        =
+        let res = doRunRun rootDir projectName projectDataStore useParallel quirkRun
+        match res with
+        | Ok v -> Console.WriteLine "Ok"
+        | Error m -> Console.WriteLine $"error: {m}"
+        ()

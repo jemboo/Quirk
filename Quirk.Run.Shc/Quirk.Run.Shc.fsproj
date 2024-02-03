@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="WorkspaceComponentType.fs" />
+    <Compile Include="RunShcTypes.fs" />
     <Compile Include="InterGenShc.fs" />
     <Compile Include="RunShc.fs" />
   </ItemGroup>

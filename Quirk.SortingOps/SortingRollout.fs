@@ -426,7 +426,7 @@ module SortingRollout =
             try
                 f sorter sortableSet |> Ok
             with ex ->
-                (sprintf "error in makeSorterOpOutput: %s" ex.Message) |> Result.Error
+                (sprintf "error in makeSorterOpOutput: %s (*88)" ex.Message) |> Result.Error
 
         match sorterOpTrackMod with
         | sorterOpTrackMode.SwitchTrack -> _wrapo applySorterAndMakeSwitchTrack sortr sortableSt

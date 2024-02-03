@@ -20,6 +20,7 @@ module RunGa =
             (genEnd:int<generation>)
             (quirkRun:quirkRun)
         =
-        result {
-            return ()
-        }
+        ()
+        //result {
+        //    return ()
+        //}

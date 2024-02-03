@@ -31,7 +31,6 @@ module CfgPlexItem =
             cfgPlexItem.cfgPlexItemValues = cfgPlexItemValues;
         }
 
-
     let getName (cfgPlexItem:cfgPlexItem) =
         cfgPlexItem.cfgPlexItemName
 

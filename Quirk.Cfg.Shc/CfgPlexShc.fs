@@ -1,8 +1,9 @@
 ﻿namespace Quirk.Cfg.Shc
 
 open FSharp.UMX
-open Quirk.Core
+open Quirk.Cfg
 open Quirk.Cfg.Core
+open Quirk.Core
 open Quirk.Iter
 open Quirk.Project
 open Quirk.Sorting
@@ -23,11 +24,20 @@ module O_64 =
                 (1 |> UMX.tag<cfgPlexItemRank>)
                 (ModelParamValue.makeNoiseFractions [0.001;])
 
-    let cpiOrders =
+    let cpiModelAlphas =
+            let order = 64 |> UMX.tag<order>
             CfgPlexItem.create
-                ("orders" |> UMX.tag<cfgPlexItemName>)
+                ("modelAlpha" |> UMX.tag<cfgPlexItemName>)
                 (2 |> UMX.tag<cfgPlexItemRank>)
-                (ModelParamValue.makeOrders [64;])
+                (ModelParamValue.makeModelAlphas 
+                    [
+                        ModelAlpha.load 
+                            order
+                            sortableSetCfgType.MergeWithInts
+                            (SwitchCount.orderTo999SwitchCount order)
+                            sorterEvalMode.CheckSuccess
+                    ]
+                )
 
     let cpiParentCounts =
             CfgPlexItem.create
@@ -70,6 +80,8 @@ module O_64 =
                 (ModelParamValue.makeSwitchGenModes [switchGenMode.stage; switchGenMode.stageSymmetric])
 
 
+
+
     let plex64 
             (projectName:string<projectName>) 
             (cfgPlexName:string<cfgPlexName>) 
@@ -80,12 +92,12 @@ module O_64 =
                 [| 
                    cpiMutationRates; 
                    cpiNoiseFractions; 
-                   cpiOrders; 
+                   cpiModelAlphas; 
                    cpiParentCounts; 
                    cpiReproductionRates; 
                    cpiSorterSetPruneMethods; 
                    cpiStageWeights; 
-                   cpiSwitchGenModes; 
+                   cpiSwitchGenModes;
                 |]
 
 

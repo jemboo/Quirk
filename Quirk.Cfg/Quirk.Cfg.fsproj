@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="SorterSetRndCfg.fs" />
     <Compile Include="SortableSetCfg.fs" />
     <Compile Include="Library.fs" />
   </ItemGroup>
@@ -15,7 +16,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Quirk.Cfg.Core\Quirk.Cfg.Core.fsproj" />
+    <ProjectReference Include="..\Quirk.Core\Quirk.Core.fsproj" />
+    <ProjectReference Include="..\Quirk.SortingOps\Quirk.SortingOps.fsproj" />
+    <ProjectReference Include="..\Quirk.SortingResults\Quirk.SortingResults.fsproj" />
+    <ProjectReference Include="..\Quirk.Sorting\Quirk.Sorting.fsproj" />
   </ItemGroup>
 
 </Project>

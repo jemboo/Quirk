@@ -67,4 +67,4 @@ module WsParams =
         if wsParams.data.ContainsKey(key) then
            wsParams.data.[key] |> Ok
         else
-            $"the key: {key} was not found (405)" |> Error
+            $"the key: {key} was not found (*102)" |> Error

@@ -11,7 +11,7 @@ module StringUtil =
         if Int32.TryParse(s, &result) then
             Ok result
         else
-            Error $"Failed to parse {s} as an int32"
+            Error $"Failed to parse {s} as an int32 (*33)"
 
 
     let parseUint64 (s: string) : Result<uint64, string> =
@@ -19,7 +19,7 @@ module StringUtil =
         if UInt64.TryParse(s, &result) then
             Ok result
         else
-            Error $"Failed to parse {s} as a uint64"
+            Error $"Failed to parse {s} as a uint64 (*34)"
 
 
     let parseFloat (s: string) : Result<float, string> =
@@ -27,7 +27,7 @@ module StringUtil =
         if Double.TryParse(s, &result) then
             Ok result
         else
-            Error $"Failed to parse {s} as a float"
+            Error $"Failed to parse {s} as a float (*35)"
         
     let nullOption (sV:string option) =
         match sV with

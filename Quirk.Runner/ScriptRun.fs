@@ -31,6 +31,39 @@ module ScriptRun =
         }
 
 
+    //let runQuirkRun
+    //        (rootDir:string<folderPath>)
+    //        (projectDataStore:IProjectDataStore)
+    //        (projectName:string<projectName>)
+    //        (useParallel:bool<useParallel>)
+    //        (genStart:int<generation>)
+    //        (genEnd:int<generation>)
+    //        (quirkRun:quirkRun)
+    //    =
+    //    result {
+    //        let! runRes = 
+    //            match (quirkRun |> QuirkRun.getQuirkModelType) with
+    //                | quirkModelType.Shc ->
+    //                    RunShc.doRun 
+    //                        rootDir
+    //                        projectName
+    //                        projectDataStore 
+    //                        useParallel
+    //                        quirkRun
+
+    //                | quirkModelType.Ga ->
+    //                    RunGa.doRun 
+    //                        rootDir 
+    //                        projectDataStore 
+    //                        useParallel
+    //                        genStart
+    //                        genEnd
+    //                        quirkRun
+    //        let! updateRes = updateProject rootDir projectDataStore projectName quirkRun
+    //        return ()
+    //    }
+
+    
     let runQuirkRun
             (rootDir:string<folderPath>)
             (projectDataStore:IProjectDataStore)
@@ -40,12 +73,12 @@ module ScriptRun =
             (genEnd:int<generation>)
             (quirkRun:quirkRun)
         =
-        result {
-            let! runRes = 
+            let runRes = 
                 match (quirkRun |> QuirkRun.getQuirkModelType) with
                     | quirkModelType.Shc ->
                         RunShc.doRun 
-                            rootDir 
+                            rootDir
+                            projectName
                             projectDataStore 
                             useParallel
                             quirkRun
@@ -58,9 +91,9 @@ module ScriptRun =
                             genStart
                             genEnd
                             quirkRun
-            let! updateRes = updateProject rootDir projectDataStore projectName quirkRun
-            return ()
-        }
+
+            let updateRes = updateProject rootDir projectDataStore projectName quirkRun
+            ()
 
 
     let runQuirkScript
@@ -74,10 +107,9 @@ module ScriptRun =
         =
         result {
             let quirkRuns = quirkScript |> QuirkScript.getQuirkRuns
-            let! yab = quirkRuns 
+            let yab = quirkRuns 
                       |> Array.map(runQuirkRun rootDir cCfgPlexDataStore projectName useParallel genStart genEnd)
                       |> Array.toList
-                      |> Result.sequence
             return ()
         }
 

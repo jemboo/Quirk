@@ -180,7 +180,7 @@ module RefSorter =
         | Degree26 -> (SorterData.Degree26Str, d 26) |> Ok
         | Degree28 -> (SorterData.Degree28Str, d 28) |> Ok
         | Degree32 -> (SorterData.Degree32Str, d 32) |> Ok
-        | _ -> "no match found in GetStringAndDegree" |> Error
+        | _ -> "no match found in GetStringAndDegree (*86)" |> Error
 
 
     let createRefSorter 
@@ -229,7 +229,7 @@ module RefSorter =
         | 30 -> RefSorter.Degree30 |> Ok
         | 31 -> RefSorter.Degree31 |> Ok
         | 32 -> RefSorter.Degree32 |> Ok
-        | _ -> "no match found in RefSorterForDegree" |> Error
+        | _ -> "no match found in RefSorterForDegree (*87)" |> Error
 
 
     let goodRefSorterForOrder 

@@ -141,7 +141,7 @@ module SorterSpeed =
             let sortrPhenotypId = switchesUsd |> SorterPhenotypeId.createFromSwitches
             (create usedSwitchCt usedStageCt, sortrPhenotypId, switchUseCts) |> Ok
         with ex ->
-            (sprintf "error in SorterSpeed.fromSorterOpOutput: %s" ex.Message)
+            (sprintf "error in SorterSpeed.fromSorterOpOutput: %s (*89)" ex.Message)
             |> Result.Error
 
 

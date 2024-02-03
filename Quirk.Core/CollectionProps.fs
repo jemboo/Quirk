@@ -135,7 +135,7 @@ module CollectionProps =
                 i <- i + 1
             acc |> Ok
         with ex ->
-            $"error in distanceSquared: { ex.Message }" |> Result.Error
+            $"error in distanceSquared: (*11) { ex.Message }" |> Result.Error
 
 
     let inline isDistanceGtZero  (a: ^a[]) (b: ^a[]) =
@@ -147,7 +147,7 @@ module CollectionProps =
                 i <- i + 1
             (acc > (zero_of a.[0]) ) |> Ok
         with ex ->
-            $"error in distanceSquared: { ex.Message }" |> Result.Error
+            $"error in distanceSquared: (*12) { ex.Message }" |> Result.Error
 
 
     let inline isDistanceGtZeroC  (a: ^a[]) (b: ^a[]) =

@@ -18,8 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Quirk.Cfg\Quirk.Cfg.fsproj" />
     <ProjectReference Include="..\Quirk.Core\Quirk.Core.fsproj" />
-    <ProjectReference Include="..\Quirk.Run.Core\Quirk.Run.Core.fsproj" />
     <ProjectReference Include="..\Quirk.Serialziation\Quirk.Serialziation.fsproj" />
     <ProjectReference Include="..\Quirk.SortingResults\Quirk.SortingResults.fsproj" />
     <ProjectReference Include="..\Quirk.Sorting\Quirk.Sorting.fsproj" />

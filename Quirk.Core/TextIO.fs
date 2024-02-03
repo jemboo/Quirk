@@ -41,7 +41,7 @@ module TextIO =
     let getFolders (folderPath:string) =
         result {
             if (Directory.Exists folderPath |> not) then
-               return! $"directory: {folderPath} does not exist" |> Error
+               return! $"directory: {folderPath} does not exist (*36)" |> Error
             else
                return Directory.EnumerateDirectories(folderPath)
         }
@@ -68,9 +68,9 @@ module TextIO =
             if File.Exists(ffp) then
                 File.ReadAllLines ffp |> Ok
             else
-                sprintf "not found (401): %s" ffp |> Error
+                sprintf "not found (*37): %s" ffp |> Error
         with ex ->
-            ("error in TextIO.readAllLines: " + ex.Message) |> Result.Error
+            ("error in TextIO.readAllLines: (*38)" + ex.Message) |> Result.Error
 
 
     let readAllText
@@ -81,9 +81,9 @@ module TextIO =
             if File.Exists(ffp) then
                 File.ReadAllText ffp |> Ok
             else
-                sprintf "not found (402): %s" ffp |> Error
+                sprintf "not found (*39): %s" ffp |> Error
         with ex ->
-            ("error in TextIO.readAllText: " + ex.Message) |> Result.Error
+            ("error in TextIO.readAllText: (*40)" + ex.Message) |> Result.Error
 
 
     let appendLines
@@ -97,7 +97,7 @@ module TextIO =
             File.AppendAllLines(ffp, data)
             true |> Ok
         with ex ->
-            ("error in TextIO.appendLines: " + ex.Message) |> Result.Error
+            ("error in TextIO.appendLines: (*41)" + ex.Message) |> Result.Error
 
 
     let writeLinesEnsureHeader
@@ -117,7 +117,7 @@ module TextIO =
                 File.AppendAllLines(ffp, data)
                 true |> Ok
         with ex ->
-            ("error in TextIO.writeLinesIfNew: " + ex.Message) |> Result.Error
+            ("error in TextIO.writeLinesIfNew: (*42)" + ex.Message) |> Result.Error
 
 
     let writeToFileIfMissing
@@ -134,7 +134,7 @@ module TextIO =
                 File.WriteAllText(ffp, data)
                 true |> Ok
         with ex ->
-            ("error in TextIO.writeToFile: " + ex.Message) |> Result.Error
+            ("error in TextIO.writeToFile: (*43)" + ex.Message) |> Result.Error
 
 
     let writeToFileOverwrite
@@ -148,7 +148,7 @@ module TextIO =
             File.WriteAllText(ffp, data)
             () |> Ok
         with ex ->
-            ("error in TextIO.writeToFile: " + ex.Message) |> Result.Error
+            ("error in TextIO.writeToFile: (*44)" + ex.Message) |> Result.Error
 
 
     // gets the next file from sourceFolderPath, and returns a tuple a*b
@@ -165,9 +165,9 @@ module TextIO =
             use mutex = new Mutex(false, "FileMoveMutex")
             let mutable fileNameAndContents = ("" |> UMX.tag<fnWExt>, "") |> Ok
             if (sourceFolder |> UMX.untag |> Directory.Exists |> not) then
-                $"{sourceFolder |> UMX.untag } not found" |> Error
+                $"{sourceFolder |> UMX.untag } not found (*45)" |> Error
             elif (sourceFolder |> UMX.untag |> Directory.EnumerateFiles |> Seq.isEmpty) then
-                $" no files in {sourceFolder} " |> Error
+                $" no files in {sourceFolder} (*46)" |> Error
             else
             if mutex.WaitOne() then
                     try
@@ -181,5 +181,5 @@ module TextIO =
                         fileNameAndContents <- (foundFileName |> UMX.tag<fnWExt>, (File.ReadAllText destinationFileNameAndPath)) |> Ok
                         mutex.ReleaseMutex()
                     with ex ->
-                            fileNameAndContents <- $"error in getNextScript: { ex.Message }" |> Result.Error
+                            fileNameAndContents <- $"error in getNextScript: { ex.Message } (*47)" |> Result.Error
             fileNameAndContents

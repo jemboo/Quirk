@@ -21,7 +21,7 @@ module SortableIntArray =
         let sc = symbolCount |> UMX.untag |> int
 
         if (ordV <> sc) then
-            sprintf "order %d and symbolcount %d don't match" ordV sc |> Error
+            sprintf "order %d and symbolcount %d don't match (*83)" ordV sc |> Error
         else
             { sortableIntArray.values = [| 0 .. ordV - 1 |]
               order = order

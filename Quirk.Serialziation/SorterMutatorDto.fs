@@ -79,7 +79,7 @@ module SorterMutatorDto =
                     |> SorterUniformMutatorDto.fromJson
                     |> Result.map(sorterMutator.Uniform)
 
-                | _ -> "sorterMutator type not matched" |> Error
+                | _ -> "sorterMutator type not matched (*81)" |> Error
         }
 
     let fromJson (jstr: string) =

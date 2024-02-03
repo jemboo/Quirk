@@ -46,4 +46,4 @@ module WsComponentType =
        | "SorterSpeedBinSet" -> wsComponentType.SorterSpeedBinSet |> Ok
        | "SorterSetPruner" -> wsComponentType.SorterSetPruner |> Ok
        | "WsParams" -> wsComponentType.WsParams |> Ok
-       | a -> $"{a} is not handled in WsComponentType.fromString" |> Error
+       | a -> $"{a} is not handled in WsComponentType.fromString (*103)" |> Error

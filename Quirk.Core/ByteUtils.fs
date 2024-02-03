@@ -17,7 +17,7 @@ module ByteUtils =
         try
             Convert.FromBase64String(s) |> Ok
         with ex ->
-            ("error in fromBase64: " + ex.Message) |> Result.Error
+            ("error in fromBase64: (*2) " + ex.Message) |> Result.Error
 
 
     let toInt (bv: bool) =
@@ -327,7 +327,7 @@ module ByteUtils =
 
             stripedArray |> Ok
         with ex ->
-            ("error in uint64ArraytoBitStriped: " + ex.Message) |> Result.Error
+            ("error in uint64ArraytoBitStriped: (*3) " + ex.Message) |> Result.Error
 
 
     let uint64ArraytoBitStriped2D 
@@ -353,7 +353,7 @@ module ByteUtils =
 
             stripedArray |> Ok
         with ex ->
-            ("error in uint64ArraytoBitStriped2D: " + ex.Message) |> Result.Error
+            ("error in uint64ArraytoBitStriped2D: (*4)" + ex.Message) |> Result.Error
 
 
     let bitStripeToUint64
@@ -384,7 +384,7 @@ module ByteUtils =
 
             packedArray |> Ok
         with ex ->
-            ("error in bitStripedToUint64array: " + ex.Message) |> Result.Error
+            ("error in bitStripedToUint64array: (*5)" + ex.Message) |> Result.Error
 
 
 
@@ -438,7 +438,7 @@ module ByteUtils =
 
             (stripedArrays, arrayCt) |> Ok
         with ex ->
-            ("error in makeStripedArraysFromBoolArrays: " + ex.Message) |> Result.Error
+            ("error in makeStripedArraysFromBoolArrays: (*6)" + ex.Message) |> Result.Error
 
 
     let fromStripeArray<'a when 'a: equality> (zero_v: 'a) (one_v: 'a) (striped: uint64[]) =

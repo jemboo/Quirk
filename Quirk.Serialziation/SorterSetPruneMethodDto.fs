@@ -48,7 +48,7 @@ module SorterSetPruneMethodDto =
         | "Shc" -> 
              sorterSetPruneMethod.Shc |> Ok
 
-        | _ -> $"{dto.duType} not handled in SorterSetPruneTypeDto.fromDto" |> Error
+        | _ -> $"{dto.duType} not handled in SorterSetPruneTypeDto.fromDto (*82)" |> Error
 
 
     let fromJson (cereal:string) =

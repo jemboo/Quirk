@@ -5,13 +5,15 @@ open Quirk.Core
 open Quirk.Sorting
 open Quirk.SortingResults
 open Quirk.Iter
+open Quirk.Cfg
 
 type modelParamValue =
+    | ModelAlpha of string<modelParamName> * modelAlpha
     | MutationRate of string<modelParamName> * float<mutationRate>
     | NoiseFraction of string<modelParamName> * float<noiseFraction>
-    | Order of string<modelParamName> * int<order>
     | ParentCount of string<modelParamName> * int<sorterCount>
     | ReproductionRate of string<modelParamName> * float<reproductionRate>
+    | SortableSetCfgType of string<modelParamName> * sortableSetCfgType
     | SorterSetPruneMethod of string<modelParamName> * sorterSetPruneMethod
     | StageWeight of string<modelParamName> * float<stageWeight>
     | SwitchGenMode of string<modelParamName> * switchGenMode
@@ -19,16 +21,16 @@ type modelParamValue =
 
 module ModelParamValue =
 
+    let makeModelAlphas (modelAlphas: modelAlpha seq) =
+        modelAlphas |> Seq.map(fun ma -> ("modelAlpha" |> UMX.tag<modelParamName>, ma) |> modelParamValue.ModelAlpha)
+        |> Seq.toArray
+
     let makeMutationRates (rates: float seq) =
         rates |> Seq.map(fun r -> ("mutationRate" |> UMX.tag<modelParamName>, r |> UMX.tag<mutationRate>) |> modelParamValue.MutationRate)
         |> Seq.toArray
 
-    let makeNoiseFractions (rates: float seq) =
-        rates |> Seq.map(fun r -> ("noiseFraction" |> UMX.tag<modelParamName>, r |> UMX.tag<noiseFraction>) |> modelParamValue.NoiseFraction)
-        |> Seq.toArray
-
-    let makeOrders (rates: int seq) =
-        rates |> Seq.map(fun r -> ("order" |> UMX.tag<modelParamName>, r |> UMX.tag<order>) |> modelParamValue.Order)
+    let makeNoiseFractions (noiseFractions: float seq) =
+        noiseFractions |> Seq.map(fun r -> ("noiseFraction" |> UMX.tag<modelParamName>, r |> UMX.tag<noiseFraction>) |> modelParamValue.NoiseFraction)
         |> Seq.toArray
 
     let makeParentCounts (rates: int seq) =
@@ -54,11 +56,12 @@ module ModelParamValue =
 
     let getModelParamName (modelParamValue: modelParamValue) =
         match modelParamValue with
+        | ModelAlpha (n, o) -> n
         | MutationRate (n, o) -> n
         | NoiseFraction (n, nf) -> n
-        | Order (n, o) -> n
         | ParentCount (n, pc) -> n
         | ReproductionRate (n, mr) -> n
+        | SortableSetCfgType (n, ssp) -> n
         | SorterSetPruneMethod (n, ssp) -> n
         | StageWeight (n, sw) -> n
         | SwitchGenMode (n, sgm) -> n
@@ -66,6 +69,13 @@ module ModelParamValue =
 
     let toArrayOfStrings (modelParamValue: modelParamValue) =
         match modelParamValue with
+        | ModelAlpha (n, o) ->
+                [|
+                    "ModelAlpha";
+                    n |> UMX.untag
+                    o |> QuirkModelAlphaDto.toJson
+                |]
+
         | MutationRate (n, o) ->
                 [|
                     "MutationRate";
@@ -78,13 +88,6 @@ module ModelParamValue =
                     "NoiseFraction";
                     n |> UMX.untag
                     nf |> UMX.untag |> string
-                |]
-
-        | Order (n, o) ->
-                [|
-                    "Order";
-                    n |> UMX.untag
-                    o |> UMX.untag |> string
                 |]
 
         | ParentCount (n, pc) ->
@@ -106,6 +109,13 @@ module ModelParamValue =
                     "SorterSetPruneMethod";
                     n |> UMX.untag
                     ssp |> SorterSetPruneMethod.toReport
+                |]
+
+        | SortableSetCfgType (n, ssp) ->
+                [|
+                    "SortableSetCfgType";
+                    n |> UMX.untag
+                    ssp |> SortableSetCfgType.toString
                 |]
 
         | StageWeight (n, sw) ->
@@ -130,6 +140,13 @@ module ModelParamValue =
 
     let fromArrayOfStrings (lst: string array) : Result<modelParamValue, string> =
         match lst with
+        | [|"ModelAlpha"; n; o|] ->
+            result {
+                let! ov = QuirkModelAlphaDto.fromJson o
+                let rpName = n |> UMX.tag<modelParamName>
+                return (rpName, ov)
+                        |> modelParamValue.ModelAlpha
+            }
 
         | [|"MutationRate"; n; o|] ->
             result {
@@ -145,13 +162,6 @@ module ModelParamValue =
                 let rpName = n |> UMX.tag<modelParamName>
                 return (rpName, nfValue |> UMX.tag<noiseFraction>)
                         |> modelParamValue.NoiseFraction
-            }
-
-        | [|"Order"; n; o|] ->
-            result {
-                let! ov = StringUtil.parseInt o
-                let rpName = n |> UMX.tag<modelParamName>
-                return (rpName, ov |> UMX.tag<order>) |> modelParamValue.Order
             }
 
         | [|"ParentCount"; n; pc;|] ->
@@ -195,7 +205,7 @@ module ModelParamValue =
                 return (rpName, smv) |> modelParamValue.SwitchGenMode
             }
 
-        | uhv -> $"not handled in CfgPlexType.fromList %A{uhv}" |> Error
+        | uhv -> $"not handled in CfgPlexType.fromList %A{uhv} (*49)" |> Error
             
 
 
@@ -274,7 +284,7 @@ module ModelParamSet =
         | Some v -> 
             match v with
             | modelParamValue.MutationRate (a,b) -> (a,b) |> Ok
-            | _ -> "not a mutationRate" |> Error
+            | _ -> "not a mutationRate (*50)" |> Error
         | _ -> $"modelParamName {modelParamName |> UMX.untag}" |> Error  
 
 
@@ -287,11 +297,11 @@ module ModelParamSet =
         | Some v -> 
             match v with
             | modelParamValue.NoiseFraction (a,b) -> (a,b) |> Ok
-            | _ -> "not a NoiseFraction" |> Error
+            | _ -> "not a NoiseFraction (*51)" |> Error
         | _ -> $"modelParamName {modelParamName |> UMX.untag}" |> Error  
 
 
-    let getOrder 
+    let getModelAlpha
             (modelParamName:string<modelParamName>)  
             (modelParamSet:modelParamSet) 
             =
@@ -299,8 +309,8 @@ module ModelParamSet =
         match modelParamValue with
         | Some v -> 
             match v with
-            | modelParamValue.Order (a,b) -> (a,b) |> Ok
-            | _ -> "not an Order" |> Error
+            | modelParamValue.ModelAlpha (a,b) -> (a,b) |> Ok
+            | _ -> "not a ModelAlpha (*52)" |> Error
         | _ -> $"modelParamName {modelParamName |> UMX.untag}" |> Error  
 
 
@@ -313,7 +323,7 @@ module ModelParamSet =
         | Some v -> 
             match v with
             | modelParamValue.ParentCount (a,b) -> (a,b) |> Ok
-            | _ -> "not a ParentCount" |> Error
+            | _ -> "not a ParentCount (*53)" |> Error
         | _ -> $"modelParamName {modelParamName |> UMX.untag}" |> Error  
 
 
@@ -326,8 +336,9 @@ module ModelParamSet =
         | Some v -> 
             match v with
             | modelParamValue.ReproductionRate (a,b) -> (a,b) |> Ok
-            | _ -> "not a ReproductionRate" |> Error
+            | _ -> "not a ReproductionRate (*54)" |> Error
         | _ -> $"modelParamName {modelParamName |> UMX.untag}" |> Error  
+
 
 
     let getSorterSetPruneMethod 
@@ -339,8 +350,22 @@ module ModelParamSet =
         | Some v -> 
             match v with
             | modelParamValue.SorterSetPruneMethod (a,b) -> (a,b) |> Ok
-            | _ -> "not a SorterSetPruneMethod" |> Error
+            | _ -> "not a SorterSetPruneMethod (*55)" |> Error
         | _ -> $"modelParamName {modelParamName |> UMX.untag}" |> Error  
+
+
+
+    let getSortableSetCfgType
+            (modelParamName:string<modelParamName>)  
+            (modelParamSet:modelParamSet) 
+            =
+        let modelParamValue = modelParamSet |> getModelParamValue modelParamName
+        match modelParamValue with
+        | Some v -> 
+            match v with
+            | modelParamValue.SortableSetCfgType (a,b) -> (a,b) |> Ok
+            | _ -> "not a SortableSetCfgType (*56)" |> Error
+        | _ -> $"modelParamName {modelParamName |> UMX.untag} (*57)" |> Error  
 
 
     let getStageWeight 
@@ -352,8 +377,8 @@ module ModelParamSet =
         | Some v -> 
             match v with
             | modelParamValue.StageWeight (a,b) -> (a,b) |> Ok
-            | _ -> "not a StageWeight" |> Error
-        | _ -> $"modelParamName {modelParamName |> UMX.untag}" |> Error  
+            | _ -> "not a StageWeight (*58)" |> Error
+        | _ -> $"modelParamName {modelParamName |> UMX.untag} (*59)" |> Error  
 
 
     let getSwitchGenMode 
@@ -365,7 +390,7 @@ module ModelParamSet =
         | Some v -> 
             match v with
             | modelParamValue.SwitchGenMode (a,b) -> (a,b) |> Ok
-            | _ -> "not a SwitchGenMode" |> Error
-        | _ -> $"modelParamName {modelParamName |> UMX.untag}" |> Error  
+            | _ -> "not a SwitchGenMode (*60)" |> Error
+        | _ -> $"modelParamName {modelParamName |> UMX.untag} (*61)" |> Error  
 
 

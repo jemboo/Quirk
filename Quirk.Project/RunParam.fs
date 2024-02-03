@@ -16,13 +16,13 @@ module RunParamSet =
         =
         match runParamSet with
         | Sim sps -> sps |> Ok
-        | Report rps -> "runParamSet.Report given, Sim expected" |> Error
+        | Report rps -> "runParamSet.Report given, Sim expected (*68)" |> Error
 
     let toReportParamSet 
             (runParamSet:runParamSet)
         =
         match runParamSet with
-        | Sim sps -> "runParamSet.Sim given, Sim Report" |> Error
+        | Sim sps -> "runParamSet.Sim given, Sim Report (*69)" |> Error
         | Report rps -> rps |> Ok
 
 
@@ -46,5 +46,5 @@ module RunParamSetType =
         match qrm.Split() with
         | [| "Run" |] -> runParamSetType.Sim |> Ok 
         | [| "Report" |] -> runParamSetType.Report |> Ok
-        | _ -> Error $"{qrm} not handled in RunParamSetType.fromString"
+        | _ -> Error $"{qrm} not handled in RunParamSetType.fromString (*70)"
 

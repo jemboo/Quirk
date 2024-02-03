@@ -27,7 +27,7 @@ module quirkProgramMode =
         | [| "GenSimScript" |] -> quirkProgramMode.GenSimScript |> Ok
         | [| "GenReportScript" |] -> quirkProgramMode.GenReportScript |> Ok
         | [| "RunScript" |] -> quirkProgramMode.RunScript |> Ok
-        | _ -> Error $"{qrm} not handled in QuirkScriptMode.fromString"
+        | _ -> Error $"{qrm} not handled in QuirkScriptMode.fromString (*75)"
 
 
     

@@ -75,7 +75,7 @@ module Program =
 
         match scriptResult with
         | Result.Ok _ -> Console.WriteLine("Script ran successfully (1)")
-        | Result.Error m -> Console.WriteLine($"Script ran with error: {m}")
+        | Result.Error m -> Console.WriteLine($"Script ran with error: {m} (*74)")
 
         Console.ReadKey() |> ignore
         0

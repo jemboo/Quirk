@@ -20,7 +20,7 @@ module Json =
     let deserializeOption<'a> str =
         match str with
         | Some s -> (deserialize<'a> s)
-        | None -> Result.Error "option was none"
+        | None -> Result.Error "option was none (*21)"
 
 
     let deserializeMapEntry<'a> 
@@ -29,6 +29,6 @@ module Json =
             if strMap.ContainsKey(key) then
                return! deserialize<'a> (strMap.[key])
             else
-               return! $"the key: {key} was not found in the map" 
+               return! $"the key: {key} was not found in the map (*22)" 
                         |> Error   
         }

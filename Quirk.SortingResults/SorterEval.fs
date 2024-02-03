@@ -57,11 +57,11 @@ type sorterEvalMode =
 
 module SorterEvalMode =
     let fromString (sv: string) =
-        match sv.ToLowerInvariant() with
+        match sv with
         | "DontCheckSuccess" -> Ok DontCheckSuccess
         | "CheckSuccess" -> Ok CheckSuccess
         | "GetSortedSetCount" -> Ok GetSortedSetCount
-        | _ -> Error "Invalid sorterEvalMode string"
+        | _ -> Error "Invalid sorterEvalMode string (*1)"
 
     let toString (mode: sorterEvalMode) =
         match mode with
@@ -203,7 +203,8 @@ module SorterEval =
 
 
     let getSorterEvalProps 
-            (sev:sorterEval) =
+            (sev:sorterEval) 
+        =
         let stageCt, switchCt = (sev.sorterSpeed |> SorterSpeed.getProps)
         let successful, sortableCt = (sev.sorterPrf |> SorterPerf.getProps)
         [|

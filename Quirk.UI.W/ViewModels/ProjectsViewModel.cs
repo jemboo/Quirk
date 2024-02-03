@@ -64,7 +64,7 @@ public partial class ProjectsViewModel : ObservableRecipient, INavigationAware
             var projectsFound = await _projectDataStore.GetAllProjectsAsync(PathProjectsRoot);
             if (projectsFound.IsError) 
             {
-                StatusMessage = $"Error: {projectsFound.ErrorValue}";
+                StatusMessage = $"Error: {projectsFound.ErrorValue} (*91)";
             }
             else
             {

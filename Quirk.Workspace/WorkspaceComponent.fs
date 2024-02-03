@@ -50,7 +50,7 @@ module WsComponentData =
         | SortableSet sortableSet -> 
              sortableSet |> Ok
         | _  -> 
-             $"wsComponentData is {comp}, not SortableSet" |> Error
+             $"wsComponentData is {comp}, not SortableSet (*92)" |> Error
 
 
     let asSorterSet (comp:wsComponentData) =
@@ -58,7 +58,7 @@ module WsComponentData =
         | SorterSet sorterSet -> 
              sorterSet |> Ok
         | _  -> 
-             $"wsComponentData is {comp}, not SorterSet" |> Error
+             $"wsComponentData is {comp}, not SorterSet (*93)" |> Error
 
 
     let asSorterSetAncestry (comp:wsComponentData) =
@@ -66,7 +66,7 @@ module WsComponentData =
         | SorterSetAncestry sorterSetAncestry -> 
              sorterSetAncestry |> Ok
         | _  -> 
-             $"wsComponentData is {comp}, not SorterSetAncestry" |> Error
+             $"wsComponentData is {comp}, not SorterSetAncestry (*94)" |> Error
 
 
     let asSorterSetMutator (comp:wsComponentData) =
@@ -74,7 +74,7 @@ module WsComponentData =
         | SorterSetMutator sorterSetMutator -> 
              sorterSetMutator |> Ok
         | _ -> 
-             $"wsComponentData is {comp}, not SorterSetMutator" |> Error
+             $"wsComponentData is {comp}, not SorterSetMutator (*95)" |> Error
 
 
     let asSorterSetParentMap (comp:wsComponentData) =
@@ -82,7 +82,7 @@ module WsComponentData =
         | SorterSetParentMap sorterSetParentMap -> 
              sorterSetParentMap |> Ok
         | _  -> 
-             $"wsComponentData is {comp}, not SorterSetParentMap" |> Error
+             $"wsComponentData is {comp}, not SorterSetParentMap (*96)" |> Error
 
 
     let asSorterSetConcatMap (comp:wsComponentData) =
@@ -90,7 +90,7 @@ module WsComponentData =
         | SorterSetConcatMap sorterSetConcatMap -> 
              sorterSetConcatMap |> Ok
         | _  -> 
-             $"wsComponentData is {comp}, not SorterSetConcatMap" |> Error
+             $"wsComponentData is {comp}, not SorterSetConcatMap (*97)" |> Error
 
 
     let asSorterSetEval (comp:wsComponentData) =
@@ -98,7 +98,7 @@ module WsComponentData =
         | SorterSetEval sorterSetEval -> 
              sorterSetEval |> Ok
         | _  -> 
-             $"wsComponentData is {comp}, not SorterSetEval" |> Error
+             $"wsComponentData is {comp}, not SorterSetEval (*98)" |> Error
 
 
     let asSorterSpeedBinSet (comp:wsComponentData) =
@@ -106,7 +106,7 @@ module WsComponentData =
         | SorterSpeedBinSet sorterSpeedBinSet -> 
              sorterSpeedBinSet |> Ok
         | _  -> 
-             $"wsComponentData is {comp}, not SorterSpeedBinSet" |> Error
+             $"wsComponentData is {comp}, not SorterSpeedBinSet (*99)" |> Error
 
 
     let asSorterSetPruner (comp:wsComponentData) =
@@ -114,7 +114,7 @@ module WsComponentData =
         | SorterSetPruner sorterSetPruner -> 
              sorterSetPruner |> Ok
         | _  -> 
-             $"wsComponentData is {comp}, not SorterSetPruner" |> Error
+             $"wsComponentData is {comp}, not SorterSetPruner (*100)" |> Error
 
 
     let asWsParams (comp:wsComponentData) =
@@ -122,7 +122,7 @@ module WsComponentData =
         | WsParams wsParams -> 
              wsParams |> Ok
         | _  -> 
-             $"wsComponentData is {comp}, not WorkspaceParams" |> Error
+             $"wsComponentData is {comp}, not WorkspaceParams (*101)" |> Error
 
 
 type wsComponent =

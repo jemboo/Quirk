@@ -35,6 +35,7 @@ module WsComponentDataDto =
         | WsParams wsParams ->
             wsParams |> WsParamsDto.toJson
 
+
     let fromJson 
             (wct:wsComponentType) 
             (cereal:string) 
@@ -83,7 +84,6 @@ module WsComponentDto =
             let! componentType = dto.componentType |> WsComponentType.fromString
             let! componentData = 
                     dto.componentData |> WsComponentDataDto.fromJson componentType
-
             return 
                 WsComponent.load
                     id
@@ -95,7 +95,7 @@ module WsComponentDto =
     let fromJson (jstr: string) =
         result {
             let! dto = Json.deserialize<wsComponentDto> jstr
-            return fromDto dto
+            return! fromDto dto
         }
 
     let toDto (wsComponent: wsComponent) =
@@ -122,4 +122,4 @@ module WsComponentDto =
         }
 
     let toJson (wsComponent: wsComponent) =
-        wsComponent |> toDto 
+        wsComponent |> toDto |> Json.serialize

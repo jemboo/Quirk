@@ -98,7 +98,7 @@ module Sorter =
         let numSwitchesToRemove = curSwitchCt - (newLength |> UMX.untag)
 
         if numSwitchesToRemove < 0 then
-            "New length is longer than sorter" |> Error
+            "New length is longer than sorter (*84)" |> Error
         else
             let trimmedSwitches =
                 sortr
@@ -118,7 +118,7 @@ module Sorter =
         let numSwitchesToRemove = curSwitchCt - (newLength |> UMX.untag)
 
         if numSwitchesToRemove < 0 then
-            "New length is longer than sorter" |> Error
+            "New length is longer than sorter (*85)" |> Error
         else
             let trimmedSwitches = (sortr |> getSwitches) |> Seq.take numSwitchesToRemove
             fromSwitches sorterD (sortr |> getOrder) trimmedSwitches |> Ok

@@ -27,7 +27,7 @@ module ScriptDispatcher =
 
         | [| "Shc_0128" |] -> () |> Ok
         | [| "Shc_016"; rn |] -> () |> Ok
-        | _ -> Error $"{projectName |> UMX.untag} not handled in ScriptDispatcher.dispatchCfgPlex"
+        | _ -> Error $"{projectName |> UMX.untag} not handled in ScriptDispatcher.dispatchCfgPlex (*75)"
 
 
 
@@ -66,7 +66,7 @@ module ScriptDispatcher =
 
         | [| "Shc_0128" |] -> () |> Ok
         | [| "Shc_016"; rn |] -> () |> Ok
-        | _ -> Error $"{projectName |> UMX.untag} not handled in ScriptDispatcher.dispatchGenSimScript"
+        | _ -> Error $"{projectName |> UMX.untag} not handled in ScriptDispatcher.dispatchGenSimScript (*76)"
 
 
     let dispatchGenReportScript
@@ -105,7 +105,7 @@ module ScriptDispatcher =
 
         | [| "Shc_0128" |] -> () |> Ok
         | [| "Shc_016"; rn |] -> () |> Ok
-        | _ -> Error $"{projectName |> UMX.untag} not handled in ScriptDispatcher.dispatchGenReportScript"
+        | _ -> Error $"{projectName |> UMX.untag} not handled in ScriptDispatcher.dispatchGenReportScript (*77)"
 
 
     let dispatchRunScript
@@ -138,7 +138,7 @@ module ScriptDispatcher =
 
         | [| "Shc_0128" |] -> () |> Ok
         | [| "Shc_016"; rn |] -> () |> Ok
-        | _ -> Error $"{projectName |> UMX.untag} not handled in ScriptDispatcher.dispatchRunScript"
+        | _ -> Error $"{projectName |> UMX.untag} not handled in ScriptDispatcher.dispatchRunScript (*78)"
 
 
     let fromQuirkProgramMode
@@ -160,10 +160,7 @@ module ScriptDispatcher =
         let projectName = projectNameOpt |> Option.get
         let cfgPlexName = cfgPlexNameOpt |> Option.get
         let quirkProgramMode = quirkProgramModeOpt |> Option.get
-        let genStart = genStartOpt |> Option.get
-        let genEnd = genEndOpt |> Option.get
-        let reportInterval = reportIntervalOpt |> Option.get
-        let snapshotInterval = snapshotIntervalOpt |> Option.get
+
 
         let res =
             match quirkProgramMode with
@@ -173,6 +170,10 @@ module ScriptDispatcher =
                     let firstScriptIndex = firstScriptIndexOpt |> Option.get
                     let runCount = runCountOpt |> Option.get
                     let maxRunSetSize = maxRunSetSizeOpt |> Option.get
+                    let genStart = genStartOpt |> Option.get
+                    let genEnd = genEndOpt |> Option.get
+                    let reportInterval = reportIntervalOpt |> Option.get
+                    let snapshotInterval = snapshotIntervalOpt |> Option.get
                     dispatchGenSimScript 
                         rootDir 
                         cCfgPlexDataStore 
@@ -190,6 +191,9 @@ module ScriptDispatcher =
                     let runCount = runCountOpt |> Option.get
                     let maxRunSetSize = maxRunSetSizeOpt |> Option.get
                     let reportTypeArg = reportTypeArgOpt |> Option.get
+                    let genStart = genStartOpt |> Option.get
+                    let genEnd = genEndOpt |> Option.get
+                    let reportInterval = reportIntervalOpt |> Option.get
                     dispatchGenReportScript 
                         rootDir 
                         cCfgPlexDataStore 
@@ -204,6 +208,8 @@ module ScriptDispatcher =
                         reportInterval
             | RunScript  -> 
                     let useParallel = useParallelOpt |> Option.get
+                    let genStart = genStartOpt |> Option.get
+                    let genEnd = genEndOpt |> Option.get
                     dispatchRunScript 
                         rootDir 
                         cCfgPlexDataStore 

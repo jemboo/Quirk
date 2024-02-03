@@ -3,10 +3,13 @@
 open System
 open Microsoft.FSharp.Core
 open FSharp.UMX
+open Quirk.Cfg
 open Quirk.Core
 open Quirk.Project
 open Quirk.Serialization
 open Quirk.Sorting
+open Quirk.SortingResults
+
 
 type quirkWorldLineDto =
         { 

@@ -6,9 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="WsComponentShc.fs" />
     <Compile Include="RunTypes.fs" />
-    <Compile Include="SortingCfg\SortableSetCfg.fs" />
-    <Compile Include="SortingCfg\SorterSetRndCfg.fs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -18,8 +17,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Quirk.Core\Quirk.Core.fsproj" />
     <ProjectReference Include="..\Quirk.Iter\Quirk.Iter.fsproj" />
-    <ProjectReference Include="..\Quirk.Serialziation\Quirk.Serialziation.fsproj" />
     <ProjectReference Include="..\Quirk.Sorting\Quirk.Sorting.fsproj" />
+    <ProjectReference Include="..\Quirk.Workspace\Quirk.Workspace.fsproj" />
   </ItemGroup>
 
 </Project>

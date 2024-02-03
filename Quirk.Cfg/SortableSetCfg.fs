@@ -16,6 +16,11 @@ type sortableSetCfgType =
 
 
 module SortableSetCfgType =
+    let toString 
+            (sortableSetCfgType:sortableSetCfgType) 
+        =
+        sortableSetCfgType |> string
+
     let fromString (cereal:string) =
         match cereal with
         | "All_Bits" -> sortableSetCfgType.All_Bits |> Ok

@@ -296,5 +296,5 @@ module SwitchGenMode =
         | "switch" -> switchGenMode.switch |> Ok
         | "stage" -> switchGenMode.stage |> Ok
         | "stageSymmetric" -> switchGenMode.stageSymmetric |> Ok
-        | _ -> $"Invalid string: { cereal } for switchGenMode" |> Error
+        | _ -> $"Invalid string: { cereal } for switchGenMode (*87)" |> Error
         

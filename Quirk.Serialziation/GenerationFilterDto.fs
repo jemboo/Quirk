@@ -38,7 +38,7 @@ module GenerationFilterDto =
             { expGenerationFilter.exp = dto.cereal |> Double.Parse }
             |> generationFilter.ExpF |> Ok
 
-        | _ -> $"{dto.duType} not handled in GenerationFilterDto.fromDto" |> Error
+        | _ -> $"{dto.duType} not handled in GenerationFilterDto.fromDto (*79)" |> Error
 
 
     let fromJson (cereal:string) =

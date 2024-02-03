@@ -150,7 +150,7 @@ module CollectionOps =
         try
             arrayProduct lhs rhs prod |> Ok
         with ex ->
-            ("error in arrayProductR: " + ex.Message) |> Result.Error
+            ("error in arrayProductR: (*7)" + ex.Message) |> Result.Error
 
 
     let allPowers   
@@ -201,7 +201,7 @@ module CollectionOps =
 
             filtAr |> Ok
         with ex ->
-            ("error in filterByPickList: " + ex.Message) |> Result.Error
+            ("error in filterByPickList: (*8)" + ex.Message) |> Result.Error
 
 
     let inline invertArray< ^a when ^a:(static member Zero:^a) and 
@@ -226,7 +226,7 @@ module CollectionOps =
         try
             invertArray a inv_out |> Ok
         with ex ->
-            ("error in inverseMapArray: " + ex.Message) |> Result.Error
+            ("error in inverseMapArray: (*9)" + ex.Message) |> Result.Error
 
 
     let histogram<'d, 'r when 'r: comparison> 
@@ -265,7 +265,7 @@ module CollectionOps =
             let a_out = Array.zeroCreate a_conj.Length
             conjIntArrays a_conj a_core a_out |> Ok
         with ex ->
-            ("error in conjIntArrays: " + ex.Message) |> Result.Error
+            ("error in conjIntArrays: (*10)" + ex.Message) |> Result.Error
 
 
 

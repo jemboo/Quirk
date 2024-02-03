@@ -20,7 +20,7 @@ module RngType =
         match cereal with
         | "Lcg" -> rngType.Lcg |> Ok
         | "Net" -> rngType.Net |> Ok
-        | _ -> $"Invalid string: { cereal } for rngType" |> Error
+        | _ -> $"Invalid string: { cereal } for rngType (*24)" |> Error
         
     let toString (rngType: rngType) =
         rngType |> string

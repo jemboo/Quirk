@@ -66,7 +66,7 @@ module ReportParamValue =
                         |> reportParamValue.ReportType
             }
 
-        | uhv -> $"not handled in reportParamValue.fromArrayOfStrings %A{uhv}" |> Error
+        | uhv -> $"not handled in reportParamValue.fromArrayOfStrings %A{uhv} (*63)" |> Error
             
 
 
@@ -119,8 +119,8 @@ module ReportParamSet =
         | Some v -> 
             match v with
             | reportParamValue.Generation (a,b) -> (a,b) |> Ok
-            | _ -> "not a Generation" |> Error
-        | _ -> $"reportParamName {reportParamName |> UMX.untag} not found" |> Error  
+            | _ -> "not a Generation (*64)" |> Error
+        | _ -> $"reportParamName {reportParamName |> UMX.untag} not found (*65)" |> Error  
 
 
     let getReportType
@@ -132,5 +132,5 @@ module ReportParamSet =
         | Some v -> 
             match v with
             | reportParamValue.ReportType (a,b) -> (a,b) |> Ok
-            | _ -> "not a ReportType" |> Error
-        | _ -> $"reportParamName {reportParamName |> UMX.untag} not found" |> Error  
+            | _ -> "not a ReportType (*66)" |> Error
+        | _ -> $"reportParamName {reportParamName |> UMX.untag} not found (*67)" |> Error  

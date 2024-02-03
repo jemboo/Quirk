@@ -19,7 +19,7 @@ module Order =
         if (value > 0) && (value < 9) then
             value |> UMX.tag<order> |> Ok
         else
-            "order must be greater than 0 and less than 9" |> Error
+            "order must be greater than 0 and less than 9 (*13)" |> Error
 
     let within (b: int<order>) v = 
         (v >= 0) && (v < (b |> UMX.untag))
@@ -75,7 +75,7 @@ module Order =
             let itemCt = order |> binExp
             Array.init<int> itemCt (id) |> Ok
         with ex ->
-            ("error in allIntForDegree: " + ex.Message) |> Result.Error
+            ("error in allIntForDegree: (*14)" + ex.Message) |> Result.Error
 
 
     let allSortableAsUint64 (order: int<order>) =
@@ -83,7 +83,7 @@ module Order =
             let itemCt = order |> binExp
             Array.init<uint64> itemCt (uint64) |> Ok
         with ex ->
-            ("error in allUint64ForDegree: " + ex.Message) |> Result.Error
+            ("error in allUint64ForDegree: (*15)" + ex.Message) |> Result.Error
 
 
 

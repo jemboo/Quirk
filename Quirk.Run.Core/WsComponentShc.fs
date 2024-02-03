@@ -1,13 +1,11 @@
-﻿namespace Quirk.Run.Ga
+﻿namespace Quirk.Run.Core
 
 open System
 open FSharp.UMX
 open Quirk.Core
 open Quirk.Iter
 open Quirk.Project
-open Quirk.Run.Core
 open Quirk.Workspace
-
 
 module WsComponentTypeShc =
 
@@ -23,7 +21,6 @@ module WsComponentTypeShc =
         ]
         |> GuidUtils.guidFromObjs
         |> UMX.tag<wsComponentId>
-
 
 
     let shcWsComponentNames =
@@ -42,14 +39,14 @@ module WsComponentTypeShc =
 
 
 
+
 type rndGenTypeShc =
     | Create
     | Mutate
     | Prune
 
 
-
-module RndGenProvider =
+module RndGenProviderShc =
 
     let getRngGen 
             (quirkWorldLineId:Guid<quirkWorldLineId>)

@@ -1,4 +1,4 @@
-﻿namespace Quirk.Run.Core
+﻿namespace Quirk.Cfg
 open Quirk.Core
 
 //type sorterSetRndCfg

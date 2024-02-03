@@ -6,27 +6,11 @@ open Quirk.Serialization
 open Quirk.Project
 open Quirk.Sorting
 open Quirk.SortingResults
-open Quirk.Run.Core
 open Quirk.Iter
+open Quirk.Cfg
 
 
 module WsParamsAttrs =
-
-    let getReportType
-            (key:string<wsParamsKey>) 
-            (wsParams:wsParams) 
-        =
-        result {
-          let! cereal = WsParams.getItem key wsParams
-          return cereal |> UMX.tag<reportType>
-        }
-    let setReportType
-            (key:string<wsParamsKey>) 
-            (value:string<reportType>)
-            (wsParams:wsParams) 
-        =
-        wsParams |> WsParams.addItem key (value |> UMX.untag |> string)
-
 
     let getGeneration
             (key:string<wsParamsKey>) 
@@ -42,8 +26,6 @@ module WsParamsAttrs =
             (wsParams:wsParams) 
         =
         wsParams |> WsParams.addItem key (value |> UMX.untag |> string)
-
-
 
 
     let incrGeneration
@@ -157,6 +139,22 @@ module WsParamsAttrs =
         =
         let cereal = value |> UMX.untag |> string
         wsParams |> WsParams.addItem key cereal
+
+
+    let getReportType
+            (key:string<wsParamsKey>) 
+            (wsParams:wsParams) 
+        =
+        result {
+          let! cereal = WsParams.getItem key wsParams
+          return cereal |> UMX.tag<reportType>
+        }
+    let setReportType
+            (key:string<wsParamsKey>) 
+            (value:string<reportType>)
+            (wsParams:wsParams) 
+        =
+        wsParams |> WsParams.addItem key (value |> UMX.untag |> string)
 
 
     let getRngGen

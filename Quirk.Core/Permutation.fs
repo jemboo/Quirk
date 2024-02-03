@@ -132,7 +132,7 @@ module Permutation =
 
     let product (lhs: permutation) (rhs: permutation) =
         if (lhs.values.Length <> rhs.values.Length) then
-            "permuation orders dont match" |> Error
+            "permuation orders dont match (*23)" |> Error
         else
             { permutation.values =
                 CollectionOps.arrayProduct (lhs.values) (rhs.values) (Array.zeroCreate lhs.values.Length) }

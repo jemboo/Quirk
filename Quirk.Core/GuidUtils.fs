@@ -117,7 +117,7 @@ module GuidUtils =
         try
             guidFromBytes blob.[offset .. offset + 15] |> Ok
         with ex ->
-            ("error in getGuidFromBytes: " + ex.Message) |> Result.Error
+            ("error in getGuidFromBytes: (*16)" + ex.Message) |> Result.Error
 
 
     let mapBytesToGuids (blob_offset: int) (guidA: Guid[]) (guidA_offset: int) (guid_ct: int) (blob: byte[]) =
@@ -128,7 +128,7 @@ module GuidUtils =
 
             guidA |> Ok
         with ex ->
-            ("error in mapBytesToGuids: " + ex.Message) |> Result.Error
+            ("error in mapBytesToGuids: (*17)" + ex.Message) |> Result.Error
 
 
     let mapGuidsToBytes (guidA_offset: int) (guid_ct: int) (blob: byte[]) (blob_offset: int) (guidA: Guid[]) =
@@ -140,7 +140,7 @@ module GuidUtils =
 
             blob |> Ok
         with ex ->
-            ("error in mapGuidsToBytes: " + ex.Message) |> Result.Error
+            ("error in mapGuidsToBytes: (*18)" + ex.Message) |> Result.Error
 
 
     let convertBytesToGuids (blob: byte[]) =
@@ -148,7 +148,7 @@ module GuidUtils =
             let guidA = Array.zeroCreate<Guid> (blob.Length / 16)
             blob |> mapBytesToGuids 0 guidA 0 (blob.Length / 16)
         with ex ->
-            ("error in convertBytesToGuids: " + ex.Message) |> Result.Error
+            ("error in convertBytesToGuids: (*19)" + ex.Message) |> Result.Error
 
 
     let convertGuidsToBytes (guidA: Guid[]) =
@@ -156,4 +156,4 @@ module GuidUtils =
             let blob = Array.zeroCreate<byte> (guidA.Length * 16)
             guidA |> mapGuidsToBytes 0 guidA.Length blob 0
         with ex ->
-            ("error in convertGuidsToBytes: " + ex.Message) |> Result.Error
+            ("error in convertGuidsToBytes: (*20)" + ex.Message) |> Result.Error

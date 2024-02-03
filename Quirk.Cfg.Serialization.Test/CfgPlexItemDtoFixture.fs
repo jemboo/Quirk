@@ -39,17 +39,15 @@ module CfgPlexItemDtoFixture =
         let cfpiRankC = 3 |> UMX.tag<cfgPlexItemRank>
         
         
-        let cfpivOrder1 = (rpNameA, 16 |> UMX.tag<order>) |> modelParamValue.Order
         let cfpivMutationRate1 = (rpNameB, 0.1 |> UMX.tag<mutationRate> ) |> modelParamValue.MutationRate
         let cfpivMutationRate2 = (rpNameB, 0.2 |> UMX.tag<mutationRate> )  |> modelParamValue.MutationRate
         let cfpivNoiseFraction1 = (rpNameC, 0.25 |> UMX.tag<noiseFraction> )  |> modelParamValue.NoiseFraction
         let cfpivNoiseFraction2 = (rpNameC, 0.50 |> UMX.tag<noiseFraction> ) |> modelParamValue.NoiseFraction
         
-        let cfgPlexItemValuesA = [| cfpivOrder1 |]
+
         let cfgPlexItemValuesB = [| cfpivMutationRate1; cfpivMutationRate2 |]
         let cfgPlexItemValuesC = [| cfpivNoiseFraction1; cfpivNoiseFraction2 |]
         
-        let cfpiA = CfgPlexItem.create cfpiNameA cfpiRankA cfgPlexItemValuesA
         let cfpiB = CfgPlexItem.create cfpiNameB cfpiRankB cfgPlexItemValuesB
         let cfpiC = CfgPlexItem.create cfpiNameC cfpiRankC cfgPlexItemValuesC
         
@@ -57,7 +55,7 @@ module CfgPlexItemDtoFixture =
         
         let cfgPlexName = "cfgPlexName" |> UMX.tag<cfgPlexName>
         let projectName = "projectName" |> UMX.tag<projectName>
-        let cfgPlexItems = [|cfpiA; cfpiB; cfpiC|]
+        let cfgPlexItems = [|cfpiB; cfpiC|]
         
         let cfgPlex = CfgPlex.create cfgPlexName projectName cfgPlexItems
         let strVal = sprintf "%A" cfgPlex

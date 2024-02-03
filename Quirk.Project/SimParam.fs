@@ -52,7 +52,7 @@ module SimParamValue =
                         |> simParamValue.Generation
             }
 
-        | uhv -> $"not handled in SimParamValue.fromArrayOfStrings %A{uhv}" |> Error
+        | uhv -> $"not handled in SimParamValue.fromArrayOfStrings %A{uhv} (*71)" |> Error
             
 
 type simParamSet = 
@@ -103,5 +103,5 @@ module SimParamSet =
         | Some v -> 
             match v with
             | simParamValue.Generation (a,b) -> (a,b) |> Ok
-            | _ -> "not a GenerationStart" |> Error
-        | _ -> $"simParamName {simParamName |> UMX.untag} not found" |> Error  
+            | _ -> "not a GenerationStart (*72)" |> Error
+        | _ -> $"simParamName {simParamName |> UMX.untag} not found (*73)" |> Error  

@@ -909,7 +909,7 @@ module Bs64Roll =
             let bitsPerSymbol = bitPack |> BitPack.getBitsPerSymbol
 
             if (bitsPerSymbol |> UMX.untag) <> 1 then
-                return! sprintf "bitsPerSymbol must be 1" |> Error
+                return! sprintf "bitsPerSymbol must be 1 (*25)" |> Error
             else
                 return!
                     bitPack
@@ -1011,7 +1011,7 @@ module RolloutFormat =
         | nameof rolloutFormat.RfI32 -> rolloutFormat.RfI32 |> Ok
         | nameof rolloutFormat.RfU64 -> rolloutFormat.RfU64 |> Ok
         | nameof rolloutFormat.RfBs64 -> rolloutFormat.RfBs64 |> Ok
-        | _ -> Error(sprintf "no match for rolloutFormat: %s" str)
+        | _ -> Error(sprintf "no match for rolloutFormat (*26): %s" str)
 
 
 
@@ -1163,7 +1163,7 @@ module Rollout =
         | RfB ->
             result {
                 if (bitsPerSymbol |> UMX.untag) > 1 then
-                  return! ("1 bit per symbol max for bool" |> Error)
+                  return! ("1 bit per symbol max for bool (*27)" |> Error)
                 else
                     let seq = aas |> Seq.map(fun ia -> ia |> Array.map(fun v -> v>0))
                     let! roll = BooleanRoll.fromBoolArrays arrayLength seq
@@ -1172,7 +1172,7 @@ module Rollout =
         | RfU8 ->
             result {
                 if (bitsPerSymbol |> UMX.untag) > 8 then
-                  return! ("8 bits per symbol max for uint8" |> Error)
+                  return! ("8 bits per symbol max for uint8 (*28)" |> Error)
                 else
                     let seq = aas |> Seq.map(fun ia -> ia |> Array.map(uint8))
                     let! roll = Uint8Roll.fromArrays arrayLength bitsPerSymbol seq
@@ -1181,7 +1181,7 @@ module Rollout =
         | RfU16 ->
             result {
                 if (bitsPerSymbol |> UMX.untag) > 16 then
-                  return! ("16 bits per symbol max for bool" |> Error)
+                  return! ("16 bits per symbol max for bool (*29)" |> Error)
                 else
                     let seq = aas |> Seq.map(fun ia -> ia |> Array.map(uint16))
                     let! roll = Uint16Roll.fromArrays arrayLength bitsPerSymbol seq
@@ -1190,7 +1190,7 @@ module Rollout =
         | RfI32 ->
             result {
                 if (bitsPerSymbol |> UMX.untag) > 31 then
-                  return! ("31 bits per symbol max for Int32" |> Error)
+                  return! ("31 bits per symbol max for Int32 (*30)" |> Error)
                 else
                     let! roll = IntRoll.fromArrays arrayLength bitsPerSymbol aas
                     return! roll |> rollout.I32 |> Ok
@@ -1199,7 +1199,7 @@ module Rollout =
         | RfU64 ->
             result {
                 if (bitsPerSymbol |> UMX.untag) > 64 then
-                  return! ("64 bits per symbol max for uint64" |> Error)
+                  return! ("64 bits per symbol max for uint64 (*31)" |> Error)
                 else
                     let seq = aas |> Seq.map(fun ia -> ia |> Array.map(uint64))
                     let! roll = Uint64Roll.fromArrays arrayLength bitsPerSymbol seq
@@ -1208,7 +1208,7 @@ module Rollout =
         | RfBs64 ->
             result {
                 if (bitsPerSymbol |> UMX.untag) > 1 then
-                  return! ("1 bits per symbol max for Bs64" |> Error)
+                  return! ("1 bits per symbol max for Bs64 (*32)" |> Error)
                 else
                     let seq = aas |> Seq.map(fun ia -> ia |> Array.map(fun v -> v>0))
                     let! roll = Bs64Roll.fromBoolArrays arrayLength seq
