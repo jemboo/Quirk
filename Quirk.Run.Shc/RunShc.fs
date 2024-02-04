@@ -128,7 +128,7 @@ module RunShc =
                 |> WsParamsAttrs.setOrder ShcWsParamKeys.order (modelAlpha |> ModelAlpha.getOrder)
                 |> WsParamsAttrs.setSortableSetCfgType ShcWsParamKeys.sortableSetCfgType (modelAlpha |> ModelAlpha.getSortableSetCfgType)
                 |> WsParamsAttrs.setSwitchCount ShcWsParamKeys.switchCount (modelAlpha |> ModelAlpha.getSwitchCount)
-                |> WsParamsAttrs.setSorterEvalMode ShcWsParamKeys.order (modelAlpha |> ModelAlpha.getSorterEvalMode)
+                |> WsParamsAttrs.setSorterEvalMode ShcWsParamKeys.sorterEvalMode (modelAlpha |> ModelAlpha.getSorterEvalMode)
                 |> WsParamsAttrs.setSorterCount ShcWsParamKeys.sorterCount parentCount
                 |> WsParamsAttrs.setReproductionRate ShcWsParamKeys.reproductionRate reproductionRate
                 |> WsParamsAttrs.setSorterSetPruneMethod ShcWsParamKeys.sorterSetPruneMethod sorterSetPruneMethod
@@ -153,24 +153,31 @@ module RunShc =
 
 
 
-    let doRunRun
+    let doSimRun
             (rootDir:string<folderPath>)
             (projectName: string<projectName>) 
             (projectDataStore:IProjectDataStore)
-            (useParallel:bool<useParallel>)
-            (quirkRun:quirkRun)
+            (wsParams:wsParams)
+
         =
         result {
-            let! wsParams = 
-                quirkRun 
-                |> toWsParams
-                    useParallel
-
             let! res = InterGenShc.procWl rootDir projectName projectDataStore wsParams
 
             return ()
         }
 
+
+    let doReportRun
+            (rootDir:string<folderPath>)
+            (projectName: string<projectName>) 
+            (projectDataStore:IProjectDataStore)
+            (wsParams:wsParams)
+        =
+        result {
+            let! res = InterGenShc.procWl rootDir projectName projectDataStore wsParams
+
+            return ()
+        }
 
     let doRun
             (rootDir:string<folderPath>)
@@ -179,8 +186,38 @@ module RunShc =
             (useParallel:bool<useParallel>)
             (quirkRun:quirkRun)
         =
-        let res = doRunRun rootDir projectName projectDataStore useParallel quirkRun
+        let res = 
+            result {
+                let! wsParams = quirkRun |> toWsParams useParallel
+                return 
+                    match (quirkRun |> QuirkRun.getRunParamSet) with
+                    | runParamSet.Sim sps -> doSimRun rootDir projectName projectDataStore wsParams
+                    | runParamSet.Report rps -> doReportRun rootDir projectName projectDataStore wsParams
+            }
         match res with
         | Ok v -> Console.WriteLine "Ok"
         | Error m -> Console.WriteLine $"error: {m}"
         ()
+
+
+
+    //let doRun
+    //        (rootDir:string<folderPath>)
+    //        (projectName: string<projectName>) 
+    //        (projectDataStore:IProjectDataStore)
+    //        (useParallel:bool<useParallel>)
+    //        (quirkRun:quirkRun)
+    //    =
+    //    let wsParamsR = quirkRun |> toWsParams useParallel
+    //    let res = 
+    //        match wsParamsR with
+    //        | Error m -> Console.WriteLine $"error: {m}"
+    //        | Ok wsParams ->
+    //             match (quirkRun |> QuirkRun.getRunParamSet) with
+    //             | runParamSet.Sim sps -> doSimRun rootDir projectName projectDataStore wsParams
+    //             | runParamSet.Report rps -> doReportRun rootDir projectName projectDataStore wsParams
+
+    //    match res with
+    //    | Ok v -> Console.WriteLine "Ok"
+    //    | Error m -> Console.WriteLine $"error: {m}"
+    //    ()

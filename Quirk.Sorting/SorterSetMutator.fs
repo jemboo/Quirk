@@ -63,7 +63,6 @@ module SorterSetMutator =
 
             return
                 SorterSet.load
-                    (sorterSetParentMap |> SorterSetParentMap.getChildSorterSetId)
                     (sorterSetToMutate |> SorterSet.getOrder)
                     mutants
         }

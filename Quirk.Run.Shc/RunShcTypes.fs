@@ -37,3 +37,12 @@ module ShcWsParamKeys =
     let switchCount = "switchCount" |> UMX.tag<wsParamsKey>
     let switchGenMode = "switchGenMode" |> UMX.tag<wsParamsKey>
     let useParallel = "useParallel" |> UMX.tag<wsParamsKey>
+
+module ShcWsCompKeys =
+    let sortableSet = "sortableSet" |> UMX.tag<wsCompKey>
+    let sorterSet = "sorterSet" |> UMX.tag<wsCompKey>
+    let sorterSetEval = "sorterSetEval" |> UMX.tag<wsCompKey>
+    let sorterSpeedBinSet = "sorterSpeedBinSet" |> UMX.tag<wsCompKey>
+    let wsParams = "wsParams" |> UMX.tag<wsCompKey>
+    let sorterParentMap = "sorterParentMap" |> UMX.tag<wsCompKey>
+    let sorterAncestry = "sorterAncestry" |> UMX.tag<wsCompKey>

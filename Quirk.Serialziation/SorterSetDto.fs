@@ -4,10 +4,9 @@ open System
 open Microsoft.FSharp.Core
 open FSharp.UMX
 open Quirk.Core
-open Quirk.Project
 open Quirk.Sorting
 
-type sorterDto = { id:Guid; order:int; switches:byte[] }
+type sorterDto = { id:Guid;order:int; switches:byte[] }
 
 module SorterDto =
 
@@ -42,7 +41,6 @@ module SorterDto =
 
 
 type sorterSetDto = { 
-        id: Guid; 
         order:int; 
         sorterIds:Guid[]; 
         offsets:int[]; 
@@ -65,8 +63,7 @@ module SorterSetDto =
                    Sorter.fromSwitches (dto.sorterIds.[i] |> UMX.tag<sorterId>)
                                        order    
                                        (Switch.fromBitPack pack))
-            let sorterSetId = dto.id |> UMX.tag<sorterSetId>
-            return SorterSet.load sorterSetId order sorterA
+            return SorterSet.load order sorterA
         }
 
 
@@ -90,7 +87,6 @@ module SorterSetDto =
                               |> Array.map(fun (_, sw, _) -> sw)
                               |> CollectionOps.bookMarkArrays
         {
-            sorterSetDto.id = sorterSt |> SorterSet.getId |> UMX.untag;
             order =  sOrder |> UMX.untag;
             sorterIds = triple |> Array.map(fun (gu, _, _) -> gu);
             offsets = bookMarks;

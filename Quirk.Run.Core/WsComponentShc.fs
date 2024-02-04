@@ -12,7 +12,7 @@ module WsComponentTypeShc =
     let getWsComponentID 
             (quirkWorldLineId:Guid<quirkWorldLineId>)
             (generation:int<generation>)
-            (wsComponentName:string<wsComponentName>)
+            (wsComponentName:string<wsCompKey>)
         =
         [
             quirkWorldLineId :> obj
@@ -25,16 +25,16 @@ module WsComponentTypeShc =
 
     let shcWsComponentNames =
         [|
-            "SortableSet" |> UMX.tag<wsComponentName>
-            "SorterSet" |> UMX.tag<wsComponentName>
-            "SorterSetAncestry" |> UMX.tag<wsComponentName>
-            "SorterSetConcatMap" |> UMX.tag<wsComponentName>
-            "SorterSetEval" |> UMX.tag<wsComponentName>
-            "SorterSetMutator" |> UMX.tag<wsComponentName>
-            "SorterSetParentMap" |> UMX.tag<wsComponentName>
-            "SorterSpeedBinSet" |> UMX.tag<wsComponentName>
-            "SorterSetPruner" |> UMX.tag<wsComponentName>
-            "WsParams" |> UMX.tag<wsComponentName>
+            "SortableSet" |> UMX.tag<wsCompKey>
+            "SorterSet" |> UMX.tag<wsCompKey>
+            "SorterSetAncestry" |> UMX.tag<wsCompKey>
+            "SorterSetConcatMap" |> UMX.tag<wsCompKey>
+            "SorterSetEval" |> UMX.tag<wsCompKey>
+            "SorterSetMutator" |> UMX.tag<wsCompKey>
+            "SorterSetParentMap" |> UMX.tag<wsCompKey>
+            "SorterSpeedBinSet" |> UMX.tag<wsCompKey>
+            "SorterSetPruner" |> UMX.tag<wsCompKey>
+            "WsParams" |> UMX.tag<wsCompKey>
         |]
 
 

@@ -6,7 +6,7 @@ open Quirk.Core
 
 type workspace = private {
 
-        wsComponents: Map<string<wsComponentName>, wsComponentData>
+        wsComponents: Map<string<wsCompKey>, wsComponentData>
     }
 
 

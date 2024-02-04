@@ -5,7 +5,7 @@ open Quirk.Core
 
 [<Measure>] type wsId
 
-[<Measure>] type wsComponentName
+[<Measure>] type wsCompKey
 
 [<Measure>] type wsComponentId
 

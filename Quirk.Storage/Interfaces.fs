@@ -14,7 +14,7 @@ type wsComponentArgs =
         rootDir: string<folderPath>
         projectName: string<projectName>
         quirkWorldlineId: Guid<quirkWorldLineId>
-        wsComponentName: string<wsComponentName>
+        wsComponentName: string<wsCompKey>
         generation: int<generation>
      }
 
@@ -24,7 +24,7 @@ module WsComponentArgs =
             (rootDir: string<folderPath>) 
             (projectName: string<projectName>) 
             (quirkWorldlineId: Guid<quirkWorldLineId>)
-            (wsComponentName: string<wsComponentName>) 
+            (wsComponentName: string<wsCompKey>) 
             (generation: int<generation>)
          =
         {

@@ -6,9 +6,6 @@ open Quirk.Core
 
 type sorterSetConcatMap = 
         private {
-        id: Guid<sorterSetConcatMapId>;
-        sorterSetBaseId:Guid<sorterSetId>;
-        sorterSetConcatId:Guid<sorterSetId>;
         concatMap:Map<Guid<sorterId>, Guid<sorterId>[]> }
 
 

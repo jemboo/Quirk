@@ -9,22 +9,10 @@ open Quirk.Sorting
 type sorterSetEval =
     private
         {
-            sorterSetEvalId:Guid<sorterSetEvalId>
-            sorterSetId:Guid<sorterSetId>
-            sortableSetId:Guid<sortableSetId>
             sorterEvals: Map<Guid<sorterId>, sorterEval>
         }
 
-module SorterSetEval 
-       =
-    let getSorterSetEvalId (ssEvl:sorterSetEval) =
-            ssEvl.sorterSetEvalId
-
-    let getSorterSetlId (ssEvl:sorterSetEval) =
-            ssEvl.sorterSetId
-
-    let getSortableSetId (ssEvl:sorterSetEval) =
-            ssEvl.sortableSetId
+module SorterSetEval =
 
     let getSorterEvalsMap (ssEvl:sorterSetEval) =
             ssEvl.sorterEvals
@@ -61,16 +49,10 @@ module SorterSetEval
 
 
     let load
-            (sorterSetEvalId: Guid<sorterSetEvalId>)
-            (sorterSetId: Guid<sorterSetId>)
-            (sortableStId: Guid<sortableSetId>)
             (sorterEvals: sorterEval[])
         =
           let sEvs = sorterEvals |> Array.map(fun sev -> (sev.sortrId, sev)) |> Map.ofArray
           {
-            sorterSetEvalId = sorterSetEvalId
-            sorterSetId = sorterSetId
-            sortableSetId = sortableStId
             sorterEvals = sEvs
           }
 
@@ -83,25 +65,10 @@ module SorterSetEval
             (useParallel: bool<useParallel>) 
         =
         try
-
-          let sorterSetEvalId  = 
-            [|
-              (sorterSet |> SorterSet.getId |> UMX.untag) :> obj;
-              (sortableSet |> SortableSet.getSortableSetId |> UMX.untag ) :> obj;
-              (sorterEvalMode) :> obj;
-            |] |> GuidUtils.guidFromObjs
-               |> UMX.tag<sorterSetEvalId>
-
-
           let sorters = sorterSet |> SorterSet.getSorters
           let sorterEvals = evalSorters sorterEvalMode sortableSet sorters useParallel
                             |> Array.map(sorterEvalAdj)
-          load
-                sorterSetEvalId
-                (sorterSet |> SorterSet.getId)
-                (sortableSet |> SortableSet.getSortableSetId)
-                sorterEvals
-          |> Ok
+          load sorterEvals |> Ok
         with ex ->
             ("error in SorterSetEval.make: " + ex.Message) 
             |> Error

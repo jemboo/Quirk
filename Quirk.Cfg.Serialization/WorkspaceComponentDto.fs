@@ -18,20 +18,14 @@ module WsComponentDataDto =
              sortableSet |> SortableSetDto.toJson
         | SorterSet sorterSet -> 
              sorterSet |> SorterSetDto.toJson
-        | SorterSetMutator sorterSetMutator -> 
-             sorterSetMutator |> SorterSetMutatorDto.toJson
         | SorterSetParentMap sorterSetParentMap -> 
              sorterSetParentMap |> SorterSetParentMapDto.toJson
-        | SorterSetConcatMap sorterSetConcatMap -> 
-             sorterSetConcatMap |> SorterSetConcatMapDto.toJson
         | SorterSetEval sorterSetEval -> 
              sorterSetEval |> SorterSetEvalDto.toJson
         | SorterSetAncestry sorterSetAncestry ->
              sorterSetAncestry |> SorterSetAncestryDto.toJson
         | SorterSpeedBinSet sorterSpeedBinSet ->
              sorterSpeedBinSet |> SorterSpeedBinSetDto.toJson
-        | SorterSetPruner sorterSetPruner ->
-             sorterSetPruner |> SorterSetPrunerWholeDto.toJson
         | WsParams wsParams ->
             wsParams |> WsParamsDto.toJson
 
@@ -47,18 +41,12 @@ module WsComponentDataDto =
             cereal |> SorterSetDto.fromJson |> Result.map(wsComponentData.SorterSet)
         | wsComponentType.SorterSetAncestry ->
             cereal |> SorterSetAncestryDto.fromJson |> Result.map(wsComponentData.SorterSetAncestry)
-        | wsComponentType.SorterSetMutator ->
-            cereal |> SorterSetMutatorDto.fromJson |> Result.map(wsComponentData.SorterSetMutator)
-        | wsComponentType.SorterSetConcatMap ->
-            cereal |> SorterSetConcatMapDto.fromJson |> Result.map(wsComponentData.SorterSetConcatMap)
         | wsComponentType.SorterSetParentMap ->
             cereal |> SorterSetParentMapDto.fromJson |> Result.map(wsComponentData.SorterSetParentMap)
         | wsComponentType.SorterSetEval ->
             cereal |> SorterSetEvalDto.fromJson |> Result.map(wsComponentData.SorterSetEval)
         | wsComponentType.SorterSpeedBinSet ->
             cereal |> SorterSpeedBinSetDto.fromJson |> Result.map(wsComponentData.SorterSpeedBinSet)
-        | wsComponentType.SorterSetPruner ->
-            cereal |> SorterSetPrunerWholeDto.fromJson |> Result.map(wsComponentData.SorterSetPruner)
         | wsComponentType.WsParams ->
             cereal |> WsParamsDto.fromJson |> Result.map(wsComponentData.WsParams)
         | _ -> "unhandled wsComponentType" |> Error
@@ -80,7 +68,7 @@ module WsComponentDto =
         result {
         
             let id = dto.id |> UMX.tag<wsComponentId>
-            let name = dto.name |> UMX.tag<wsComponentName>
+            let name = dto.name |> UMX.tag<wsCompKey>
             let! componentType = dto.componentType |> WsComponentType.fromString
             let! componentData = 
                     dto.componentData |> WsComponentDataDto.fromJson componentType

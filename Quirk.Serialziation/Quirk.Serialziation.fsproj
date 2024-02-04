@@ -12,7 +12,6 @@
     <Compile Include="SorterSetEvalDto.fs" />
     <Compile Include="SorterSpeedBinDto.fs" />
     <Compile Include="SorterSetAncestryDto.fs" />
-    <Compile Include="SorterSetConcatMapDto.fs" />
     <Compile Include="SorterSetDto.fs" />
     <Compile Include="SorterMutatorDto.fs" />
     <Compile Include="SorterSetMutatorDto.fs" />

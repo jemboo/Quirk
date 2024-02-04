@@ -237,7 +237,7 @@ type projectFileStore () =
                 (wsRootDir:string<folderPath>)
                 (projectName:string<projectName>) 
                 (quirkWorldLineId:Guid<quirkWorldLineId>) 
-                (wsComponentName:string<wsComponentName>) 
+                (wsComponentName:string<wsCompKey>) 
                 (generation:int<generation>) 
                 =
                 let projectRootPath = this.getProjectPathToFolder wsRootDir projectName |> UMX.untag
@@ -259,7 +259,7 @@ type projectFileStore () =
                 (wsRootDir:string<folderPath>)
                 (projectName:string<projectName>) 
                 (quirkWorldLineId:Guid<quirkWorldLineId>) 
-                (wsComponentName:string<wsComponentName>) 
+                (wsComponentName:string<wsCompKey>) 
                 (generation:int<generation>) 
                 : Result<wsComponent, string>
             =
@@ -274,7 +274,7 @@ type projectFileStore () =
                 (wsRootDir:string<folderPath>)
                 (projectName:string<projectName>) 
                 (quirkWorldLineId:Guid<quirkWorldLineId>) 
-                (wsComponentName:string<wsComponentName>) 
+                (wsComponentName:string<wsCompKey>) 
                 (generation:int<generation>)
                 (wsComponent:wsComponent)
             =
