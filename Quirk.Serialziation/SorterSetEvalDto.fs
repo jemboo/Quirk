@@ -206,6 +206,8 @@ module SorterEvalDto =
 
 
 type sorterSetEvalDto = {
+        sorterSetId:Guid; 
+        sortableSetId:Guid; 
         sorterEvals:string[]; 
      }
 
@@ -221,7 +223,18 @@ module SorterSetEvalDto =
                     |> Array.toList
                     |> Result.sequence
 
+            let sorterSetId =
+                    dto.sorterSetId
+                    |> UMX.tag<sorterSetId>
+
+            let sortableSetId =
+                    dto.sortableSetId
+                    |> UMX.tag<sortableSetId>
+
+
             return SorterSetEval.load
+                        sorterSetId
+                        sortableSetId
                         (sorterEvals |> List.toArray)
         }
 
@@ -235,6 +248,8 @@ module SorterSetEvalDto =
 
     let toDto (ssEvl:sorterSetEval) =
         {
+            sorterSetId = ssEvl |> SorterSetEval.getSorterSetlId |> UMX.untag
+            sortableSetId = ssEvl |> SorterSetEval.getSortableSetId |> UMX.untag
             sorterEvals = ssEvl |> SorterSetEval.getSorterEvalsArray |> Array.map(SorterEvalDto.toJson)
         }
 

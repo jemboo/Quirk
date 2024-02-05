@@ -41,6 +41,7 @@ module SorterDto =
 
 
 type sorterSetDto = { 
+        id: Guid; 
         order:int; 
         sorterIds:Guid[]; 
         offsets:int[]; 
@@ -63,7 +64,8 @@ module SorterSetDto =
                    Sorter.fromSwitches (dto.sorterIds.[i] |> UMX.tag<sorterId>)
                                        order    
                                        (Switch.fromBitPack pack))
-            return SorterSet.load order sorterA
+            let sorterSetId = dto.id |> UMX.tag<sorterSetId>
+            return SorterSet.load sorterSetId order sorterA
         }
 
 
@@ -87,6 +89,7 @@ module SorterSetDto =
                               |> Array.map(fun (_, sw, _) -> sw)
                               |> CollectionOps.bookMarkArrays
         {
+            sorterSetDto.id = sorterSt |> SorterSet.getId |> UMX.untag;
             order =  sOrder |> UMX.untag;
             sorterIds = triple |> Array.map(fun (gu, _, _) -> gu);
             offsets = bookMarks;

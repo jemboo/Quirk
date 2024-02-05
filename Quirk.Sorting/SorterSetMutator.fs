@@ -48,6 +48,7 @@ module SorterSetMutator =
 
 
     let createMutantSorterSetFromParentMap
+            (sorterSetId:Guid<sorterSetId>)
             (sorterSetParentMap:sorterSetParentMap)
             (ssm:sorterSetMutator)
             (rngGen:rngGen) 
@@ -63,6 +64,7 @@ module SorterSetMutator =
 
             return
                 SorterSet.load
+                    sorterSetId
                     (sorterSetToMutate |> SorterSet.getOrder)
                     mutants
         }

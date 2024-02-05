@@ -8,11 +8,19 @@ open Quirk.Sorting
 
 type sorterSetEval =
     private
-        {
+        {   
+            sorterSetId:Guid<sorterSetId>
+            sortableSetId:Guid<sortableSetId>
             sorterEvals: Map<Guid<sorterId>, sorterEval>
         }
 
 module SorterSetEval =
+
+    let getSorterSetlId (ssEvl:sorterSetEval) =
+            ssEvl.sorterSetId
+
+    let getSortableSetId (ssEvl:sorterSetEval) =
+            ssEvl.sortableSetId
 
     let getSorterEvalsMap (ssEvl:sorterSetEval) =
             ssEvl.sorterEvals
@@ -49,10 +57,14 @@ module SorterSetEval =
 
 
     let load
+            (sorterSetId: Guid<sorterSetId>)
+            (sortableStId: Guid<sortableSetId>)
             (sorterEvals: sorterEval[])
         =
           let sEvs = sorterEvals |> Array.map(fun sev -> (sev.sortrId, sev)) |> Map.ofArray
           {
+            sorterSetId = sorterSetId
+            sortableSetId = sortableStId
             sorterEvals = sEvs
           }
 
@@ -68,7 +80,11 @@ module SorterSetEval =
           let sorters = sorterSet |> SorterSet.getSorters
           let sorterEvals = evalSorters sorterEvalMode sortableSet sorters useParallel
                             |> Array.map(sorterEvalAdj)
-          load sorterEvals |> Ok
+          load 
+            (sorterSet |> SorterSet.getId)
+            (sortableSet |> SortableSet.getSortableSetId)
+            sorterEvals 
+            |> Ok
         with ex ->
             ("error in SorterSetEval.make: " + ex.Message) 
             |> Error

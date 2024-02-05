@@ -7,11 +7,14 @@ open Quirk.Core
 type sorterSet =
     private
         {
+          id: Guid<sorterSetId>
           order: int<order>
           sorterMap: Map<Guid<sorterId>, sorter> 
         }
 
 module SorterSet =
+
+    let getId (sorterSet: sorterSet) = sorterSet.id
 
     let getOrder (sorterSet: sorterSet) = sorterSet.order
 
@@ -61,6 +64,7 @@ module SorterSet =
 
 
     let load 
+            (id:Guid<sorterSetId>) 
             (order: int<order>) 
             (sorters: seq<sorter>) 
         =
@@ -70,13 +74,14 @@ module SorterSet =
             |> Map.ofSeq
 
         {
+          sorterSet.id = id
           order = order
           sorterMap = sorterMap 
         }
 
 
     let createEmpty = 
-        load (0 |> UMX.tag<order>) (Seq.empty)
+        load (Guid.Empty |> UMX.tag<sorterSetId>) (0 |> UMX.tag<order>) (Seq.empty)
 
 
     let create
@@ -88,23 +93,11 @@ module SorterSet =
         generateSorterIds sorterStId
         |> Seq.map (fun sId -> sorterGen sId)
         |> Seq.take(sorterCt |> UMX.untag)
-        |> load order 
-
-
-    let createMergedSorterSetId
-            (lhs:Guid<sorterSetId>)
-            (rhs:Guid<sorterSetId>) 
-        =
-        [| 
-            (lhs |> UMX.untag);
-            (rhs |> UMX.untag);
-        |] 
-        |> Array.map(fun tup -> tup:> obj) 
-        |> GuidUtils.guidFromObjs 
-        |> UMX.tag<sorterSetId>
+        |> load sorterStId  order 
 
 
     let createMergedSorterSet
+            (mergedId:Guid<sorterSetId>)
             (lhs:sorterSet)
             (rhs:sorterSet)
         =
@@ -112,6 +105,7 @@ module SorterSet =
             (getSorters lhs)
             |> Array.append (getSorters rhs)
         load
+            mergedId
             (lhs.order)
             mergedSorters
 
@@ -284,7 +278,7 @@ module SorterSet =
         |> Seq.filter(Result.isOk)
         |> Seq.map(Result.ExtractOrThrow)
         |> Seq.take(sorterCt |> UMX.untag)
-        |> load order
+        |> load sorterStId order
 
 
     //// creates a Map<mergeId*(pfxId*sfxId)>
