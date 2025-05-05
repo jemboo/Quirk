@@ -50,13 +50,13 @@ module ScriptDispatcher =
             result {
                 let! cfgPlex = cCfgPlexDataStore.GetCfgPlex rootDir projectName cfgPlexName
                 let lsO64 = O_64.quirkSimScripts 
-                                cfgPlex 
-                                firstScriptIndex 
-                                runCount 
-                                maxRunSetSize 
-                                genStart 
-                                genMax 
-                                reportInterval 
+                                cfgPlex
+                                firstScriptIndex
+                                runCount
+                                maxRunSetSize
+                                genStart
+                                genMax
+                                reportInterval
                                 snapShotInterval
                             |> Array.toList
                 let! saveRes = lsO64 |> List.map(fun qs -> (cCfgPlexDataStore.SaveScriptAsync rootDir qs).Result)

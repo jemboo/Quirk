@@ -104,7 +104,7 @@ type wsComponent =
 
 module WsComponent =
 
-    let load 
+    let make 
             (id: Guid<wsComponentId>) 
             (name: string<wsCompKey>) 
             (wsComponentType: wsComponentType) 

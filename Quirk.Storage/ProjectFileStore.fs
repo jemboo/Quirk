@@ -237,14 +237,14 @@ type projectFileStore () =
                 (wsRootDir:string<folderPath>)
                 (projectName:string<projectName>) 
                 (quirkWorldLineId:Guid<quirkWorldLineId>) 
-                (wsComponentName:string<wsCompKey>) 
+                (wsComponentKey:string<wsCompKey>) 
                 (generation:int<generation>) 
                 =
                 let projectRootPath = this.getProjectPathToFolder wsRootDir projectName |> UMX.untag
                 let worldLinePart = quirkWorldLineId |> UMX.untag |> string
-                let componentPathPart = wsComponentName|> UMX.untag
+                let componentPathPart = wsComponentKey|> UMX.untag
                 let componentFileNamePart = 
-                        WsComponentTypeShc.getWsComponentID quirkWorldLineId generation wsComponentName
+                        WsComponentTypeShc.getWsComponentID quirkWorldLineId generation wsComponentKey
                         |> UMX.untag |> string 
                 let path = Path.Combine(
                     projectRootPath,
@@ -259,12 +259,14 @@ type projectFileStore () =
                 (wsRootDir:string<folderPath>)
                 (projectName:string<projectName>) 
                 (quirkWorldLineId:Guid<quirkWorldLineId>) 
-                (wsComponentName:string<wsCompKey>) 
+                (wsComponentKey:string<wsCompKey>) 
                 (generation:int<generation>) 
                 : Result<wsComponent, string>
             =
             result {
-                let fullPath = this.getWsComponentPathShc wsRootDir projectName quirkWorldLineId wsComponentName generation
+                let fullPath = 
+                    this.getWsComponentPathShc 
+                         wsRootDir projectName quirkWorldLineId wsComponentKey generation
                 let! cereal = TextIO.readAllText fullPath
                 let! wsCompShc = WsComponentDto.fromJson cereal
                 return wsCompShc
@@ -274,12 +276,14 @@ type projectFileStore () =
                 (wsRootDir:string<folderPath>)
                 (projectName:string<projectName>) 
                 (quirkWorldLineId:Guid<quirkWorldLineId>) 
-                (wsComponentName:string<wsCompKey>) 
+                (wsComponentKey:string<wsCompKey>) 
                 (generation:int<generation>)
                 (wsComponent:wsComponent)
             =
             result {
-                let fullPath = this.getWsComponentPathShc wsRootDir projectName quirkWorldLineId wsComponentName generation
+                let fullPath = 
+                    this.getWsComponentPathShc 
+                         wsRootDir projectName quirkWorldLineId wsComponentKey generation
                 let cereal = WsComponentDto.toJson wsComponent
                 let! res = TextIO.writeToFileOverwrite fullPath cereal
                 return res
@@ -303,23 +307,25 @@ type projectFileStore () =
                     = this.getCfgPlex wsRootDir projectName cfgPlexName
         member this.SaveCfgPlex (wsRootDir:string<folderPath>) cfgPlex 
                     = this.saveCfgPlex wsRootDir cfgPlex
-        member this.GetWsComponentShc (wsComponentArgs:wsComponentArgs)
+        member this.GetWsComponentShc 
+                        (wsComponentStorageArgs:wsComponentStorageArgs)
                     =  this.getWsComponentShc
-                            wsComponentArgs.rootDir 
-                            wsComponentArgs.projectName 
-                            wsComponentArgs.quirkWorldlineId 
-                            wsComponentArgs.wsComponentName 
-                            wsComponentArgs.generation
+                            wsComponentStorageArgs.rootDir 
+                            wsComponentStorageArgs.projectName 
+                            wsComponentStorageArgs.quirkWorldlineId 
+                            wsComponentStorageArgs.wsCompKeyName 
+                            wsComponentStorageArgs.generation
 
-        member this.SaveWsComponentShc (wsComponentArgs:wsComponentArgs) (wsComponent:wsComponent)
+        member this.SaveWsComponentShc 
+                        (wsComponentStorageArgs:wsComponentStorageArgs) 
+                        (wsComponent:wsComponent)
                     = this.saveWsComponentShc 
-                            wsComponentArgs.rootDir 
-                            wsComponentArgs.projectName 
-                            wsComponentArgs.quirkWorldlineId 
-                            wsComponentArgs.wsComponentName 
-                            wsComponentArgs.generation 
+                            wsComponentStorageArgs.rootDir 
+                            wsComponentStorageArgs.projectName 
+                            wsComponentStorageArgs.quirkWorldlineId 
+                            wsComponentStorageArgs.wsCompKeyName 
+                            wsComponentStorageArgs.generation 
                             wsComponent
-
 
         member this.GetProjectAsync (wsRootDir:string<folderPath>) (projectName:string<projectName>) 
                     = Task.Run(fun () -> this.getProject wsRootDir projectName)
@@ -337,23 +343,25 @@ type projectFileStore () =
                     = Task.Run(fun () -> this.getCfgPlex wsRootDir projectName cfgPlexName)
         member this.SaveCfgPlexAsync (wsRootDir:string<folderPath>) cfgPlex 
                     = Task.Run(fun () -> this.saveCfgPlex wsRootDir cfgPlex)
-        member this.GetWsComponentShcAsync (wsComponentArgs:wsComponentArgs)
+        member this.GetWsComponentShcAsync (wsComponentStorageArgs:wsComponentStorageArgs)
                     = Task.Run(fun () -> 
                                 this.getWsComponentShc 
-                                    wsComponentArgs.rootDir 
-                                    wsComponentArgs.projectName 
-                                    wsComponentArgs.quirkWorldlineId 
-                                    wsComponentArgs.wsComponentName 
-                                    wsComponentArgs.generation
+                                    wsComponentStorageArgs.rootDir 
+                                    wsComponentStorageArgs.projectName 
+                                    wsComponentStorageArgs.quirkWorldlineId 
+                                    wsComponentStorageArgs.wsCompKeyName 
+                                    wsComponentStorageArgs.generation
                               )
 
-        member this.SaveWsComponentShcAsync (wsComponentArgs:wsComponentArgs) (wsComponent:wsComponent)
+        member this.SaveWsComponentShcAsync 
+                        (wsComponentStorageArgs:wsComponentStorageArgs) 
+                        (wsComponent:wsComponent)
                     = Task.Run(fun () -> 
                                 this.saveWsComponentShc 
-                                    wsComponentArgs.rootDir 
-                                    wsComponentArgs.projectName 
-                                    wsComponentArgs.quirkWorldlineId 
-                                    wsComponentArgs.wsComponentName 
-                                    wsComponentArgs.generation 
+                                    wsComponentStorageArgs.rootDir 
+                                    wsComponentStorageArgs.projectName 
+                                    wsComponentStorageArgs.quirkWorldlineId 
+                                    wsComponentStorageArgs.wsCompKeyName 
+                                    wsComponentStorageArgs.generation 
                                     wsComponent
                               )

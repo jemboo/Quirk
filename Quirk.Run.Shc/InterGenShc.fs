@@ -23,13 +23,21 @@ module InterGenShc =
 
     let initWorkspace
                 (wsParams:wsParams)
+                (projectDataStore:IProjectDataStore)
+                (wsComponentStorageArgs:wsComponentStorageArgs)
         =
         result {
+            let! genStart = wsParams |> WsParamsAttrs.getGeneration ShcWsParamKeys.generationStart
             let! order = wsParams |> WsParamsAttrs.getOrder ShcWsParamKeys.order
             let! sortableSetCfgType = wsParams |> WsParamsAttrs.getSortableSetCfgType ShcWsParamKeys.sortableSetCfgType
-            let sortableSetCfg =
-                    SortableSetCfg.make sortableSetCfgType order None
+            let sortableSetCfg = SortableSetCfg.make sortableSetCfgType order None
             let! sortableSet = sortableSetCfg |> SortableSetCfg.makeSortableSet
+            let wscdSortableSet = sortableSet |> wsComponentData.SortableSet
+            let! worldLineId = wsParams |> WsParamsAttrs.getQuirkWorldLineId ShcWsParamKeys.quirkWorldLineId
+            let wscIdSortableSet = WsComponentTypeShc.getWsComponentID worldLineId genStart ShcWsCompKeys.sortableSet
+            let wscSortableSet = WsComponent.make wscIdSortableSet ShcWsCompKeys.sortableSet wsComponentType.SortableSet wscdSortableSet
+            let! res = projectDataStore.SaveWsComponentShc wsComponentStorageArgs wscSortableSet
+
 
             //let sorterSetCfg = 
             //        new sorterSetRndCfg(
@@ -59,14 +67,14 @@ module InterGenShc =
             (wsParams:wsParams)
         =
         result {
-            let! res = initWorkspace wsParams
             let! genStart = wsParams |> WsParamsAttrs.getGeneration ShcWsParamKeys.generationStart
-            let! quirkWlId = wsParams |> WsParamsAttrs.getQuirkWorldLineId ShcWsParamKeys.quirkWorldLineId
-            let wsCompName = "WsParams" |> UMX.tag<wsCompKey>
-            let wsComponentArgs = WsComponentArgs.create rootDir projectName quirkWlId wsCompName genStart
-            let wsComponentData = wsParams |> wsComponentData.WsParams
-            let wsComponentId = WsComponentTypeShc.getWsComponentID quirkWlId genStart wsCompName
-            let wsComponent = WsComponent.load wsComponentId wsCompName wsComponentType.WsParams wsComponentData
-            let! res = projectDataStore.SaveWsComponentShc wsComponentArgs wsComponent
+            let! worldLineId = wsParams |> WsParamsAttrs.getQuirkWorldLineId ShcWsParamKeys.quirkWorldLineId
+            let wsComponentStorageArgs = WsComponentStorageArgs.create rootDir projectName worldLineId genStart ShcWsCompKeys.wsParams
+            let! res = initWorkspace wsParams projectDataStore wsComponentStorageArgs
+
+            let wscdParams = wsParams |> wsComponentData.WsParams
+            let wscIdParams = WsComponentTypeShc.getWsComponentID worldLineId genStart ShcWsCompKeys.wsParams
+            let wscParams = WsComponent.make wscIdParams ShcWsCompKeys.wsParams wsComponentType.WsParams wscdParams
+            let! res = projectDataStore.SaveWsComponentShc wsComponentStorageArgs wscParams
             return ()
         }

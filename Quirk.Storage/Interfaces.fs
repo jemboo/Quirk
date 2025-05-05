@@ -9,29 +9,29 @@ open Quirk.Workspace
 open Quirk.Iter
 
 
-type wsComponentArgs =
+type wsComponentStorageArgs =
      { 
         rootDir: string<folderPath>
         projectName: string<projectName>
         quirkWorldlineId: Guid<quirkWorldLineId>
-        wsComponentName: string<wsCompKey>
+        wsCompKeyName: string<wsCompKey>
         generation: int<generation>
      }
 
-module WsComponentArgs =
+module WsComponentStorageArgs =
     
     let create 
             (rootDir: string<folderPath>) 
             (projectName: string<projectName>) 
             (quirkWorldlineId: Guid<quirkWorldLineId>)
-            (wsComponentName: string<wsCompKey>) 
             (generation: int<generation>)
+            (wsCompKeyName: string<wsCompKey>) 
          =
         {
-            wsComponentArgs.rootDir = rootDir
+            wsComponentStorageArgs.rootDir = rootDir
             projectName = projectName
             quirkWorldlineId = quirkWorldlineId
-            wsComponentName = wsComponentName
+            wsCompKeyName = wsCompKeyName
             generation = generation
         }
 
@@ -45,8 +45,8 @@ type IProjectDataStore =
     abstract member SaveScript : string<folderPath> -> quirkScript -> Result<unit, string>
     abstract member GetCfgPlex : string<folderPath> -> string<projectName> -> string<cfgPlexName> -> Result<cfgPlex, string>
     abstract member SaveCfgPlex : string<folderPath> -> cfgPlex -> Result<unit, string>
-    abstract member GetWsComponentShc : wsComponentArgs -> Result<wsComponent, string>
-    abstract member SaveWsComponentShc : wsComponentArgs -> wsComponent -> Result<unit, string>
+    abstract member GetWsComponentShc : wsComponentStorageArgs -> Result<wsComponent, string>
+    abstract member SaveWsComponentShc : wsComponentStorageArgs -> wsComponent -> Result<unit, string>
 
     abstract member GetProjectAsync : string<folderPath> -> string<projectName> -> Task<Result<quirkProject, string>>
     abstract member GetAllProjectsAsync : string<folderPath> -> Task<Result<quirkProject[], string>>
@@ -56,8 +56,8 @@ type IProjectDataStore =
     abstract member SaveScriptAsync : string<folderPath> -> quirkScript -> Task<Result<unit, string>>
     abstract member GetCfgPlexAsync : string<folderPath> -> string<projectName> -> string<cfgPlexName> -> Task<Result<cfgPlex, string>>
     abstract member SaveCfgPlexAsync : string<folderPath> -> cfgPlex -> Task<Result<unit, string>>
-    abstract member GetWsComponentShcAsync : wsComponentArgs -> Task<Result<wsComponent, string>>
-    abstract member SaveWsComponentShcAsync : wsComponentArgs -> wsComponent -> Task<Result<unit, string>>
+    abstract member GetWsComponentShcAsync : wsComponentStorageArgs -> Task<Result<wsComponent, string>>
+    abstract member SaveWsComponentShcAsync : wsComponentStorageArgs -> wsComponent -> Task<Result<unit, string>>
 
 
 type ITest =

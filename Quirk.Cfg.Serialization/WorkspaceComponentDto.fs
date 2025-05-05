@@ -73,7 +73,7 @@ module WsComponentDto =
             let! componentData = 
                     dto.componentData |> WsComponentDataDto.fromJson componentType
             return 
-                WsComponent.load
+                WsComponent.make
                     id
                     name
                     componentType

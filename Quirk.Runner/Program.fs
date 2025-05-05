@@ -23,6 +23,8 @@ module Program =
 // RunScript
 //--working-directory C:\Quirk --program-mode RunScript --project-name Shc_064 --cfgplex-name Shc_064_cfgPlex --gen-start 0 --gen-end 100 --report-interval 10 --snapshot-interval 50 --use-parallel true --log-level 1
 
+// RunScriptN
+//--working-directory C:\Quirk2 --program-mode RunScript --project-name Shc_064 --cfgplex-name Shc_064_cfgPlex --gen-start 0 --gen-end 100 --use-parallel true --log-level 1
 
 
     let [<EntryPoint>] main argv =

@@ -11,5 +11,10 @@ type workspace = private {
 
 
 module Workspace = 
+    let make (compTup: (string<wsCompKey> * wsComponentData) seq)
+        =
+        {
+            wsComponents = compTup |> Map.ofSeq
+        }
 
     let getWsComponents (ws:workspace) = ws.wsComponents
